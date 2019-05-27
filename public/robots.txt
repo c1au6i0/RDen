@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: /rden.netlify.com/sitemap.xml
+Sitemap: rden.netlify.com/sitemap.xml

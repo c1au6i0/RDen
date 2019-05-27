@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Animated Prison - RDen</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="c1au6i0HH" />
+  <meta name="description" content="In this post we will get the datasets and write the code to create the following visualization of the rate of incarceration over time in U.S (custody and jurisdiction counts of all prisoners).
+[Double click for full screen]
+" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.55.6" />
+
+
+<link rel="canonical" href="/rden.netlify.com/post/animated-prison/" />
+
+
+
+<link rel="icon" href="/rden.netlify.com/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/rden.netlify.com/sass/jane.min.ec807d8b802a40889537c26e014f733206312ea440d42e1f0dabed80918de1ac.css" integrity="sha256-7IB9i4AqQIiVN8JuAU9zMgYxLqRA1C4fDavtgJGN4aw=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Animated Prison" />
+<meta property="og:description" content="In this post we will get the datasets and write the code to create the following visualization of the rate of incarceration over time in U.S (custody and jurisdiction counts of all prisoners).
+
+[Double click for full screen]
+
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/rden.netlify.com/post/animated-prison/" />
+<meta property="article:published_time" content="2018-10-25T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2018-10-23T18:19:53-04:00"/>
+
+<meta itemprop="name" content="Animated Prison">
+<meta itemprop="description" content="In this post we will get the datasets and write the code to create the following visualization of the rate of incarceration over time in U.S (custody and jurisdiction counts of all prisoners).
+
+[Double click for full screen]
+
+">
+
+
+<meta itemprop="datePublished" content="2018-10-25T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-10-23T18:19:53-04:00" />
+<meta itemprop="wordCount" content="1954">
+
+
+
+<meta itemprop="keywords" content="av,ggplot,visualization," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Animated Prison"/>
+<meta name="twitter:description" content="In this post we will get the datasets and write the code to create the following visualization of the rate of incarceration over time in U.S (custody and jurisdiction counts of all prisoners).
+
+[Double click for full screen]
+
+"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-128292506-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/rden.netlify.com/" class="logo">muaydata</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/about/">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/rden.netlify.com/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/rden.netlify.com/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/rden.netlify.com/" class="logo">
+    
+      muaydata
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/about/">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Animated Prison</h1>
+      
+      <div class="post-meta">
+        <time datetime="2018-10-25" class="post-time">
+          2018-10-25
+        </time>
+        <div class="post-category">
+            <a href="/rden.netlify.com/categories/r/"> R </a>
+            
+          </div>
+        <span class="more-meta"> 1954 words </span>
+          <span class="more-meta"> 10 min read </span>
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#get-the-data-and-make-it-tidy">Get the data and make it tidy</a></li>
+<li><a href="#plot-it">Plot it!</a></li>
+<li><a href="#a-simple-line-plot">A simple line plot</a></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <p>In this post we will get the datasets and write the code to create the following visualization of the rate of incarceration over time in U.S (custody and jurisdiction counts of all prisoners).</p>
+
+<p><em>[Double click for full screen]</em></p>
+
+<iframe title="Prison_video" height="400" src="/Users/heverz/Documents/R_projects/rDen/static/data/data_post3/output.mp4" frameBorder="0" allowfullscreen></iframe>
+
+<p>What are we looking at? The video-graph represents the number of people in private and public prisons (sentenced and unsentenced) normalized by the corresponding state population. The darker is a state, the higher is the prison population relative to the total population. The year is indicated on the top left and the video shows the data <strong>from 1999 to 2015</strong>.</p>
+
+<p>Some changes are quite evident. For example, Texas is the darkest among Southern states at the start of the video, but by the year 2015 it is Oklahoma to lead the South in terms of prison population.</p>
+
+<p>If you liked the video/graph and you are interested in the code behind that visualization keep reading!</p>
+
+<p>If not, <strong>bye bye!</strong></p>
+
+<h1 id="introduction">Introduction</h1>
+
+<p>Animated plots are like spinning-back kicks in muay Thai: they are extremely risky, seldom used, but they can be highly effective and hit you right between the eyes!</p>
+
+<p><center>
+<img src="/data/data_post3/giphy.gif" alt="prova" />
+</center></p>
+
+<p>Few weeks agon, I stumble upon a newly released package, <a href="https://github.com/ropensci/av"><em>av</em></a>, that uses <a href="https://ffmpeg.org/"><em>ffmpeg</em></a> to capture <em>R</em> plots and create videos.
+I decided to give it a try and use it with heat-maps to visualize the change of prison population in U.S.
+Admittedly the video does not knock you out (changes are relatively small), but I think that it does still summarize the data at glance quite well.</p>
+
+<h1 id="get-the-data-and-make-it-tidy">Get the data and make it tidy</h1>
+
+<p>We load the libraries.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="kn">library</span><span class="p">(</span>av<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>lubridate<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>maps<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>readr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>readxl<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>stringr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>tidyverse<span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>The primary dataset that we are going to use is the <a href="https://www.icpsr.umich.edu/icpsrweb/ICPSR/studies/36657">National Prisoner Statistics, 1978-2015</a> curated by the United States Department of Justice, the Office of Justice Program and the Bureau of Justice Statistics.</p>
+
+<p>The dataset (<em>rda file</em>) comes with many documents including the Codebook and details of the methodology used to collect the data. We double click on the <em>rda</em> file to import it, we assign it to <em>prison_pop</em> and we take a look at some rows and columns.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">prison_pop <span class="o">&lt;-</span> as_tibble<span class="p">(</span>da36657.0001<span class="p">)</span>
+prison_pop<span class="p">[</span><span class="m">2044</span><span class="o">:</span><span class="m">2052</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="m">6</span><span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">## # A tibble: 9 x 6
+##    YEAR STATEID                   STATE REGION              CUSGT1M CUSGT1F
+##   &lt;dbl&gt; &lt;fct&gt;                     &lt;fct&gt; &lt;fct&gt;                 &lt;dbl&gt;   &lt;dbl&gt;
+## 1  2015 (50) 50. Vermont          VT    (1) Northeast           966      83
+## 2  2015 (51) 51. Virginia         VA    (3) South             28105    2325
+## 3  2015 (53) 53. Washington       WA    (4) West              15848    1297
+## 4  2015 (54) 54. West Virginia    WV    (3) South              5319     606
+## 5  2015 (55) 55. Wisconsin        WI    (2) Midwest           20346    1329
+## 6  2015 (56) 56. Wyoming          WY    (4) West               1888     245
+## 7  2015 (60) State prison total   ST    (7) State total     1054949   78954
+## 8  2015 (70) US prison total (st… US    (5) U.S. total      1192289   89180
+## 9  2015 (99) Federal BOP          FE    (6) Federal Bureau…  137340   10226</pre></td></tr></table>
+</div>
+</div>
+<p>The data is in the right format (long) but it is not tidy. For example, the last 3 observations are totals that we don&rsquo;t need and the name of the states (<em>STATEID</em>) is recorder with other superfluous information. We need to cleaning it up and also restrict our focus of analysis.</p>
+
+<p>I decided to look at the variables that indicate the number of inmates in custody (private and public facilities). The Codebook says:</p>
+
+<p><strong><em>&ldquo;Variables CNOPRIVM, CNOPRIVF, CWPRIVM, and CWPRIVF were created by BJS starting in 1999 to address the fact that some states were counting their private prisons in their custody counts, but others were not.&rdquo;</em></strong></p>
+
+<p>So we are going to get those variables, filter the dataframe/tibble to have years from 1999 to 2015 and clean up the STATEID column.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">prison_1999 <span class="o">&lt;-</span>
+  prison_pop <span class="o">%&gt;%</span> 
+  filter<span class="p">(</span>YEAR <span class="o">&gt;=</span> <span class="m">1999</span><span class="p">,</span> <span class="o">!</span>str_detect<span class="p">(</span>STATEID<span class="p">,</span> <span class="s">&#39;total|BOP&#39;</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="c1"># remove totals</span>
+  select<span class="p">(</span>YEAR<span class="p">,</span> STATE<span class="p">,</span> STATEID<span class="p">,</span> matches<span class="p">(</span><span class="s">&#39;PRIV.$&#39;</span><span class="p">))</span>  <span class="c1"># lets take the variables regarding the people in costudy</span>
+
+prison_1999<span class="o">$</span>STATEID <span class="o">&lt;-</span> <span class="kp">tolower</span><span class="p">(</span>str_sub<span class="p">(</span>prison_1999<span class="o">$</span>STATEID<span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">-1</span><span class="p">))</span> <span class="c1"># clean up the STATEID column</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>We calculate the totals (male + females, private only,  public facilities..).</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># calculate the total prison population  by state</span>
+prison_1999_tot <span class="o">&lt;-</span> 
+  prison_1999 <span class="o">%&gt;%</span> 
+  rowwise<span class="p">()</span> <span class="o">%&gt;%</span>  <span class="c1"># I love this function</span>
+  mutate<span class="p">(</span>TOT <span class="o">=</span> CWPRIVM <span class="o">+</span> CWPRIVF<span class="p">,</span> 
+         TOT_PUB <span class="o">=</span> CNOPRIVM <span class="o">+</span> CNOPRIVF<span class="p">,</span> 
+         TOT_PRIV <span class="o">=</span>  TOT <span class="o">-</span> TOT_PUB<span class="p">)</span> <span class="o">%&gt;%</span> 
+  ungroup<span class="p">()</span> <span class="o">%&gt;%</span> 
+  group_by<span class="p">(</span>YEAR<span class="p">,</span> STATEID<span class="p">,</span> STATE<span class="p">)</span> <span class="o">%&gt;%</span> 
+  summarize<span class="p">(</span>PRIS <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span>TOT<span class="p">,</span> na.rm <span class="o">=</span> <span class="kc">TRUE</span><span class="p">),</span> 
+            PRIS_PUB <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span>TOT_PUB<span class="p">,</span> na.rm <span class="o">=</span> <span class="kc">TRUE</span><span class="p">),</span>
+            PRIS_PRIV <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span>TOT_PRIV<span class="p">,</span> na.rm <span class="o">=</span> <span class="kc">TRUE</span><span class="p">))</span> </code></pre></td></tr></table>
+</div>
+</div>
+<p>..and this is what we obtain:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">glimpse<span class="p">(</span>prison_1999_tot<span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">## Observations: 867
+## Variables: 6
+## Groups: YEAR, STATEID [867]
+## $ YEAR      &lt;dbl&gt; 1999, 1999, 1999, 1999, 1999, 1999, 1999, 1999, 1999, …
+## $ STATEID   &lt;chr&gt; &#34;alabama&#34;, &#34;alaska&#34;, &#34;arizona&#34;, &#34;arkansas&#34;, &#34;californi…
+## $ STATE     &lt;fct&gt; AL, AK, AZ, AR, CA, CO, CT, DE, DC, FL, GA, HI, ID, IL…
+## $ PRIS      &lt;dbl&gt; 21227, 3916, 25986, 10388, 160687, 12995, 16987, 6585,…
+## $ PRIS_PUB  &lt;dbl&gt; 21227, 2529, 24594, 9174, 156066, 12995, 16987, 6585, …
+## $ PRIS_PRIV &lt;dbl&gt; 0, 1387, 1392, 1214, 4621, 0, 0, 0, 4024, 3773, 3001, …</pre></td></tr></table>
+</div>
+</div>
+<p>But now we have our first problem: a possible increase in the prison population might be the result of corresponding variation of U.S population. To circumvent that problem we need to express the prison population relative to the corresponding state population for the time interval of interest. Where do we get the data?
+In the website of the U.S Census Bureau, of course!</p>
+
+<p>In particular this is what we need:</p>
+
+<ul>
+<li><p><a href="https://www.census.gov/data/tables/time-series/demo/popest/intercensal-1990-2000-state-and-county-totals.html">Intercensal Tables form 1990 to 2000</a></p></li>
+
+<li><p><a href="https://www.census.gov/content/census/en/data/tables/time-series/demo/popest/intercensal-2000-2010-state.html">Intercensal Tables form 2000 to 2010</a></p></li>
+
+<li><p><a href="https://www.census.gov/content/census/en/data/tables/2017/demo/popest/state-detail.html">State Population by Characteristics: 2010-2017</a></p></li>
+</ul>
+
+<p>I have already merged all the census data together in <em>csv</em> file that is on the cloud and we will assign to <em>sp_wide</em> (it is in wide format).</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Thanks LukeA: https://stackoverflow.com/questions/33135060/read-csv-file-hosted-on-google-drive#33142446) </span>
+
+ids <span class="o">&lt;-</span>  <span class="s">&#34;1nTEpk2hW56Czx8-aGysQgKKaebhIFg1B&#34;</span> <span class="c1"># IDS file </span>
+
+sp_wide <span class="o">&lt;-</span> read_csv<span class="p">(</span><span class="kp">sprintf</span><span class="p">(</span><span class="s">&#34;https://drive.google.com/uc?id=%s&amp;export=download&#34;</span><span class="p">,</span> ids<span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>We need to make the STATEID column consistent with the dataframe/tibble of the prison population and to rearrange it in a long format.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">sp_long <span class="o">&lt;-</span> sp_wide <span class="o">%&gt;%</span> 
+  mutate<span class="p">(</span>STATEID <span class="o">=</span> <span class="kp">tolower</span><span class="p">(</span>STATEID<span class="p">))</span> <span class="o">%&gt;%</span> 
+  gather<span class="p">(</span>YEAR<span class="p">,</span> POP<span class="p">,</span> <span class="o">-</span>STATEID<span class="p">,</span> convert <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> na.rm <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  na.omit<span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Finaly we can join the 2 dataframe/tibble by STATEID and YEAR and normalize the prison data by state population.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">prison_norm <span class="o">&lt;-</span> 
+  left_join<span class="p">(</span>prison_1999_tot<span class="p">,</span> sp_long<span class="p">,</span> by <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#34;STATEID&#34;</span><span class="p">,</span> <span class="s">&#34;YEAR&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+  rowwise<span class="p">()</span> <span class="o">%&gt;%</span> 
+  mutate<span class="p">(</span>PERC_PRIS <span class="o">=</span> PRIS<span class="o">/</span>POP <span class="o">*</span><span class="m">10000</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  ungroup<span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<h1 id="plot-it">Plot it!</h1>
+
+<p>What is a map? It is a series of polygons that have been drawn on a paper sheet based on known latitude and longitude.</p>
+
+<p>In our case the sheet of paper is the area within our Cartesian axes, and latitude and longitude are X and Y coordinates. We need those coordinates to draw our map. Easy done!
+We use the package <a href="https://cran.r-project.org/web/packages/maps/index.html"><em>maps</em></a> to get the coordinates of each U.S. state and then we merge the obtain dataframe/tibble with the one of the prison population.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">states <span class="o">&lt;-</span> map_data<span class="p">(</span><span class="s">&#34;state&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  rename<span class="p">(</span>STATEID <span class="o">=</span> region<span class="p">)</span>
+
+prison_norm_xy <span class="o">&lt;-</span> 
+  left_join<span class="p">(</span>prison_norm<span class="p">,</span> states<span class="p">,</span> by <span class="o">=</span> <span class="s">&#34;STATEID&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  select<span class="p">(</span>YEAR<span class="o">:</span>lat<span class="p">)</span> <span class="o">%&gt;%</span> 
+  setNames<span class="p">(</span><span class="kp">toupper</span><span class="p">(</span><span class="kp">names</span><span class="p">(</span><span class="m">.</span><span class="p">)))</span>
+
+glimpse<span class="p">(</span>prison_norm_xy<span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">## Observations: 264,163
+## Variables: 10
+## $ YEAR      &lt;dbl&gt; 1999, 1999, 1999, 1999, 1999, 1999, 1999, 1999, 1999, …
+## $ STATEID   &lt;chr&gt; &#34;alabama&#34;, &#34;alabama&#34;, &#34;alabama&#34;, &#34;alabama&#34;, &#34;alabama&#34;,…
+## $ STATE     &lt;fct&gt; AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL…
+## $ PRIS      &lt;dbl&gt; 21227, 21227, 21227, 21227, 21227, 21227, 21227, 21227…
+## $ PRIS_PUB  &lt;dbl&gt; 21227, 21227, 21227, 21227, 21227, 21227, 21227, 21227…
+## $ PRIS_PRIV &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ POP       &lt;dbl&gt; 4430141, 4430141, 4430141, 4430141, 4430141, 4430141, …
+## $ PERC_PRIS &lt;dbl&gt; 47.91495, 47.91495, 47.91495, 47.91495, 47.91495, 47.9…
+## $ LONG      &lt;dbl&gt; -87.46201, -87.48493, -87.52503, -87.53076, -87.57087,…
+## $ LAT       &lt;dbl&gt; 30.38968, 30.37249, 30.37249, 30.33239, 30.32665, 30.3…</pre></td></tr></table>
+</div>
+</div>
+<p>In our video/graph we want also to indicate the state code (2 letters). To do that we need to create a dataframe/tibble that has the coordinates of the positions of those labels. Ideally, they would be in the center of the state, so we can just average the longitude and latitude of each state. Of course don&rsquo;t expect that to be perfect, the shape of states is not a perfect square or circle!</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">xy_lab <span class="o">&lt;-</span> 
+  prison_norm_xy <span class="o">%&gt;%</span> 
+  filter<span class="p">(</span>STATEID <span class="o">!=</span> <span class="s">&#34;district of columbia&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  ungroup<span class="p">()</span> <span class="o">%&gt;%</span> 
+  group_by<span class="p">(</span>STATEID<span class="p">,</span> STATE<span class="p">)</span> <span class="o">%&gt;%</span> 
+  summarize<span class="p">(</span>LAB_LONG <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>LONG<span class="p">),</span> LAB_LAT <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>LAT<span class="p">))</span> <span class="o">%&gt;%</span> 
+  mutate<span class="p">(</span>LAB_LONG <span class="o">=</span> <span class="kp">replace</span><span class="p">(</span>LAB_LONG<span class="p">,</span> STATE <span class="o">==</span> <span class="s">&#34;FL&#34;</span><span class="p">,</span> LAB_LONG <span class="o">+</span> <span class="m">1.7</span><span class="p">))</span>  <span class="c1"># to adjust FL label</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>District of Columbia is too small to be seen in the map. Let&rsquo;s remove it.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">data_p <span class="o">&lt;-</span> 
+  prison_norm_xy <span class="o">%&gt;%</span> 
+  filter<span class="p">(</span>STATEID <span class="o">!=</span> <span class="s">&#34;district of columbia&#34;</span><span class="p">)</span> </code></pre></td></tr></table>
+</div>
+</div>
+<p>Finally, we get to the code to make the video. The idea behind it is pretty simple. We write a function that split our dataframe by year and plots sequentially each of the yearly data. Than we call the function and we capture the output with <em>av</em>. A video is just a sequence of single images!</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">makeplot <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(){</span>
+  datalist <span class="o">&lt;-</span> <span class="kp">split</span><span class="p">(</span>data_p<span class="p">,</span> data_p<span class="o">$</span>YEAR<span class="p">)</span>
+  map<span class="p">(</span>datalist<span class="p">,</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">){</span>
+    p <span class="o">&lt;-</span> 
+      ggplot<span class="p">(</span>x<span class="p">)</span> <span class="o">+</span>
+      geom_polygon<span class="p">(</span>aes<span class="p">(</span>LONG<span class="p">,</span> LAT<span class="p">,</span> fill <span class="o">=</span> PERC_PRIS<span class="p">,</span> group <span class="o">=</span> STATEID<span class="p">),</span> colour <span class="o">=</span> <span class="s">&#34;white&#34;</span><span class="p">)</span> <span class="o">+</span>
+      scale_fill_gradient<span class="p">(</span>low <span class="o">=</span> <span class="s">&#34;white&#34;</span><span class="p">,</span> high <span class="o">=</span> <span class="s">&#34;black&#34;</span><span class="p">,</span> limit <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">))</span> <span class="o">+</span>
+      geom_text<span class="p">(</span>aes<span class="p">(</span>LAB_LONG<span class="p">,</span> LAB_LAT<span class="p">,</span> label <span class="o">=</span> STATE<span class="p">),</span> color <span class="o">=</span> <span class="s">&#34;white&#34;</span><span class="p">,</span> size<span class="o">=</span><span class="m">3</span><span class="p">,</span> data <span class="o">=</span> xy_lab<span class="p">)</span> <span class="o">+</span>  <span class="c1"># here our labels</span>
+      labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&#34;Prison Population (every 10 thousand)&#34;</span><span class="p">,</span>
+           subtitle <span class="o">=</span> <span class="kp">paste0</span><span class="p">(</span><span class="s">&#34;YEAR: &#34;</span><span class="p">,</span> x<span class="o">$</span>YEAR<span class="p">[</span><span class="m">1</span><span class="p">]),</span>
+           fill <span class="o">=</span> <span class="s">&#34; &#34;</span><span class="p">)</span> <span class="o">+</span>
+      theme_void<span class="p">()</span> <span class="o">+</span>
+      theme<span class="p">(</span>plot.title <span class="o">=</span> element_text<span class="p">(</span>hjust <span class="o">=</span> <span class="m">0.5</span><span class="p">),</span>
+            legend.title.align <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span>
+            panel.background <span class="o">=</span> element_rect<span class="p">(</span>fill <span class="o">=</span> <span class="s">&#34;slategray1&#34;</span><span class="p">),</span>
+            plot.background <span class="o">=</span> element_rect<span class="p">(</span>fill <span class="o">=</span> <span class="s">&#34;slategray1&#34;</span><span class="p">))</span>
+
+    <span class="kp">print</span><span class="p">(</span>p<span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+
+video_file <span class="o">&lt;-</span> <span class="kp">file.path</span><span class="p">(</span><span class="s">&#34;~/Documents&#34;</span><span class="p">,</span> <span class="s">&#39;output.mp4&#39;</span><span class="p">)</span>
+av<span class="o">::</span>av_capture_graphics<span class="p">(</span>makeplot<span class="p">(),</span> video_file<span class="p">,</span> <span class="m">1600</span><span class="p">,</span> <span class="m">900</span><span class="p">,</span> res <span class="o">=</span> <span class="m">144</span><span class="p">,</span> framerate <span class="o">=</span> <span class="m">2</span><span class="p">)</span>
+av<span class="o">::</span>av_video_info<span class="p">(</span>video_file<span class="p">)</span>
+utils<span class="o">::</span>browseURL<span class="p">(</span>video_file<span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>With that we have covered all the code related to the video/graph, but I could not resist&hellip;</p>
+
+<p><center>
+<img src="/static/data/data_post3/columbo.jpeg" alt="prova" />
+</center></p>
+
+<p>&hellip;making at least another plot.</p>
+
+<h1 id="a-simple-line-plot">A simple line plot</h1>
+
+<p>I wanted also to create a classic line plot with the U.S total prison population (1999-2015) and also indicate the party of the president in office (as Harvey Wickam as done in his ggplot2 book).</p>
+
+<p>Let&rsquo;s get the presidents&hellip;</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">pres_sub <span class="o">&lt;-</span> 
+  presidential <span class="o">%&gt;%</span> 
+  mutate<span class="p">(</span>start <span class="o">=</span> year<span class="p">(</span>start<span class="p">),</span> end <span class="o">=</span> year<span class="p">(</span>end<span class="p">))</span> <span class="o">%&gt;%</span> 
+  top_n<span class="p">(</span><span class="m">3</span><span class="p">,</span> end<span class="p">)</span>
+
+pres_sub<span class="o">$</span>start<span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="m">1999</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>and the plot!</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">prison_norm_tot <span class="o">&lt;-</span>
+  prison_norm <span class="o">%&gt;%</span> 
+  filter<span class="p">(</span>STATEID <span class="o">!=</span> <span class="s">&#34;district of columbia&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  group_by<span class="p">(</span>YEAR<span class="p">)</span> <span class="o">%&gt;%</span> 
+  summarize<span class="p">(</span>PRIS <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span>PRIS<span class="p">),</span> 
+            PRIS_PUB <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span>PRIS_PUB<span class="p">),</span>
+            PRIS_PRIV <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span>PRIS_PRIV<span class="p">),</span> 
+            POP <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span>POP<span class="p">),</span>
+            PERC_PRIS <span class="o">=</span> PRIS<span class="o">/</span>POP<span class="p">,</span>
+            PERC_PRIS_PUB <span class="o">=</span> PRIS_PUB<span class="o">/</span>POP<span class="p">,</span>
+            PERC_PRIS_PRIV <span class="o">=</span> PRIS_PRIV<span class="o">/</span>POP<span class="p">)</span>
+
+ggplot<span class="p">(</span>prison_norm_tot<span class="p">)</span> <span class="o">+</span>
+  labs<span class="p">(</span>title <span class="o">=</span> <span class="s">&#34;Number of people in prison (every 10 thousand)&#34;</span><span class="p">,</span>
+  y <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
+  x <span class="o">=</span> <span class="s">&#34;Year&#34;</span><span class="p">,</span>
+  caption <span class="o">=</span> <span class="s">&#34;fig.2&#34;</span><span class="p">)</span> <span class="o">+</span>
+  geom_rect<span class="p">(</span>aes<span class="p">(</span>xmin <span class="o">=</span> start<span class="p">,</span> xmax <span class="o">=</span> end<span class="p">,</span> fill <span class="o">=</span> party<span class="p">),</span> ymin <span class="o">=</span> <span class="o">-</span><span class="kc">Inf</span><span class="p">,</span> ymax <span class="o">=</span> <span class="kc">Inf</span><span class="p">,</span> alpha <span class="o">=</span> <span class="m">0.2</span><span class="p">,</span>
+  data <span class="o">=</span> pres_sub<span class="p">)</span> <span class="o">+</span>
+  scale_fill_manual<span class="p">(</span>values <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#34;blue&#34;</span><span class="p">,</span><span class="s">&#34;red&#34;</span><span class="p">))</span> <span class="o">+</span>
+  geom_line<span class="p">(</span>aes<span class="p">(</span>YEAR<span class="p">,</span> PERC_PRIS <span class="o">*</span> <span class="m">10000</span><span class="p">))</span> <span class="o">+</span>
+  scale_x_continuous<span class="p">(</span>expand <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span> labels <span class="o">=</span> <span class="m">1999</span><span class="o">:</span><span class="m">2015</span><span class="p">,</span> breaks <span class="o">=</span> <span class="m">1999</span><span class="o">:</span><span class="m">2015</span><span class="p">)</span> <span class="o">+</span>
+  theme<span class="p">(</span>plot.title <span class="o">=</span> element_text<span class="p">(</span>hjust <span class="o">=</span> <span class="m">0.5</span><span class="p">),</span>
+        axis.text.x <span class="o">=</span> element_text<span class="p">(</span>angle <span class="o">=</span> <span class="m">45</span><span class="p">,</span> hjust <span class="o">=</span> <span class="m">1</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><img src="/rden.netlify.compost/2018-10-25-animated-prison_files/figure-html/fig.2_prison_time-1.png" width="672" /></p>
+
+<p>From 2008 to 2015, the prison population went from about 44 inmates for 10 thousand people to about 39. It is ≈ 10% decrease!
+That is going to be the last graph of the post!</p>
+
+<p>Next time, I will try to focus on machine learning analysis.</p>
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="/rden.netlify.com/tags/av/">av</a>
+          <a href="/rden.netlify.com/tags/ggplot/">ggplot</a>
+          <a href="/rden.netlify.com/tags/visualization/">visualization</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/rden.netlify.com/post/fighting-diseases/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">Fighting Diseases with Predictive Modeling</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+          <a class="next" href="/rden.netlify.com/post/re-di-twitter-ii/">
+            <span class="next-text nav-default">Il Re di Twitter? (PART II)</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "/rden.netlify.com/post/animated-prison/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'rden';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="clau6ioHH@email.com" rel="me noopener" class="iconfont"
+      title="email"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+
+
+<a href="/rden.netlify.com/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>
+        
+      </span></span>
+
+  
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/rden.netlify.com/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/rden.netlify.com/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/rden.netlify.com/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/rden.netlify.com/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/rden.netlify.com/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/rden.netlify.com/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

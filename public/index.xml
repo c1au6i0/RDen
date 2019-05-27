@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Thu, 18 Apr 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 06 May 2019 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/rden.netlify.com/index.xml" rel="self" type="application/rss+xml" />
     
@@ -25,6 +25,316 @@
 
 &lt;p&gt;This blog was built in &lt;code&gt;RStudio&lt;/code&gt; using &lt;code&gt;RMarkdown&lt;/code&gt;, &lt;code&gt;Rblogdown&lt;/code&gt; and &lt;code&gt;Hugo&lt;/code&gt;.&lt;/p&gt;
 </description>
+      
+    </item>
+    
+    <item>
+      <title>Snakes, pandas, sea born creatures and how to find them</title>
+      <link>/rden.netlify.com/post/reticulate/</link>
+      <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/rden.netlify.com/post/reticulate/</guid>
+      
+        <description>&lt;p&gt;What&amp;rsquo;s the fastest way to read a csv file in &lt;code&gt;R&lt;/code&gt;? Among the &lt;code&gt;R&lt;/code&gt; packages, the ultra-fast sprinter is certainly &lt;code&gt;data.table&lt;/code&gt; but&amp;hellip;few years ago, the introduction of the package &lt;a href=&#34;https://blog.rstudio.com/2018/03/26/reticulate-r-interface-to-python/&#34;&gt;&lt;code&gt;reticulate&lt;/code&gt;&lt;/a&gt; gave us the possibility of use &lt;code&gt;python&lt;/code&gt; and in particular the library &lt;code&gt;pandas&lt;/code&gt; to read files in &lt;code&gt;R&lt;/code&gt;. Would &lt;code&gt;pandas&lt;/code&gt; (used in &lt;code&gt;R&lt;/code&gt;) be faster than &lt;code&gt;data.table&lt;/code&gt;? How would its performance compare with &lt;code&gt;readr&lt;/code&gt; or base &lt;code&gt;R&lt;/code&gt;? Let&amp;rsquo;s take a look.&lt;/p&gt;
+
+&lt;h1 id=&#34;benchmark-evaluation&#34;&gt;Benchmark evaluation&lt;/h1&gt;
+
+&lt;p&gt;We  start by loading few &lt;code&gt;R&lt;/code&gt; libraries to read the csv file and  evaluate the performance (&lt;code&gt;microbenchmark&lt;/code&gt;) of our contestants&amp;hellip;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span class=&#34;kn&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;tidyverse&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;reticulate&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;data.table&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;microbenchmark&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;and by getting &lt;code&gt;pandas&lt;/code&gt; in the &lt;code&gt;python&lt;/code&gt; environment.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;pandas&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;pd&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;I downloaded the &lt;a href=&#34;https://vincentarelbundock.github.io/Rdatasets/csv/boot/amis.csv&#34;&gt;dataset&lt;/a&gt; that consists of 8437  observations of 4 variables and I placed on my home folder.&lt;/p&gt;
+
+&lt;p&gt;We are going to read the csv file using:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;base &lt;code&gt;R&lt;/code&gt; function &lt;code&gt;read.csv&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;pandas&lt;/code&gt; function &lt;code&gt;read_csv&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;readr::read_csv&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;data.table::fread&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We read the file  1000 times for each of the package and record the performance with &lt;code&gt;microbenchmark::microbenchmark&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;mb &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; microbenchmark&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+          &lt;span class=&#34;s&#34;&gt;&amp;#34;base&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+            read.csv&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;~/amis.csv&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; sep&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;,&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+          &lt;span class=&#34;s&#34;&gt;&amp;#34;readr&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+            read_csv&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;~/amis.csv&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+          &lt;span class=&#34;s&#34;&gt;&amp;#34;pandas&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;py_run_string&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;pd.read_csv(&amp;#39;~/amis.csv&amp;#39;)&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+          &lt;span class=&#34;s&#34;&gt;&amp;#34;data.table&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+            fread&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;~/amis.csv&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+          times &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;And we summarize it&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;mb &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
+  group_by&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;expr&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
+  rename&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;package &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; expr&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
+  mutate&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; time &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0.000001&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
+  summarize&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;mean &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kp&#34;&gt;mean&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; median &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; median&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; min &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kp&#34;&gt;min&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; max &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kp&#34;&gt;max&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; sd &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; sd&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
+  arrange&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kp&#34;&gt;mean&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
+  knitr&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;kable&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;format &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;html&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; caption &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;: Milliseconds to read a csv file&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;table&gt;
+&lt;caption&gt;Table 1: : Milliseconds to read a csv file&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style=&#34;text-align:left;&#34;&gt; package &lt;/th&gt;
+   &lt;th style=&#34;text-align:right;&#34;&gt; mean &lt;/th&gt;
+   &lt;th style=&#34;text-align:right;&#34;&gt; median &lt;/th&gt;
+   &lt;th style=&#34;text-align:right;&#34;&gt; min &lt;/th&gt;
+   &lt;th style=&#34;text-align:right;&#34;&gt; max &lt;/th&gt;
+   &lt;th style=&#34;text-align:right;&#34;&gt; sd &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style=&#34;text-align:left;&#34;&gt; data.table &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 1.163429 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 1.051192 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 0.893294 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 11.988350 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 0.5746664 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&#34;text-align:left;&#34;&gt; pandas &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 4.174706 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 3.900311 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 3.176870 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 9.903987 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 0.9339007 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&#34;text-align:left;&#34;&gt; readr &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 4.763939 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 4.117349 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 3.787468 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 169.842847 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 5.5154385 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&#34;text-align:left;&#34;&gt; base &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 8.979738 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 8.309741 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 7.746079 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 33.335507 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 2.4232146 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The faster function is still &lt;code&gt;data.table::fread&lt;/code&gt; with a mean reading time of about ~1 ms,  followed by &lt;code&gt;pandas&lt;/code&gt; (4.17 ms) and &lt;code&gt;readr&lt;/code&gt; (4.76 ms). The R base function &lt;code&gt;read.csv&lt;/code&gt; is the slowest, with reading times about 4-fold  larger than &lt;code&gt;data.table::fread&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;We could graphically visualize the &lt;code&gt;microbenchmark&lt;/code&gt; performance just launching &lt;code&gt;autoplot(mb)&lt;/code&gt; but that would not be fun! We come so far, why not visualize the data using &lt;code&gt;python&lt;/code&gt;?&lt;/p&gt;
+
+&lt;h1 id=&#34;seaborn&#34;&gt;Seaborn&lt;/h1&gt;
+
+&lt;p&gt;First we need to convert the &lt;code&gt;R&lt;/code&gt; object &lt;code&gt;mb&lt;/code&gt; to &lt;code&gt;python&lt;/code&gt; object.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;py&lt;span class=&#34;o&#34;&gt;$&lt;/span&gt;mb &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; r_to_py&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;mb&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; convert &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;TRUE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;In what is dataframe converted in &lt;code&gt;R&lt;/code&gt;?&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;nb&#34;&gt;type&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;## &amp;lt;class &amp;#39;pandas.core.frame.DataFrame&amp;#39;&amp;gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&amp;hellip;of course in a &lt;code&gt;pandas Dataframe&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now, let&amp;rsquo;s import some libraries and plot the data using &lt;code&gt;seaborn&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;numpy&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;np&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;seaborn&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;sns&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;plt&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;sns&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;style&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;whitegrid&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;palette&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;muted&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;mb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;time_ms&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;time&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.000001&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# from nano seconds to millisecond&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;ax&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sns&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;stripplot&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;expr&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;time_ms&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;data&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;ax&lt;/span&gt;  &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ax&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ylabel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;Time (milliseconds)&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;xlabel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;package&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;plt&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;show&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;2019-04-17-reticulate_files/figure-html/p_libraries-1.png&#34; alt=&#34;&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;In this sprint race to import csv in &lt;code&gt;R&lt;/code&gt;, the first place is still hold by the favourite &lt;code&gt;data.table::fread&lt;/code&gt; followed by &lt;code&gt;pandas read_csv&lt;/code&gt; and then by &lt;code&gt;readr::read_csv&lt;/code&gt;. These two last packages/functions were really close at the final line. The base &lt;code&gt;R&lt;/code&gt; function &lt;code&gt;read.csv&lt;/code&gt; was not able to get to the podium and had reading times about 4-fold larger than &lt;code&gt;data.table::fread&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Ciao Ciao!&lt;/p&gt;
+
+&lt;h1 id=&#34;edit-05-08-2019-vroom&#34;&gt;EDIT (05-08-2019): vroom!&lt;/h1&gt;
+
+&lt;p&gt;Few days ago, &lt;a href=&#34;https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/?fbclid=IwAR0JN1wqX8U1CarXdKbKPkkg77RlNX1bew_k6bZbINb1uZloSXvNyjotxVg&#34;&gt;vroom 1.0.0&lt;/a&gt; was released on CRAN, and so we have another important contestant in our competition. Let&amp;rsquo;s look at an update table of the reading benchmark for the &lt;code&gt;amis.csv&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;table&gt;
+&lt;caption&gt;Table 2: : UPDATED Milliseconds to read a csv file&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style=&#34;text-align:left;&#34;&gt; package &lt;/th&gt;
+   &lt;th style=&#34;text-align:right;&#34;&gt; mean &lt;/th&gt;
+   &lt;th style=&#34;text-align:right;&#34;&gt; median &lt;/th&gt;
+   &lt;th style=&#34;text-align:right;&#34;&gt; min &lt;/th&gt;
+   &lt;th style=&#34;text-align:right;&#34;&gt; max &lt;/th&gt;
+   &lt;th style=&#34;text-align:right;&#34;&gt; sd &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style=&#34;text-align:left;&#34;&gt; data.table &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 1.060955 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 1.031286 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 0.877797 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 2.874855 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 0.1540645 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&#34;text-align:left;&#34;&gt; pandas &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 3.897818 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 3.780800 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 3.137245 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 12.067028 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 0.6595005 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&#34;text-align:left;&#34;&gt; readr &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 4.298844 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 4.128091 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 3.871632 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 23.730213 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 1.3351350 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&#34;text-align:left;&#34;&gt; base &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 8.062673 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 7.951877 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 7.501073 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 13.467489 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 0.5136744 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&#34;text-align:left;&#34;&gt; vroom &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 13.325987 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 12.528962 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 11.977720 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 40.054096 &lt;/td&gt;
+   &lt;td style=&#34;text-align:right;&#34;&gt; 3.2400886 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Under these conditions, &lt;code&gt;vroom&lt;/code&gt; appears to be even slower than base &lt;code&gt;R&lt;/code&gt; in terms of reading times&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;/rden.netlify.com/rden.netlify.compost/2019-04-17-reticulate_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;To undestand why, we need to take a look at our &lt;code&gt;amis.csv&lt;/code&gt; data.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;## Classes &amp;#39;data.table&amp;#39; and &amp;#39;data.frame&amp;#39;:	8437 obs. of  4 variables:
+##  $ speed  : int  26 26 26 26 27 28 28 28 28 29 ...
+##  $ period : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ warning: int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ pair   : int  1 1 1 1 1 1 1 1 1 1 ...
+##  - attr(*, &amp;#34;.internal.selfref&amp;#34;)=&amp;lt;externalptr&amp;gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Our data consists of numeric variables and &lt;code&gt;vroom&lt;/code&gt; advantage over the other packages/fucntions is that &lt;em&gt;&amp;ldquo;character data is read from the file lazily; you only pay for the data you use&amp;rdquo;&lt;/em&gt;.
+So under these conditions, &lt;code&gt;data.table::fread&lt;/code&gt; is still a gold medal!&lt;/p&gt;</description>
       
     </item>
     
@@ -1256,7 +1566,7 @@ The &lt;code&gt;glmnet&lt;/code&gt; model show the highest &lt;em&gt;precision&l
 
 &lt;p&gt;&lt;em&gt;[Double click for full screen]&lt;/em&gt;&lt;/p&gt;
 
-&lt;iframe title=&#34;Prison_video&#34; height=&#34;400&#34; src=&#34;/rden.netlify.com/Users/heverz/Documents/R_projects/rDen/static/data/data_post3/output.mp4&#34; frameBorder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
+&lt;iframe title=&#34;Prison_video&#34; height=&#34;400&#34; src=&#34;/rden.netlify.com/data/data_post3/output.mp4&#34; frameBorder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
 
 &lt;p&gt;What are we looking at? The video-graph represents the number of people in private and public prisons (sentenced and unsentenced) normalized by the corresponding state population. The darker is a state, the higher is the prison population relative to the total population. The year is indicated on the top left and the video shows the data &lt;strong&gt;from 1999 to 2015&lt;/strong&gt;.&lt;/p&gt;
 
@@ -3186,341 +3496,6 @@ Sono piuttosto chiare le differenze tra i 3 politici:&lt;/p&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;Seduto alla sua scrivania e con il suo iphone (fig.8), &lt;strong&gt;Salvini ha fatto di &lt;em&gt;Twitter&lt;/em&gt; il suo regno incontrastato&lt;/strong&gt;.&lt;/p&gt;</description>
-      
-    </item>
-    
-    <item>
-      <title></title>
-      <link>/rden.netlify.com/post/2019-04-17-reticulate/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/rden.netlify.com/post/2019-04-17-reticulate/</guid>
-      
-        <description>&lt;p&gt;&amp;rsquo;&amp;mdash;
-title: Snakes, pandas, sea born creatures and how to find them
-author: c1au6io_hh
-date: &amp;lsquo;2019-05-06&amp;rsquo;
-slug: reticulate
-categories:
-  - R
-  - Python
-tags:
-  - reticulate
-  - import_csv
-  - microbenchmark
-  - seaborn
-  - vroom
-lastmod: &amp;lsquo;2019-05-06T11:46:00-04:00&amp;rsquo;
-keywords: []
-description: &amp;ldquo;
-comment: yes
-toc: yes
-autoCollapseToc: yes
-contentCopyright: yes
-reward: no&lt;/p&gt;
-
-&lt;h2 id=&#34;mathjax-no&#34;&gt;mathjax: no&lt;/h2&gt;
-
-&lt;p&gt;What&amp;rsquo;s the fastest way to read a csv file in &lt;code&gt;R&lt;/code&gt;? Among the &lt;code&gt;R&lt;/code&gt; packages, the ultra-fast sprinter is certainly &lt;code&gt;data.table&lt;/code&gt; but&amp;hellip;few years ago, the introduction of the package &lt;a href=&#34;https://blog.rstudio.com/2018/03/26/reticulate-r-interface-to-python/&#34;&gt;&lt;code&gt;reticulate&lt;/code&gt;&lt;/a&gt; gave us the possibility of use &lt;code&gt;python&lt;/code&gt; and in particular the library &lt;code&gt;pandas&lt;/code&gt; to read files in &lt;code&gt;R&lt;/code&gt;. Would &lt;code&gt;pandas&lt;/code&gt; (used in &lt;code&gt;R&lt;/code&gt;) be faster than &lt;code&gt;data.table&lt;/code&gt;? How would its performance compare with &lt;code&gt;readr&lt;/code&gt; or base &lt;code&gt;R&lt;/code&gt;? Let&amp;rsquo;s take a look.&lt;/p&gt;
-
-&lt;h1 id=&#34;benchmark-evaluation&#34;&gt;Benchmark evaluation&lt;/h1&gt;
-
-&lt;p&gt;We  start by loading few &lt;code&gt;R&lt;/code&gt; libraries to read the csv file and  evaluate the performance (&lt;code&gt;microbenchmark&lt;/code&gt;) of our contestants&amp;hellip;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span class=&#34;kn&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;tidyverse&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;kn&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;reticulate&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;kn&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;data.table&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;kn&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;microbenchmark&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;and by getting &lt;code&gt;pandas&lt;/code&gt; in the &lt;code&gt;python&lt;/code&gt; environment.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;pandas&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;pd&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;I downloaded the &lt;a href=&#34;https://vincentarelbundock.github.io/Rdatasets/csv/boot/amis.csv&#34;&gt;dataset&lt;/a&gt; that consists of 8437  observations of 4 variables and I placed on my home folder.&lt;/p&gt;
-
-&lt;p&gt;We are going to read the csv file using:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;base &lt;code&gt;R&lt;/code&gt; function &lt;code&gt;read.csv&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;pandas&lt;/code&gt; function &lt;code&gt;read_csv&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;readr::read_csv&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;data.table::fread&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;We read the file  1000 times for each of the package and record the performance with &lt;code&gt;microbenchmark::microbenchmark&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;mb &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; microbenchmark&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
-          &lt;span class=&#34;s&#34;&gt;&amp;#34;base&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
-            read.csv&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;~/amis.csv&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; sep&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;,&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-          &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
-          &lt;span class=&#34;s&#34;&gt;&amp;#34;readr&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
-            read_csv&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;~/amis.csv&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-          &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
-          &lt;span class=&#34;s&#34;&gt;&amp;#34;pandas&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;py_run_string&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;pd.read_csv(&amp;#39;~/amis.csv&amp;#39;)&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-          &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
-          &lt;span class=&#34;s&#34;&gt;&amp;#34;data.table&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
-            fread&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;~/amis.csv&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-          &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
-          times &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;And we summarize it&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;mb &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
-  group_by&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;expr&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
-  rename&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;package &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; expr&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
-  mutate&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; time &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0.000001&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
-  summarize&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;mean &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kp&#34;&gt;mean&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; median &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; median&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; min &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kp&#34;&gt;min&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; max &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kp&#34;&gt;max&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; sd &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; sd&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;time_ms&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
-  arrange&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kp&#34;&gt;mean&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;%&amp;gt;%&lt;/span&gt; 
-  knitr&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;kable&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;format &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;html&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; caption &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;: Milliseconds to read a csv file&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;table&gt;
-&lt;caption&gt;Table 1: : Milliseconds to read a csv file&lt;/caption&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style=&#34;text-align:left;&#34;&gt; package &lt;/th&gt;
-   &lt;th style=&#34;text-align:right;&#34;&gt; mean &lt;/th&gt;
-   &lt;th style=&#34;text-align:right;&#34;&gt; median &lt;/th&gt;
-   &lt;th style=&#34;text-align:right;&#34;&gt; min &lt;/th&gt;
-   &lt;th style=&#34;text-align:right;&#34;&gt; max &lt;/th&gt;
-   &lt;th style=&#34;text-align:right;&#34;&gt; sd &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style=&#34;text-align:left;&#34;&gt; data.table &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 1.163429 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 1.051192 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 0.893294 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 11.988350 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 0.5746664 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style=&#34;text-align:left;&#34;&gt; pandas &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 4.174706 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 3.900311 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 3.176870 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 9.903987 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 0.9339007 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style=&#34;text-align:left;&#34;&gt; readr &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 4.763939 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 4.117349 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 3.787468 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 169.842847 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 5.5154385 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style=&#34;text-align:left;&#34;&gt; base &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 8.979738 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 8.309741 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 7.746079 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 33.335507 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 2.4232146 &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;The faster function is still &lt;code&gt;data.table::fread&lt;/code&gt; with a mean reading time of about ~1 ms,  followed by &lt;code&gt;pandas&lt;/code&gt; (4.17 ms) and &lt;code&gt;readr&lt;/code&gt; (4.76 ms). The R base function &lt;code&gt;read.csv&lt;/code&gt; is the slowest, with reading times about 4-fold  larger than &lt;code&gt;data.table::fread&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;We could graphically visualize the &lt;code&gt;microbenchmark&lt;/code&gt; performance just launching &lt;code&gt;autoplot(mb)&lt;/code&gt; but that would not be fun! We come so far, why not visualize the data using &lt;code&gt;python&lt;/code&gt;?&lt;/p&gt;
-
-&lt;h1 id=&#34;seaborn&#34;&gt;Seaborn&lt;/h1&gt;
-
-&lt;p&gt;First we need to convert the &lt;code&gt;R&lt;/code&gt; object &lt;code&gt;mb&lt;/code&gt; to &lt;code&gt;python&lt;/code&gt; object.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;py&lt;span class=&#34;o&#34;&gt;$&lt;/span&gt;mb &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; r_to_py&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;mb&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; convert &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;TRUE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;In what is dataframe converted in &lt;code&gt;R&lt;/code&gt;?&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;nb&#34;&gt;type&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;## &amp;lt;class &amp;#39;pandas.core.frame.DataFrame&amp;#39;&amp;gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;&amp;hellip;of course in a &lt;code&gt;pandas Dataframe&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now, let&amp;rsquo;s import some libraries and plot the data using &lt;code&gt;seaborn&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;numpy&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;np&lt;/span&gt;
-&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;seaborn&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;sns&lt;/span&gt;
-&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;plt&lt;/span&gt;
-
-&lt;span class=&#34;n&#34;&gt;sns&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;style&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;whitegrid&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;palette&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;muted&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-
-&lt;span class=&#34;n&#34;&gt;mb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;time_ms&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;time&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.000001&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# from nano seconds to millisecond&lt;/span&gt;
-
-&lt;span class=&#34;n&#34;&gt;ax&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sns&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;stripplot&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;expr&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;time_ms&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;data&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mb&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-
-&lt;span class=&#34;n&#34;&gt;ax&lt;/span&gt;  &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ax&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ylabel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;Time (milliseconds)&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;xlabel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;package&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-
-&lt;span class=&#34;n&#34;&gt;plt&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;show&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;&lt;img src=&#34;2019-04-17-reticulate_files/figure-html/p_libraries-1.png&#34; alt=&#34;&#34; /&gt;&lt;!-- --&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;In this sprint race to import csv in &lt;code&gt;R&lt;/code&gt;, the first place is still hold by the favourite &lt;code&gt;data.table::fread&lt;/code&gt; followed by &lt;code&gt;pandas read_csv&lt;/code&gt; and then by &lt;code&gt;readr::read_csv&lt;/code&gt;. These two last packages/functions were really close at the final line. The base &lt;code&gt;R&lt;/code&gt; function &lt;code&gt;read.csv&lt;/code&gt; was not able to get to the podium and had reading times about 4-fold larger than &lt;code&gt;data.table::fread&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Ciao Ciao!&lt;/p&gt;
-
-&lt;h1 id=&#34;edit-05-08-2019-vroom&#34;&gt;EDIT (05-08-2019): vroom!&lt;/h1&gt;
-
-&lt;p&gt;Few days ago, &lt;a href=&#34;https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/?fbclid=IwAR0JN1wqX8U1CarXdKbKPkkg77RlNX1bew_k6bZbINb1uZloSXvNyjotxVg&#34;&gt;vroom 1.0.0&lt;/a&gt; was released on CRAN, and so we have another important contestant in our competition. Let&amp;rsquo;s look at an update table of the reading benchmark for the &lt;code&gt;amis.csv&lt;/code&gt; file.&lt;/p&gt;
-
-&lt;table&gt;
-&lt;caption&gt;Table 2: : UPDATED Milliseconds to read a csv file&lt;/caption&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style=&#34;text-align:left;&#34;&gt; package &lt;/th&gt;
-   &lt;th style=&#34;text-align:right;&#34;&gt; mean &lt;/th&gt;
-   &lt;th style=&#34;text-align:right;&#34;&gt; median &lt;/th&gt;
-   &lt;th style=&#34;text-align:right;&#34;&gt; min &lt;/th&gt;
-   &lt;th style=&#34;text-align:right;&#34;&gt; max &lt;/th&gt;
-   &lt;th style=&#34;text-align:right;&#34;&gt; sd &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style=&#34;text-align:left;&#34;&gt; data.table &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 1.060955 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 1.031286 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 0.877797 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 2.874855 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 0.1540645 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style=&#34;text-align:left;&#34;&gt; pandas &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 3.897818 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 3.780800 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 3.137245 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 12.067028 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 0.6595005 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style=&#34;text-align:left;&#34;&gt; readr &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 4.298844 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 4.128091 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 3.871632 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 23.730213 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 1.3351350 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style=&#34;text-align:left;&#34;&gt; base &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 8.062673 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 7.951877 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 7.501073 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 13.467489 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 0.5136744 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style=&#34;text-align:left;&#34;&gt; vroom &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 13.325987 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 12.528962 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 11.977720 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 40.054096 &lt;/td&gt;
-   &lt;td style=&#34;text-align:right;&#34;&gt; 3.2400886 &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;Under these conditions, &lt;code&gt;vroom&lt;/code&gt; appears to be even slower than base &lt;code&gt;R&lt;/code&gt; in terms of reading times&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;/rden.netlify.com/rden.netlify.compost/2019-04-17-reticulate_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;To undestand why, we need to take a look at our &lt;code&gt;amis.csv&lt;/code&gt; data.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
-&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;## Classes &amp;#39;data.table&amp;#39; and &amp;#39;data.frame&amp;#39;:	8437 obs. of  4 variables:
-##  $ speed  : int  26 26 26 26 27 28 28 28 28 29 ...
-##  $ period : int  1 1 1 1 1 1 1 1 1 1 ...
-##  $ warning: int  1 1 1 1 1 1 1 1 1 1 ...
-##  $ pair   : int  1 1 1 1 1 1 1 1 1 1 ...
-##  - attr(*, &amp;#34;.internal.selfref&amp;#34;)=&amp;lt;externalptr&amp;gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;Our data consists of numeric variables and &lt;code&gt;vroom&lt;/code&gt; advantage over the other packages/fucntions is that &lt;em&gt;&amp;ldquo;character data is read from the file lazily; you only pay for the data you use&amp;rdquo;&lt;/em&gt;.
-So under these conditions, &lt;code&gt;data.table::fread&lt;/code&gt; is still a gold medal!&lt;/p&gt;</description>
       
     </item>
     

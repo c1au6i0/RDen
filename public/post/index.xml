@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Thu, 18 Apr 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 06 May 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/rden.netlify.com/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Snakes, pandas, sea born creatures and how to find them</title>
+      <link>/rden.netlify.com/post/reticulate/</link>
+      <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/rden.netlify.com/post/reticulate/</guid>
+      <description>&lt;p&gt;What&amp;rsquo;s the fastest way to read a csv file in &lt;code&gt;R&lt;/code&gt;? Among the &lt;code&gt;R&lt;/code&gt; packages, the ultra-fast sprinter is certainly &lt;code&gt;data.table&lt;/code&gt; but&amp;hellip;few years ago, the introduction of the package &lt;a href=&#34;https://blog.rstudio.com/2018/03/26/reticulate-r-interface-to-python/&#34;&gt;&lt;code&gt;reticulate&lt;/code&gt;&lt;/a&gt; gave us the possibility of use &lt;code&gt;python&lt;/code&gt; and in particular the library &lt;code&gt;pandas&lt;/code&gt; to read files in &lt;code&gt;R&lt;/code&gt;. Would &lt;code&gt;pandas&lt;/code&gt; (used in &lt;code&gt;R&lt;/code&gt;) be faster than &lt;code&gt;data.table&lt;/code&gt;? How would its performance compare with &lt;code&gt;readr&lt;/code&gt; or base &lt;code&gt;R&lt;/code&gt;? Let&amp;rsquo;s take a look.&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Do not invoke me</title>
@@ -40,7 +49,7 @@
 
 &lt;p&gt;&lt;em&gt;[Double click for full screen]&lt;/em&gt;&lt;/p&gt;
 
-&lt;iframe title=&#34;Prison_video&#34; height=&#34;400&#34; src=&#34;/rden.netlify.com/Users/heverz/Documents/R_projects/rDen/static/data/data_post3/output.mp4&#34; frameBorder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;</description>
+&lt;iframe title=&#34;Prison_video&#34; height=&#34;400&#34; src=&#34;/rden.netlify.com/data/data_post3/output.mp4&#34; frameBorder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;</description>
     </item>
     
     <item>
@@ -64,40 +73,6 @@
 &lt;li&gt;Nella &lt;strong&gt;parte I&lt;/strong&gt; analizzeremo le abitudini dei 3 leader e  scopriremo chi dei 3 è il più attivo, quando durante la giornata, quanto sono popolari i vari tweets e molte altre informazioni.&lt;/li&gt;
 &lt;li&gt;Nella &lt;strong&gt;parte II&lt;/strong&gt; ci addentreremo nel contenuto dei tweets e andremo a vedere quali sono le parole e i lemmi più usati dai 3 politici.&lt;/li&gt;
 &lt;/ul&gt;</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>/rden.netlify.com/post/2019-04-17-reticulate/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/rden.netlify.com/post/2019-04-17-reticulate/</guid>
-      <description>&lt;p&gt;&amp;rsquo;&amp;mdash;
-title: Snakes, pandas, sea born creatures and how to find them
-author: c1au6io_hh
-date: &amp;lsquo;2019-05-06&amp;rsquo;
-slug: reticulate
-categories:
-  - R
-  - Python
-tags:
-  - reticulate
-  - import_csv
-  - microbenchmark
-  - seaborn
-  - vroom
-lastmod: &amp;lsquo;2019-05-06T11:46:00-04:00&amp;rsquo;
-keywords: []
-description: &amp;ldquo;
-comment: yes
-toc: yes
-autoCollapseToc: yes
-contentCopyright: yes
-reward: no&lt;/p&gt;
-
-&lt;h2 id=&#34;mathjax-no&#34;&gt;mathjax: no&lt;/h2&gt;
-
-&lt;p&gt;What&amp;rsquo;s the fastest way to read a csv file in &lt;code&gt;R&lt;/code&gt;? Among the &lt;code&gt;R&lt;/code&gt; packages, the ultra-fast sprinter is certainly &lt;code&gt;data.table&lt;/code&gt; but&amp;hellip;few years ago, the introduction of the package &lt;a href=&#34;https://blog.rstudio.com/2018/03/26/reticulate-r-interface-to-python/&#34;&gt;&lt;code&gt;reticulate&lt;/code&gt;&lt;/a&gt; gave us the possibility of use &lt;code&gt;python&lt;/code&gt; and in particular the library &lt;code&gt;pandas&lt;/code&gt; to read files in &lt;code&gt;R&lt;/code&gt;. Would &lt;code&gt;pandas&lt;/code&gt; (used in &lt;code&gt;R&lt;/code&gt;) be faster than &lt;code&gt;data.table&lt;/code&gt;? How would its performance compare with &lt;code&gt;readr&lt;/code&gt; or base &lt;code&gt;R&lt;/code&gt;? Let&amp;rsquo;s take a look.&lt;/p&gt;</description>
     </item>
     
   </channel>

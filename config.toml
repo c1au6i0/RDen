@@ -2,7 +2,7 @@
 # If you want to see the full configuration, please check `full-config.toml` .
 # And see https://gohugo.io/getting-started/configuration/ .
 
-baseURL = "rden.netlify.com"
+baseURL = "https://rden.netlify.com"
 title = "RDen"
 enableRobotsTXT = true
 enableEmoji = true

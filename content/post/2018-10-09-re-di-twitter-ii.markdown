@@ -3,7 +3,7 @@ title: Il Re di Twitter? (PART II)
 subtitle: Analisi dei tweets
 author: C1au6i0_HH
 date:  '2018-10-10'
-# lastmod: "2019 May 27 14 13"
+# lastmod: "2019 May 27 14 25"
 slug: re-di-twitter-ii
 categories:
   - R
@@ -124,7 +124,7 @@ f_twwords %>% # frequency tweet words
           legend.position = "none")
 ```
 
-<img src="/rden.netlify.compost/2018-10-09-re-di-twitter-ii_files/figure-html/fig1_most_used_words-1.png" width="768" style="display: block; margin: auto;" />
+<img src="/post/2018-10-09-re-di-twitter-ii_files/figure-html/fig1_most_used_words-1.png" width="768" style="display: block; margin: auto;" />
 
 __Per Salvini e Martina la parola più usata è il proprio nome/screenname__, mentre per __Di Maio è il partito__ "m5s". __Salvini menziona il suo nome in circa 1 tweets ogni 3, Martina e Di Maio menzionano nome e partito in 1 tweet ogni 10 , rispettivamente__.
 
@@ -167,7 +167,7 @@ f_twwords %>%
       facet_grid(screenName~., scales = 'free_y', labeller = labeller(screenName = NULL))
 ```
 
-<img src="/rden.netlify.compost/2018-10-09-re-di-twitter-ii_files/figure-html/fig.2_worcloud-1.png" width="576" style="display: block; margin: auto;" />
+<img src="/post/2018-10-09-re-di-twitter-ii_files/figure-html/fig.2_worcloud-1.png" width="576" style="display: block; margin: auto;" />
 
 Nella fig.2, le parole più usate hanno una dimensione maggiore.
 
@@ -251,7 +251,7 @@ Andiamo finalmente a rappresentare graficamente le 7 parole più usate da Di Mai
   theme(plot.title = element_text(hjust = 0.5)) 
 ```
 
-<img src="/rden.netlify.compost/2018-10-09-re-di-twitter-ii_files/figure-html/fig.3_timeline_dimaioa-1.png" width="672" style="display: block; margin: auto;" />
+<img src="/post/2018-10-09-re-di-twitter-ii_files/figure-html/fig.3_timeline_dimaioa-1.png" width="672" style="display: block; margin: auto;" />
 
 Le 3 parole relative al movimento e al suo fondatore (fig.3 panello A) sono state usate da Di Maio costantemente ma con frequenza variabile negli ultimi anni. È tuttavia negli ultimi mesi (da Marzo a Luglio 2018) che il loro uso è andato quasi scomparendo. Questa diminuzione si è verificata nel concitato periodo di consultazioni con il quirinale e formazione del governo (Febbraio-Giugno), mesi in cui la parola *governo* è usata ogni 2-5 tweets (fig.3 panello B). 
 E le parole relative al PD? __I riferimenti da parte di Di Maio al attuale partito di opposizione (parola *pd*) e al suo precedente segretario (parola *renzi*)__ se pure a tratti molto frequenti tra il 2014-2017, __scompaiono completamente nel periodo in cui il movimento a 5 stelle diventa partito di maggioranza__ (fig.3 pannello C, linea tratteggiata indica l'insediamento del governo). 
@@ -341,7 +341,7 @@ fav_twwords %>%
     legend.position = "none")
 ```
 
-<img src="/rden.netlify.compost/2018-10-09-re-di-twitter-ii_files/figure-html/fig.4_like_word-1.png" width="768" style="display: block; margin: auto;" />
+<img src="/post/2018-10-09-re-di-twitter-ii_files/figure-html/fig.4_like_word-1.png" width="768" style="display: block; margin: auto;" />
 
 Il primo dato che balza agli occhi dalla fig.4 è che __le prime 10 parole più usate da Salvini hanno totalizzato un numero molto più alto di likes rispetto quelle di Di Maio e Martina__.
 Inoltre, le parole che hanno ricevuto più likes sono state utilizzate __soltanto 1 o 2 volte dai vari politici__.  Perché? 
@@ -368,7 +368,7 @@ twwords %>%
         axis.text.x = element_text(size = 14))
 ```
 
-<img src="/rden.netlify.compost/2018-10-09-re-di-twitter-ii_files/figure-html/fig.5_vitalizi-1.png" width="384" style="display: block; margin: auto;" />
+<img src="/post/2018-10-09-re-di-twitter-ii_files/figure-html/fig.5_vitalizi-1.png" width="384" style="display: block; margin: auto;" />
 
 Anche se in quelle 2 occasioni il numero di like ricevuti è stato estremamente alto, la presenza di numerosi tweets con pochi like ha spostato la media di like per tweet verso il basso (fig.5).
 

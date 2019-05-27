@@ -36,15 +36,11 @@
 <meta name="generator" content="Hugo 0.55.6" />
 
 
-<link rel="canonical" href="/rden.netlify.com/post/fighting-diseases/" />
+<link rel="canonical" href="/post/fighting-diseases/" />
 
 
 
-<link rel="icon" href="/rden.netlify.com/favicon.ico" />
-
-
-
-
+<link rel="icon" href="/favicon.ico" />
 
 
 
@@ -52,7 +48,11 @@
 
 
 
-<link rel="stylesheet" href="/rden.netlify.com/sass/jane.min.ec807d8b802a40889537c26e014f733206312ea440d42e1f0dabed80918de1ac.css" integrity="sha256-7IB9i4AqQIiVN8JuAU9zMgYxLqRA1C4fDavtgJGN4aw=" media="screen" crossorigin="anonymous">
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.ec807d8b802a40889537c26e014f733206312ea440d42e1f0dabed80918de1ac.css" integrity="sha256-7IB9i4AqQIiVN8JuAU9zMgYxLqRA1C4fDavtgJGN4aw=" media="screen" crossorigin="anonymous">
 
 
 
@@ -61,7 +61,7 @@
 <meta property="og:title" content="Fighting Diseases with Predictive Modeling" />
 <meta property="og:description" content="In this post we will analyze the data of the ADD HEALTH, a national longitudinal study that enrolled  ~90000 adolescents and followed them up for 20 years. Using the R package caret, we will train and evaluate different models (regression, decision tree, random Forest) in order to predict drug use behavior in adulthood from information (friends, social activities, parents and others) collected during adolescence. This will give us the opportunity to play and get familiarized with the most important caret functions as well as to introduce seminal concepts of machine learning." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/rden.netlify.com/post/fighting-diseases/" />
+<meta property="og:url" content="/post/fighting-diseases/" />
 <meta property="article:published_time" content="2019-03-24T00:00:00&#43;00:00"/>
 <meta property="article:modified_time" content="2019-03-24T11:13:24-04:00"/>
 
@@ -107,7 +107,7 @@ if (!doNotTrack) {
 <body>
   <div id="mobile-navbar" class="mobile-navbar">
   <div class="mobile-header-logo">
-    <a href="/rden.netlify.com/" class="logo">RDen</a>
+    <a href="/" class="logo">RDen</a>
   </div>
   <div class="mobile-navbar-icon">
     <span></span>
@@ -121,28 +121,28 @@ if (!doNotTrack) {
         
           
           
-            <a class="menu-item-link" href="/rden.netlify.com/">Home</a>
+            <a class="menu-item-link" href="/">Home</a>
           
         
       </li><li class="mobile-menu-item">
         
           
           
-            <a class="menu-item-link" href="/rden.netlify.com/tags/">Tags</a>
+            <a class="menu-item-link" href="/tags/">Tags</a>
           
         
       </li><li class="mobile-menu-item">
         
           
           
-            <a class="menu-item-link" href="/rden.netlify.com/categories/">Categories</a>
+            <a class="menu-item-link" href="/categories/">Categories</a>
           
         
       </li><li class="mobile-menu-item">
         
           
           
-            <a class="menu-item-link" href="/rden.netlify.com/about/">About</a>
+            <a class="menu-item-link" href="/about/">About</a>
           
         
       </li>
@@ -159,8 +159,8 @@ if (!doNotTrack) {
 
 
 
-  <link rel="stylesheet" href="/rden.netlify.com/lib/photoswipe/photoswipe.min.css" />
-  <link rel="stylesheet" href="/rden.netlify.com/lib/photoswipe/default-skin/default-skin.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
 
 
 
@@ -215,7 +215,7 @@ if (!doNotTrack) {
 
   <header id="header" class="header container">
     <div class="logo-wrapper">
-  <a href="/rden.netlify.com/" class="logo">
+  <a href="/" class="logo">
     
       RDen
     
@@ -230,7 +230,7 @@ if (!doNotTrack) {
         
           
           
-            <a class="menu-item-link" href="/rden.netlify.com/">Home</a>
+            <a class="menu-item-link" href="/">Home</a>
           
 
         
@@ -241,7 +241,7 @@ if (!doNotTrack) {
         
           
           
-            <a class="menu-item-link" href="/rden.netlify.com/tags/">Tags</a>
+            <a class="menu-item-link" href="/tags/">Tags</a>
           
 
         
@@ -252,7 +252,7 @@ if (!doNotTrack) {
         
           
           
-            <a class="menu-item-link" href="/rden.netlify.com/categories/">Categories</a>
+            <a class="menu-item-link" href="/categories/">Categories</a>
           
 
         
@@ -263,7 +263,7 @@ if (!doNotTrack) {
         
           
           
-            <a class="menu-item-link" href="/rden.netlify.com/about/">About</a>
+            <a class="menu-item-link" href="/about/">About</a>
           
 
         
@@ -290,7 +290,7 @@ if (!doNotTrack) {
           2019-03-24
         </time>
         <div class="post-category">
-            <a href="/rden.netlify.com/categories/r/"> R </a>
+            <a href="/categories/r/"> R </a>
             
           </div>
         <span class="more-meta"> 5801 words </span>
@@ -869,7 +869,7 @@ glimpse<span class="p">(</span>metrics<span class="p">)</span></code></pre></td>
           panel.spacing <span class="o">=</span> unit<span class="p">(</span><span class="m">1.2</span><span class="p">,</span> <span class="s">&#34;lines&#34;</span><span class="p">))</span></code></pre></td></tr></table>
 </div>
 </div>
-<p><img src="/rden.netlify.compost/2019-03-24-fighting-diseases_files/figure-html/plot_metrics1-1.png" width="672" /></p>
+<p><img src="/post/2019-03-24-fighting-diseases_files/figure-html/plot_metrics1-1.png" width="672" /></p>
 
 <p>Again, <strong>the glmnet model has the highest <em>sensitivity</em> and *F</strong>*. The tree-based models  have very good <em>specificity</em> but poor <em>sensitivity</em> and <em>precision</em>. The performance of the Random Forest is even worse and, because no positive can be detected the <em>precision</em> and <em>F</em> cannot be calculated. <strong>Overall, all the 4 models have poor performances</strong>.</p>
 
@@ -1051,7 +1051,7 @@ roc <span class="o">&lt;-</span> roc.curve<span class="p">(</span>scores.class0 
 plot<span class="p">(</span>roc<span class="p">)</span></code></pre></td></tr></table>
 </div>
 </div>
-<p><img src="/rden.netlify.compost/2019-03-24-fighting-diseases_files/figure-html/example-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="/post/2019-03-24-fighting-diseases_files/figure-html/example-1.png" width="672" style="display: block; margin: auto;" /></p>
 
 <p>The legend indicates the threshold at which <em>sensitivity</em> and <em>1-specificity</em> are calculated. When the threshold is set to 0.41, the model correctly recognizes the last observation as  <em>Yes</em> and all the others as <em>No</em>. The predictions of the model are perfect, even if the probabilities for <em>Yes</em> are all minor than 0.5. Bearing this in mind we can look at our models.</p>
 
@@ -1080,7 +1080,7 @@ plot<span class="p">(</span>roc<span class="p">)</span></code></pre></td></tr></
   theme<span class="p">(</span>plot.title <span class="o">=</span> element_text<span class="p">(</span>hjust <span class="o">=</span> <span class="m">0.5</span><span class="p">))</span> </code></pre></td></tr></table>
 </div>
 </div>
-<p><img src="/rden.netlify.compost/2019-03-24-fighting-diseases_files/figure-html/ROC_plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="/post/2019-03-24-fighting-diseases_files/figure-html/ROC_plot-1.png" width="672" style="display: block; margin: auto;" /></p>
 
 <p>The curve of the <code>glmnet</code> model is positioned more to the up-left of the graph than those of all the other models. The <code>RandomForest</code> ROC curve is immediately below the <code>glmnet</code>, followed by the <code>rpart</code><code>and</code><code>ctree</code>` curves. These last two curves lie in close  proximity of diagonal of the graph.</p>
 
@@ -1125,7 +1125,7 @@ data_pr  <span class="o">%&gt;%</span>
   theme<span class="p">(</span>plot.title <span class="o">=</span> element_text<span class="p">(</span>hjust <span class="o">=</span> <span class="m">0.5</span><span class="p">))</span> </code></pre></td></tr></table>
 </div>
 </div>
-<p><img src="/rden.netlify.compost/2019-03-24-fighting-diseases_files/figure-html/precision_recal_alt-1.png" width="672" style="display: block; margin: auto;" />
+<p><img src="/post/2019-03-24-fighting-diseases_files/figure-html/precision_recal_alt-1.png" width="672" style="display: block; margin: auto;" />
 The <code>glmnet</code> model show the highest <em>precision</em>, followed by the <code>RandomForest</code>, the <code>ctree</code> and finally the <code>rpart</code> model. <strong>Even our best model <code>glmnet</code>, has a maximal precision of 0.5 (only one over 2 positive predictions are true) at a <em>recall</em> of less than 10%.</strong> This performance is better than pure chance but not as good as we would have hoped.</p>
 
 <h2 id="the-area-under-the-curve">The Area Under the Curve</h2>
@@ -1161,7 +1161,7 @@ The <code>glmnet</code> model show the highest <em>precision</em>, followed by t
           panel.spacing <span class="o">=</span> unit<span class="p">(</span><span class="m">1.2</span><span class="p">,</span> <span class="s">&#34;lines&#34;</span><span class="p">))</span></code></pre></td></tr></table>
 </div>
 </div>
-<p><img src="/rden.netlify.compost/2019-03-24-fighting-diseases_files/figure-html/metrics2-1.png" width="672" /></p>
+<p><img src="/post/2019-03-24-fighting-diseases_files/figure-html/metrics2-1.png" width="672" /></p>
 
 <p>The <code>glmnet</code> has the larger AUCs of ROCs and precision-recall curves, followed by the <code>RandomForest</code>. The 2 classification-tree models have the smallest AUCs, with values that approximate to those expected for random choices.
 <strong>The <code>glmnet</code> model produces the most accurate predictions among the models, but its precision and sensitivity are still quite limited.</strong></p>
@@ -1216,18 +1216,18 @@ The <code>glmnet</code> model show the highest <em>precision</em>, followed by t
 
     <footer class="post-footer">
       <div class="post-tags">
-          <a href="/rden.netlify.com/tags/caret/">caret</a>
-          <a href="/rden.netlify.com/tags/predictive-modeling/">predictive modeling</a>
-          <a href="/rden.netlify.com/tags/add_health/">ADD_Health</a>
-          <a href="/rden.netlify.com/tags/roc/">ROC</a>
-          <a href="/rden.netlify.com/tags/precision-recall/">precision recall</a>
+          <a href="/tags/caret/">caret</a>
+          <a href="/tags/predictive-modeling/">predictive modeling</a>
+          <a href="/tags/add_health/">ADD_Health</a>
+          <a href="/tags/roc/">ROC</a>
+          <a href="/tags/precision-recall/">precision recall</a>
           
         </div>
 
       
       <nav class="post-nav">
         
-          <a class="prev" href="/rden.netlify.com/post/do-not-invoke-me/">
+          <a class="prev" href="/post/do-not-invoke-me/">
             
             <i class="iconfont">
               <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -1241,7 +1241,7 @@ The <code>glmnet</code> model show the highest <em>precision</em>, followed by t
             <span class="prev-text nav-mobile">Prev</span>
           </a>
         
-          <a class="next" href="/rden.netlify.com/post/animated-prison/">
+          <a class="next" href="/post/animated-prison/">
             <span class="next-text nav-default">Animated Prison</span>
             <span class="prev-text nav-mobile">Next</span>
             
@@ -1280,7 +1280,7 @@ The <code>glmnet</code> model show the highest <em>precision</em>, followed by t
   <div id="disqus_thread"></div>
   <script type="text/javascript">
     var disqus_config = function () {
-      this.page.url = "/rden.netlify.com/post/fighting-diseases/";
+      this.page.url = "/post/fighting-diseases/";
     };
     function load_disqus() {
       
@@ -1323,7 +1323,7 @@ The <code>glmnet</code> model show the highest <em>precision</em>, followed by t
     </a>
 
 
-<a href="/rden.netlify.com/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+<a href="/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
     class="iconfont" title="rss" target="_blank">
     <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
   xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -1386,13 +1386,13 @@ The <code>glmnet</code> model show the highest <em>precision</em>, followed by t
     </div>
   </div>
   
-<script type="text/javascript" src="/rden.netlify.com/lib/jquery/jquery-3.2.1.min.js"></script>
-  <script type="text/javascript" src="/rden.netlify.com/lib/slideout/slideout-1.0.1.min.js"></script>
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
 
 
 
 
-<script type="text/javascript" src="/rden.netlify.com/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
 
 
 
@@ -1400,9 +1400,9 @@ The <code>glmnet</code> model show the highest <em>precision</em>, followed by t
 
 
   
-    <script type="text/javascript" src="/rden.netlify.com/js/load-photoswipe.js"></script>
-    <script type="text/javascript" src="/rden.netlify.com/lib/photoswipe/photoswipe.min.js"></script>
-    <script type="text/javascript" src="/rden.netlify.com/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
   
 
 

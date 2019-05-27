@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on RDen</title>
-    <link>/rden.netlify.com/categories/</link>
+    <link>/categories/</link>
     <description>Recent content in Categories on RDen</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
     <lastBuildDate>Mon, 06 May 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/rden.netlify.com/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Python</title>
-      <link>/rden.netlify.com/categories/python/</link>
+      <link>/categories/python/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>/rden.netlify.com/categories/python/</guid>
+      <guid>/categories/python/</guid>
       <description></description>
     </item>
     
     <item>
       <title>R</title>
-      <link>/rden.netlify.com/categories/r/</link>
+      <link>/categories/r/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>/rden.netlify.com/categories/r/</guid>
+      <guid>/categories/r/</guid>
       <description></description>
     </item>
     

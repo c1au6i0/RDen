@@ -202,7 +202,7 @@ tw_d <- twdat %>%
   grid.arrange(tw_h, tw_d, ncol =  2, top = "Percentage of tweets          ")
 ```
 
-<img src="/rden.netlify.compost/2018-09-10-re-di-twitter-i_files/figure-html/fig.1_plot_tw_wdays-1.png" width="960" />
+<img src="/post/2018-09-10-re-di-twitter-i_files/figure-html/fig.1_plot_tw_wdays-1.png" width="960" />
 __Salvini__ tende ad iniziare a twittare al mattino come Di Maio e Martina, ma  rispetto a loro, tende a continuare ad essere __attivo anche la sera (7-23)__. Per __Martina__ il picco di attività è __la mattina (9-11)__ mentre per __Di Maio è dalle 9 alle 16__ (fig.2, sinistra). __Tutti e tre i politici hanno un giorno durante il week-end in cui sono molto meno attivi__: sia per Di Maio che Salvini è il Sabato, mentre per Martina la Domenica (fig.2, destra).
 
 Ho usato *ggridges*, una extention di *ggplot2*, per creare dei *density plots* e visualizzare in dettaglio l'interazione tra giorno della settimana ed ora del giorno dei tweets (fig.3 sottostante). L'analisi tende comunque a supportare la generabilità delle osservazioni precedenti ma con alcune precisazioni: la Domenica è Di Maio a distribuire i sui tweets  più tardi la sera. Inoltre, il Lunedì Salvini è, diversamente dagli altri giorni della settimana, molto più attivo nel primo pomeriggio tra le 14 e le 16 (fig.3). 
@@ -231,7 +231,7 @@ twdat %>%
     guides(fill = FALSE)
 ```
 
-<img src="/rden.netlify.compost/2018-09-10-re-di-twitter-i_files/figure-html/fig.2_ridges-1.png" width="672" />
+<img src="/post/2018-09-10-re-di-twitter-i_files/figure-html/fig.2_ridges-1.png" width="672" />
 
 ### Ultimi mesi
 
@@ -320,7 +320,7 @@ Ho usato il codice indicato sopra sui dati normalizzati usando come baseline il 
 grid.arrange(timeline_abs, timeline_perc, ncol =  2)
 ```
 
-<img src="/rden.netlify.compost/2018-09-10-re-di-twitter-i_files/figure-html/fig.4_timeline-1.png" width="960" />
+<img src="/post/2018-09-10-re-di-twitter-i_files/figure-html/fig.4_timeline-1.png" width="960" />
 Sulla sinistra abbiamo i dati assoluti mentre sulla destra i dati in percentuale. Questa normalizzazione ci permette di comparare meglio gli andamenti e i cambiamenti di attività tra i politici.
 
 Salvini twitta molto più di Di Maio e Martina ma __l'attività di tutti e 3 i politici aumenta drasticamente in Febbraio__ di quest'anno, mese di [campagna elettorale](https://it.wikipedia.org/wiki/XVIII_legislatura_della_Repubblica_Italiana)) (con un inizio precoce per Salvini già in Gennaio). Questo picco di attività __crolla velocemente__ e in __Marzo__ già si ritorna a quei livelli di attività pre-elettorali (o anche inferiori nel caso di Di Maio). Un altro __aumento dell'attività__ di __Salvini e Martina__ si osserva __negli ultimi mesi__, sospetto sia in qualche modo collegato alle vicenda dell'Acquarius e della "chiusura dei porti" (fig.3).
@@ -350,7 +350,7 @@ twdat %>%
   guides(col = FALSE)
 ```
 
-<img src="/rden.netlify.compost/2018-09-10-re-di-twitter-i_files/figure-html/fig.4_distribution_fav-1.png" width="960" />
+<img src="/post/2018-09-10-re-di-twitter-i_files/figure-html/fig.4_distribution_fav-1.png" width="960" />
 
 Tutte e tre le distribuzioni sono estremamente skewed verso destra ma anche da questo grafico è possibile cogliere che i tweets di Salvini con alti numeri di likes sono più numerosi rispetto a quelli degli altri 2 politici (barre verdi sono più alte rispetto alle gialle e rosse quando ci spostiamo verso destra,fig.4)
 
@@ -366,7 +366,7 @@ twdat %>%
   theme(plot.title = element_text(hjust = 0.5),legend.position = "none") 
 ```
 
-<img src="/rden.netlify.compost/2018-09-10-re-di-twitter-i_files/figure-html/fig5_jitter_likes-1.png" width="480" />
+<img src="/post/2018-09-10-re-di-twitter-i_files/figure-html/fig5_jitter_likes-1.png" width="480" />
 
 Nella figura ogni tweet è rappresentato da un punto che è in alto se il tweet ha ricevuto molti likes. Anche da questa rappresentazione si evince che __Salvini è estremamente più popolare tra i suoi followers di Di Maio e Martina__ (fig.5).
 
@@ -374,7 +374,7 @@ Nella figura ogni tweet è rappresentato da un punto che è in alto se il tweet 
 
 Come è cambiata la popolarità dei vari politici negli ultimi mesi? Andiamo ad analizzarlo attraverso la visualizzazione di numero di like per tweet (fig.6, sinistra) e totale di like (fig.5) nei mesi di Dicembre 2017 fino a Luglio 2018. Utilizzeremo lo stesso codice impiegato per le fig.1.
 
-<img src="/rden.netlify.compost/2018-09-10-re-di-twitter-i_files/figure-html/fig.6_plot_timeline_likes-1.png" width="960" />
+<img src="/post/2018-09-10-re-di-twitter-i_files/figure-html/fig.6_plot_timeline_likes-1.png" width="960" />
 Sia per __Di Maio__ che per __Salvini__ in numero di __like per tweet è aumentato drasticamente__ a partire __da Marzo del 2018__ con un __picco quest'estaste__ (fig.6 sinistra). Anche __i like  per tweet di Martina sono aumentati__, ma __in misura molto minore__ rispetto a quelli degli altri 2 politici (fig.6 sinistra). Un altra considerazione interessante è che __negli ultimi mesi la popolarità dei tweets di Di Maio e Salvini__ in termini di likes per tweets __non è__ stata tutto sommato __molto differente__ (__2500-4000 likes per tweet__, fig.6 sinistra) e il maggiore numero totale di likes da parte di Salvini è imputabile al sua maggiore presenza sul social media (fig.6 destra).
 
 
@@ -401,7 +401,7 @@ twdat %>%
           axis.text.x = element_text(vjust = 0.25, angle = 45)) 
 ```
 
-<img src="/rden.netlify.compost/2018-09-10-re-di-twitter-i_files/figure-html/fig.6_10_fav-1.png" width="960" />
+<img src="/post/2018-09-10-re-di-twitter-i_files/figure-html/fig.6_10_fav-1.png" width="960" />
 
 Alcuni dei temi più cari ai m5s e Lega emergono nei  tweets più apprezzati:
 
@@ -450,7 +450,7 @@ count_dev %>%
       labs(y = NULL, x = NULL, fill = NULL, caption = "fig.8" )
 ```
 
-<img src="/rden.netlify.compost/2018-09-10-re-di-twitter-i_files/figure-html/fig.7_pie-1.png" width="960" />
+<img src="/post/2018-09-10-re-di-twitter-i_files/figure-html/fig.7_pie-1.png" width="960" />
 Sono piuttosto chiare le differenze tra i 3 politici:
 
 * Di Maio principalmente utilizza android e twitta post da facebook

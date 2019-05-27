@@ -248,7 +248,7 @@ Few days ago, [vroom 1.0.0](https://www.tidyverse.org/articles/2019/05/vroom-1-0
 
 Under these conditions, `vroom` appears to be even slower than base `R` in terms of reading times
 
-<img src="/rden.netlify.compost/2019-04-17-reticulate_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+<img src="/post/2019-04-17-reticulate_files/figure-html/unnamed-chunk-2-1.png" width="672" />
 
 To undestand why, we need to take a look at our `amis.csv` data.
 

@@ -372,7 +372,7 @@ metrics %>%
           panel.spacing = unit(1.2, "lines"))
 ```
 
-<img src="/rden.netlify.compost/2019-03-24-fighting-diseases_files/figure-html/plot_metrics1-1.png" width="672" />
+<img src="/post/2019-03-24-fighting-diseases_files/figure-html/plot_metrics1-1.png" width="672" />
 
 Again, **the glmnet model has the highest *sensitivity* and *F***. The tree-based models  have very good *specificity* but poor *sensitivity* and *precision*. The performance of the Random Forest is even worse and, because no positive can be detected the *precision* and *F* cannot be calculated. **Overall, all the 4 models have poor performances**.
 
@@ -487,7 +487,7 @@ roc <- roc.curve(scores.class0 = sc, weights.class0 = lab, curve = TRUE)
 plot(roc)
 ```
 
-<img src="/rden.netlify.compost/2019-03-24-fighting-diseases_files/figure-html/example-1.png" width="672" style="display: block; margin: auto;" />
+<img src="/post/2019-03-24-fighting-diseases_files/figure-html/example-1.png" width="672" style="display: block; margin: auto;" />
 
 The legend indicates the threshold at which *sensitivity* and *1-specificity* are calculated. When the threshold is set to 0.41, the model correctly recognizes the last observation as  *Yes* and all the others as *No*. The predictions of the model are perfect, even if the probabilities for *Yes* are all minor than 0.5. Bearing this in mind we can look at our models.
 
@@ -506,7 +506,7 @@ data_roc  %>%
   theme(plot.title = element_text(hjust = 0.5)) 
 ```
 
-<img src="/rden.netlify.compost/2019-03-24-fighting-diseases_files/figure-html/ROC_plot-1.png" width="672" style="display: block; margin: auto;" />
+<img src="/post/2019-03-24-fighting-diseases_files/figure-html/ROC_plot-1.png" width="672" style="display: block; margin: auto;" />
 
 The curve of the ```glmnet``` model is positioned more to the up-left of the graph than those of all the other models. The ```RandomForest``` ROC curve is immediately below the ```glmnet```, followed by the ``rpart``` and ```ctree``` curves. These last two curves lie in close  proximity of diagonal of the graph.  
 
@@ -538,7 +538,7 @@ data_pr  %>%
   theme(plot.title = element_text(hjust = 0.5)) 
 ```
 
-<img src="/rden.netlify.compost/2019-03-24-fighting-diseases_files/figure-html/precision_recal_alt-1.png" width="672" style="display: block; margin: auto;" />
+<img src="/post/2019-03-24-fighting-diseases_files/figure-html/precision_recal_alt-1.png" width="672" style="display: block; margin: auto;" />
 The ```glmnet``` model show the highest *precision*, followed by the ```RandomForest```, the ```ctree``` and finally the ```rpart``` model. **Even our best model ```glmnet```, has a maximal precision of 0.5 (only one over 2 positive predictions are true) at a *recall* of less than 10%.** This performance is better than pure chance but not as good as we would have hoped.
 
 ## The Area Under the Curve
@@ -561,7 +561,7 @@ metrics %>%
           panel.spacing = unit(1.2, "lines"))
 ```
 
-<img src="/rden.netlify.compost/2019-03-24-fighting-diseases_files/figure-html/metrics2-1.png" width="672" />
+<img src="/post/2019-03-24-fighting-diseases_files/figure-html/metrics2-1.png" width="672" />
 
 The ```glmnet``` has the larger AUCs of ROCs and precision-recall curves, followed by the ```RandomForest```. The 2 classification-tree models have the smallest AUCs, with values that approximate to those expected for random choices. 
 **The ```glmnet``` model produces the most accurate predictions among the models, but its precision and sensitivity are still quite limited.**

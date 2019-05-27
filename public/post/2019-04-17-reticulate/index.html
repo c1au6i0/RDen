@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> - RDen</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="c1au6i0HH" />
+  <meta name="description" content="&amp;rsquo;&amp;mdash; title: Snakes, pandas, sea born creatures and how to find them author: c1au6io_hh date: &amp;lsquo;2019-05-06&amp;rsquo; slug: reticulate categories: - R - Python tags: - reticulate - import_csv - microbenchmark - seaborn - vroom lastmod: &amp;lsquo;2019-05-06T11:46:00-04:00&amp;rsquo; keywords: [] description: &amp;ldquo; comment: yes toc: yes autoCollapseToc: yes contentCopyright: yes reward: no
+mathjax: no What&amp;rsquo;s the fastest way to read a csv file in R? Among the R packages, the ultra-fast sprinter is certainly data.table but&amp;hellip;few years ago, the introduction of the package reticulate gave us the possibility of use python and in particular the library pandas to read files in R. Would pandas (used in R) be faster than data.table? How would its performance compare with readr or base R? Let&amp;rsquo;s take a look.
+" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.55.6" />
+
+
+<link rel="canonical" href="/rden.netlify.com/post/2019-04-17-reticulate/" />
+
+
+
+<link rel="icon" href="/rden.netlify.com/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/rden.netlify.com/sass/jane.min.ec807d8b802a40889537c26e014f733206312ea440d42e1f0dabed80918de1ac.css" integrity="sha256-7IB9i4AqQIiVN8JuAU9zMgYxLqRA1C4fDavtgJGN4aw=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="" />
+<meta property="og:description" content="&rsquo;&mdash;
+title: Snakes, pandas, sea born creatures and how to find them
+author: c1au6io_hh
+date: &lsquo;2019-05-06&rsquo;
+slug: reticulate
+categories:
+  - R
+  - Python
+tags:
+  - reticulate
+  - import_csv
+  - microbenchmark
+  - seaborn
+  - vroom
+lastmod: &lsquo;2019-05-06T11:46:00-04:00&rsquo;
+keywords: []
+description: &ldquo;
+comment: yes
+toc: yes
+autoCollapseToc: yes
+contentCopyright: yes
+reward: no
+
+mathjax: no
+
+What&rsquo;s the fastest way to read a csv file in R? Among the R packages, the ultra-fast sprinter is certainly data.table but&hellip;few years ago, the introduction of the package reticulate gave us the possibility of use python and in particular the library pandas to read files in R. Would pandas (used in R) be faster than data.table? How would its performance compare with readr or base R? Let&rsquo;s take a look." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/rden.netlify.com/post/2019-04-17-reticulate/" />
+
+
+<meta itemprop="name" content="">
+<meta itemprop="description" content="&rsquo;&mdash;
+title: Snakes, pandas, sea born creatures and how to find them
+author: c1au6io_hh
+date: &lsquo;2019-05-06&rsquo;
+slug: reticulate
+categories:
+  - R
+  - Python
+tags:
+  - reticulate
+  - import_csv
+  - microbenchmark
+  - seaborn
+  - vroom
+lastmod: &lsquo;2019-05-06T11:46:00-04:00&rsquo;
+keywords: []
+description: &ldquo;
+comment: yes
+toc: yes
+autoCollapseToc: yes
+contentCopyright: yes
+reward: no
+
+mathjax: no
+
+What&rsquo;s the fastest way to read a csv file in R? Among the R packages, the ultra-fast sprinter is certainly data.table but&hellip;few years ago, the introduction of the package reticulate gave us the possibility of use python and in particular the library pandas to read files in R. Would pandas (used in R) be faster than data.table? How would its performance compare with readr or base R? Let&rsquo;s take a look.">
+
+
+
+<meta itemprop="wordCount" content="820">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content=""/>
+<meta name="twitter:description" content="&rsquo;&mdash;
+title: Snakes, pandas, sea born creatures and how to find them
+author: c1au6io_hh
+date: &lsquo;2019-05-06&rsquo;
+slug: reticulate
+categories:
+  - R
+  - Python
+tags:
+  - reticulate
+  - import_csv
+  - microbenchmark
+  - seaborn
+  - vroom
+lastmod: &lsquo;2019-05-06T11:46:00-04:00&rsquo;
+keywords: []
+description: &ldquo;
+comment: yes
+toc: yes
+autoCollapseToc: yes
+contentCopyright: yes
+reward: no
+
+mathjax: no
+
+What&rsquo;s the fastest way to read a csv file in R? Among the R packages, the ultra-fast sprinter is certainly data.table but&hellip;few years ago, the introduction of the package reticulate gave us the possibility of use python and in particular the library pandas to read files in R. Would pandas (used in R) be faster than data.table? How would its performance compare with readr or base R? Let&rsquo;s take a look."/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-128292506-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/rden.netlify.com/" class="logo">muaydata</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/">Home</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/tags/">Tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/categories/">Categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/about/">About</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/rden.netlify.com/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/rden.netlify.com/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/rden.netlify.com/" class="logo">
+    
+      muaydata
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/">Home</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/tags/">Tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/categories/">Categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="/rden.netlify.com/about/">About</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title"></h1>
+      
+      <div class="post-meta">
+        <time datetime="0001-01-01" class="post-time">
+          0001-01-01
+        </time>
+        
+        <span class="more-meta"> 820 words </span>
+          <span class="more-meta"> 4 min read </span>
+
+        
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#mathjax-no">mathjax: no</a></li>
+</ul></li>
+<li><a href="#benchmark-evaluation">Benchmark evaluation</a></li>
+<li><a href="#seaborn">Seaborn</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#edit-05-08-2019-vroom">EDIT (05-08-2019): vroom!</a></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <p>&rsquo;&mdash;
+title: Snakes, pandas, sea born creatures and how to find them
+author: c1au6io_hh
+date: &lsquo;2019-05-06&rsquo;
+slug: reticulate
+categories:
+  - R
+  - Python
+tags:
+  - reticulate
+  - import_csv
+  - microbenchmark
+  - seaborn
+  - vroom
+lastmod: &lsquo;2019-05-06T11:46:00-04:00&rsquo;
+keywords: []
+description: &ldquo;
+comment: yes
+toc: yes
+autoCollapseToc: yes
+contentCopyright: yes
+reward: no</p>
+
+<h2 id="mathjax-no">mathjax: no</h2>
+
+<p>What&rsquo;s the fastest way to read a csv file in <code>R</code>? Among the <code>R</code> packages, the ultra-fast sprinter is certainly <code>data.table</code> but&hellip;few years ago, the introduction of the package <a href="https://blog.rstudio.com/2018/03/26/reticulate-r-interface-to-python/"><code>reticulate</code></a> gave us the possibility of use <code>python</code> and in particular the library <code>pandas</code> to read files in <code>R</code>. Would <code>pandas</code> (used in <code>R</code>) be faster than <code>data.table</code>? How would its performance compare with <code>readr</code> or base <code>R</code>? Let&rsquo;s take a look.</p>
+
+<h1 id="benchmark-evaluation">Benchmark evaluation</h1>
+
+<p>We  start by loading few <code>R</code> libraries to read the csv file and  evaluate the performance (<code>microbenchmark</code>) of our contestants&hellip;</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="kn">library</span><span class="p">(</span>tidyverse<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>reticulate<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>data.table<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>microbenchmark<span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>and by getting <code>pandas</code> in the <code>python</code> environment.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>I downloaded the <a href="https://vincentarelbundock.github.io/Rdatasets/csv/boot/amis.csv">dataset</a> that consists of 8437  observations of 4 variables and I placed on my home folder.</p>
+
+<p>We are going to read the csv file using:</p>
+
+<ul>
+<li>base <code>R</code> function <code>read.csv</code></li>
+<li><code>pandas</code> function <code>read_csv</code></li>
+<li><code>readr::read_csv</code></li>
+<li><code>data.table::fread</code></li>
+</ul>
+
+<p>We read the file  1000 times for each of the package and record the performance with <code>microbenchmark::microbenchmark</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">mb <span class="o">&lt;-</span> microbenchmark<span class="p">(</span>
+          <span class="s">&#34;base&#34;</span> <span class="o">=</span> <span class="p">{</span>
+            read.csv<span class="p">(</span><span class="s">&#34;~/amis.csv&#34;</span><span class="p">,</span> sep<span class="o">=</span><span class="s">&#34;,&#34;</span><span class="p">)</span>
+          <span class="p">},</span>
+          <span class="s">&#34;readr&#34;</span> <span class="o">=</span> <span class="p">{</span>
+            read_csv<span class="p">(</span><span class="s">&#34;~/amis.csv&#34;</span><span class="p">)</span>
+          <span class="p">},</span>
+          <span class="s">&#34;pandas&#34;</span> <span class="o">=</span> <span class="p">{</span>py_run_string<span class="p">(</span><span class="s">&#34;pd.read_csv(&#39;~/amis.csv&#39;)&#34;</span><span class="p">)</span>
+          <span class="p">},</span>
+          <span class="s">&#34;data.table&#34;</span> <span class="o">=</span> <span class="p">{</span>
+            fread<span class="p">(</span><span class="s">&#34;~/amis.csv&#34;</span><span class="p">)</span>
+          <span class="p">},</span>
+          times <span class="o">=</span> <span class="m">1000</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>And we summarize it</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">mb <span class="o">%&gt;%</span> 
+  group_by<span class="p">(</span>expr<span class="p">)</span> <span class="o">%&gt;%</span> 
+  rename<span class="p">(</span>package <span class="o">=</span> expr<span class="p">)</span> <span class="o">%&gt;%</span> 
+  mutate<span class="p">(</span>time_ms <span class="o">=</span> time <span class="o">*</span> <span class="m">0.000001</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  summarize<span class="p">(</span>mean <span class="o">=</span> <span class="kp">mean</span><span class="p">(</span>time_ms<span class="p">),</span> median <span class="o">=</span> median<span class="p">(</span>time_ms<span class="p">),</span> min <span class="o">=</span> <span class="kp">min</span><span class="p">(</span>time_ms<span class="p">),</span> max <span class="o">=</span> <span class="kp">max</span><span class="p">(</span>time_ms<span class="p">),</span> sd <span class="o">=</span> sd<span class="p">(</span>time_ms<span class="p">))</span> <span class="o">%&gt;%</span> 
+  arrange<span class="p">(</span><span class="kp">mean</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+  knitr<span class="o">::</span>kable<span class="p">(</span>format <span class="o">=</span> <span class="s">&#34;html&#34;</span><span class="p">,</span> caption <span class="o">=</span> <span class="s">&#34;: Milliseconds to read a csv file&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<table>
+<caption>Table 1: : Milliseconds to read a csv file</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> package </th>
+   <th style="text-align:right;"> mean </th>
+   <th style="text-align:right;"> median </th>
+   <th style="text-align:right;"> min </th>
+   <th style="text-align:right;"> max </th>
+   <th style="text-align:right;"> sd </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> data.table </td>
+   <td style="text-align:right;"> 1.163429 </td>
+   <td style="text-align:right;"> 1.051192 </td>
+   <td style="text-align:right;"> 0.893294 </td>
+   <td style="text-align:right;"> 11.988350 </td>
+   <td style="text-align:right;"> 0.5746664 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> pandas </td>
+   <td style="text-align:right;"> 4.174706 </td>
+   <td style="text-align:right;"> 3.900311 </td>
+   <td style="text-align:right;"> 3.176870 </td>
+   <td style="text-align:right;"> 9.903987 </td>
+   <td style="text-align:right;"> 0.9339007 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> readr </td>
+   <td style="text-align:right;"> 4.763939 </td>
+   <td style="text-align:right;"> 4.117349 </td>
+   <td style="text-align:right;"> 3.787468 </td>
+   <td style="text-align:right;"> 169.842847 </td>
+   <td style="text-align:right;"> 5.5154385 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> base </td>
+   <td style="text-align:right;"> 8.979738 </td>
+   <td style="text-align:right;"> 8.309741 </td>
+   <td style="text-align:right;"> 7.746079 </td>
+   <td style="text-align:right;"> 33.335507 </td>
+   <td style="text-align:right;"> 2.4232146 </td>
+  </tr>
+</tbody>
+</table>
+
+<p>The faster function is still <code>data.table::fread</code> with a mean reading time of about ~1 ms,  followed by <code>pandas</code> (4.17 ms) and <code>readr</code> (4.76 ms). The R base function <code>read.csv</code> is the slowest, with reading times about 4-fold  larger than <code>data.table::fread</code>.</p>
+
+<p>We could graphically visualize the <code>microbenchmark</code> performance just launching <code>autoplot(mb)</code> but that would not be fun! We come so far, why not visualize the data using <code>python</code>?</p>
+
+<h1 id="seaborn">Seaborn</h1>
+
+<p>First we need to convert the <code>R</code> object <code>mb</code> to <code>python</code> object.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r">py<span class="o">$</span>mb <span class="o">&lt;-</span> r_to_py<span class="p">(</span>mb<span class="p">,</span> convert <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>In what is dataframe converted in <code>R</code>?</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="nb">type</span><span class="p">(</span><span class="n">mb</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">## &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</pre></td></tr></table>
+</div>
+</div>
+<p>&hellip;of course in a <code>pandas Dataframe</code>.</p>
+
+<p>Now, let&rsquo;s import some libraries and plot the data using <code>seaborn</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="nb">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&#34;whitegrid&#34;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&#34;muted&#34;</span><span class="p">)</span>
+
+<span class="n">mb</span><span class="p">[</span><span class="s1">&#39;time_ms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mb</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.000001</span> <span class="c1"># from nano seconds to millisecond</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">stripplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&#34;expr&#34;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&#34;time_ms&#34;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">mb</span><span class="p">)</span>
+
+<span class="n">ax</span>  <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="nb">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Time (milliseconds)&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;package&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><img src="2019-04-17-reticulate_files/figure-html/p_libraries-1.png" alt="" /><!-- --></p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>In this sprint race to import csv in <code>R</code>, the first place is still hold by the favourite <code>data.table::fread</code> followed by <code>pandas read_csv</code> and then by <code>readr::read_csv</code>. These two last packages/functions were really close at the final line. The base <code>R</code> function <code>read.csv</code> was not able to get to the podium and had reading times about 4-fold larger than <code>data.table::fread</code>.</p>
+
+<p>Ciao Ciao!</p>
+
+<h1 id="edit-05-08-2019-vroom">EDIT (05-08-2019): vroom!</h1>
+
+<p>Few days ago, <a href="https://www.tidyverse.org/articles/2019/05/vroom-1-0-0/?fbclid=IwAR0JN1wqX8U1CarXdKbKPkkg77RlNX1bew_k6bZbINb1uZloSXvNyjotxVg">vroom 1.0.0</a> was released on CRAN, and so we have another important contestant in our competition. Let&rsquo;s look at an update table of the reading benchmark for the <code>amis.csv</code> file.</p>
+
+<table>
+<caption>Table 2: : UPDATED Milliseconds to read a csv file</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> package </th>
+   <th style="text-align:right;"> mean </th>
+   <th style="text-align:right;"> median </th>
+   <th style="text-align:right;"> min </th>
+   <th style="text-align:right;"> max </th>
+   <th style="text-align:right;"> sd </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> data.table </td>
+   <td style="text-align:right;"> 1.060955 </td>
+   <td style="text-align:right;"> 1.031286 </td>
+   <td style="text-align:right;"> 0.877797 </td>
+   <td style="text-align:right;"> 2.874855 </td>
+   <td style="text-align:right;"> 0.1540645 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> pandas </td>
+   <td style="text-align:right;"> 3.897818 </td>
+   <td style="text-align:right;"> 3.780800 </td>
+   <td style="text-align:right;"> 3.137245 </td>
+   <td style="text-align:right;"> 12.067028 </td>
+   <td style="text-align:right;"> 0.6595005 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> readr </td>
+   <td style="text-align:right;"> 4.298844 </td>
+   <td style="text-align:right;"> 4.128091 </td>
+   <td style="text-align:right;"> 3.871632 </td>
+   <td style="text-align:right;"> 23.730213 </td>
+   <td style="text-align:right;"> 1.3351350 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> base </td>
+   <td style="text-align:right;"> 8.062673 </td>
+   <td style="text-align:right;"> 7.951877 </td>
+   <td style="text-align:right;"> 7.501073 </td>
+   <td style="text-align:right;"> 13.467489 </td>
+   <td style="text-align:right;"> 0.5136744 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> vroom </td>
+   <td style="text-align:right;"> 13.325987 </td>
+   <td style="text-align:right;"> 12.528962 </td>
+   <td style="text-align:right;"> 11.977720 </td>
+   <td style="text-align:right;"> 40.054096 </td>
+   <td style="text-align:right;"> 3.2400886 </td>
+  </tr>
+</tbody>
+</table>
+
+<p>Under these conditions, <code>vroom</code> appears to be even slower than base <code>R</code> in terms of reading times</p>
+
+<p><img src="/rden.netlify.compost/2019-04-17-reticulate_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+
+<p>To undestand why, we need to take a look at our <code>amis.csv</code> data.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">## Classes &#39;data.table&#39; and &#39;data.frame&#39;:	8437 obs. of  4 variables:
+##  $ speed  : int  26 26 26 26 27 28 28 28 28 29 ...
+##  $ period : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ warning: int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ pair   : int  1 1 1 1 1 1 1 1 1 1 ...
+##  - attr(*, &#34;.internal.selfref&#34;)=&lt;externalptr&gt;</pre></td></tr></table>
+</div>
+</div>
+<p>Our data consists of numeric variables and <code>vroom</code> advantage over the other packages/fucntions is that <em>&ldquo;character data is read from the file lazily; you only pay for the data you use&rdquo;</em>.
+So under these conditions, <code>data.table::fread</code> is still a gold medal!</p>
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">c1au6i0HH</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">0001-01-01</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/rden.netlify.com/post/re-di-twitter-i/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">Il Re di Twitter? (PARTE I)</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  <div class="disqus-comment">
+  <div class="disqus-button" id="load_disqus" onclick="load_disqus()">
+    Show Disqus Comments
+  </div>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_config = function () {
+      this.page.url = "/rden.netlify.com/post/2019-04-17-reticulate/";
+    };
+    function load_disqus() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'rden';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+
+      $('#load_disqus').remove();
+    };
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+  
+  </div>
+
+    
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="clau6ioHH@email.com" rel="me noopener" class="iconfont"
+      title="email"  target="_blank"
+      >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+
+
+<a href="/rden.netlify.com/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2018 -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>
+        
+      </span></span>
+
+  
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/rden.netlify.com/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/rden.netlify.com/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/rden.netlify.com/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/rden.netlify.com/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/rden.netlify.com/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/rden.netlify.com/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

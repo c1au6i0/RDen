@@ -1,21 +1,26 @@
 ---
-title: Lottery
+title: "Abstract aRt: visualize 16 years of Megamillions numbers"
 author: ''
 date: '2019-05-15'
-slug: lottery
+slug: gganimate-lottery
 categories:
   - R
-tags: []
+tags: 
+  - gganimate
+  - rvest
+  - visualize
+  - aRt
 lastmod: '2019-05-15T14:02:02-04:00'
 keywords: []
-description: 'post8: visualize lottery numbers'
-comment: no
-toc: no
-autoCollapseToc: no
-contentCopyright: no
+description: ' visualize lottery numbers'
+comment: yes
+toc: yes
+autoCollapseToc: yes
+contentCopyright: yes
 reward: no
 mathjax: no
 ---
+
 
 <!--more-->
 
@@ -65,6 +70,8 @@ pages <- 1:62 # pages >63  do not have a megaplier
 urls <- paste0("https://www.usamega.com/mega-millions-history.asp?p=", pages)
 
 lott <- map_dfr(urls, extract_table)
+
+min(lott$date)
 ```
 
 
@@ -91,17 +98,13 @@ lott_b <- xy_b$x %>%    # no we join them based on their biweek ID
   inner_join(xy_b$y, by = c("date", "id")) %>% 
   select(order(colnames(.))) %>% 
   select(-starts_with("p"))
-
-lott_b %>% 
-  summary()
-    
 ```
 
 ```{r bubble, eval=FALSE}
-p1 <- lott_b %>% 
+lott_b %>% 
+  head(9) %>% 
   ggplot(aes(value.x, value.y, color = jackpot, size = megaplier)) +
   geom_point(alpha = 0.7) + 
-  # geom_line(size = 1) +
   scale_size(range = c(1, 10), trans = "exp") +
   scale_color_jcolors_contin(palette = "rainbow") +
   scale_x_continuous(limits= c(0, 80), breaks = seq(0, 80, 10), labels = seq(0, 80, 10)) +
@@ -114,11 +117,10 @@ p1 <- lott_b %>%
         legend.background = element_blank(),
         legend.box.background = element_rect(colour = "black")) +
   labs(title = 'MEGAMILLIONS\ndate results: {current_frame}',
-      x = "numbers (1st to 3d)", 
-      y = "numbers (4th to 5th)", 
+      x = "numbers (1st to 3d)",
+      y = "numbers (4th to 6th)",
       color = "jackpot\n(millions)") +
-  transition_manual(date, cumulative = TRUE) +
-  ease_aes('bounce-in')
+  transition_manual(date, cumulative = TRUE)
 ```
 
 # Polygons
@@ -158,15 +160,14 @@ lott_poly[,"lott_colour"] <- lott_poly %>%
   }
 ```
 
-
-
 ```{r}
 lott_poly %>% 
   mutate(all_dates = paste0(date.x, " & ", date.y)) %>% 
   ggplot(aes(value.x, value.y, fill = lott_colour)) +
   geom_polygon() +
   scale_fill_identity() +
-  transition_manual(all_dates, cumulative = TRUE) +
+  scale_x_continuous(limits= c(0, 80), breaks = seq(0, 80, 10), labels = seq(0, 80, 10)) +
+  scale_y_continuous(limits= c(0, 80), breaks = seq(0, 80, 10), labels = seq(0, 80, 10)) +
   theme_bw() +
   theme(legend.title.align = 0.5,
         panel.grid.minor  = element_blank(),
@@ -175,5 +176,22 @@ lott_poly %>%
         legend.box.background = element_rect(colour = "black")) +
   labs(title = 'MEGAMILLIONS\ndate results: {current_frame}',
       x = "date1 numbers", 
-      y = "date2 numbers") 
+      y = "date2 numbers") +
+  transition_manual(all_dates, cumulative = TRUE)
 ```
+
+
+```{r}
+library(gganimate)
+#> Loading required package: ggplot2
+
+# We'll start with a static plot
+p <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length)) + 
+  geom_point()
+
+anim <- p + 
+  transition_states(Species,
+                    transition_length = 2,
+                    state_length = 1)
+```
+

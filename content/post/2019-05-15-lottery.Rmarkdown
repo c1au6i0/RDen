@@ -27,6 +27,7 @@ library(jcolors)
 library(lubridate)
 library(gapminder)
 library(gganimate)
+library(glue)
 ```
 
 
@@ -67,20 +68,75 @@ lott <- map_dfr(urls, extract_table)
 ```
 
 
+# BUBBLES
+
+```{r}
+xy_b <- lott %>%
+  gather(point, value, x1:x6) %>%
+  mutate(point2 = case_when(
+    str_detect(point, "(1|2|3)") ~ "x",
+    str_detect(point, "(4|5|6)") ~ "y"),
+         id = case_when(
+    str_detect(point, "(1|4)") ~ 1,
+    str_detect(point, "(2|5)") ~ 2,
+    str_detect(point, "(3|6)") ~ 3
+    )
+  ) %>% 
+  split.data.frame(.$point2)  #we split the dataframe based on xy
+  
+names(xy_b) <- c("x", "y")
+
+lott_b <- xy_b$x %>%    # no we join them based on their biweek ID
+  select(-c(point, point2, jackpot, megaplier)) %>% 
+  inner_join(xy_b$y, by = c("date", "id")) %>% 
+  select(order(colnames(.))) %>% 
+  select(-starts_with("p"))
+
+lott_b %>% 
+  summary()
+    
+```
+
+```{r bubble, eval=FALSE}
+p1 <- lott_b %>% 
+  ggplot(aes(value.x, value.y, color = jackpot, size = megaplier)) +
+  geom_point(alpha = 0.7) + 
+  # geom_line(size = 1) +
+  scale_size(range = c(1, 10), trans = "exp") +
+  scale_color_jcolors_contin(palette = "rainbow") +
+  scale_x_continuous(limits= c(0, 80), breaks = seq(0, 80, 10), labels = seq(0, 80, 10)) +
+  scale_y_continuous(limits= c(0, 80), breaks = seq(0, 80, 10), labels = seq(0, 80, 10)) +
+  coord_fixed(ratio = 1) +
+  theme_bw() +
+  theme(legend.title.align = 0.5,
+        panel.grid.minor  = element_blank(),
+        panel.grid.major = element_blank(),
+        legend.background = element_blank(),
+        legend.box.background = element_rect(colour = "black")) +
+  labs(title = 'MEGAMILLIONS\ndate results: {current_frame}',
+      x = "numbers (1st to 3d)", 
+      y = "numbers (4th to 5th)", 
+      color = "jackpot\n(millions)") +
+  transition_manual(date, cumulative = TRUE) +
+  ease_aes('bounce-in')
+```
+
+# Polygons
+
 ```{r}
 # we need to have 6 values for the x and 6 for the y so we are going to take 2 extractions of numbers
-
-xy <- lott %>% 
+xy_p <- lott %>% 
   mutate(biweek = rep(1:(nrow(.)/2), each = 2),  # we create a biweek ID (same ID for points of the same shape)
          xy = rep(c("x", "y"), nrow(.)/2))  %>%  # xy, one extraction will be the x coordinate and one the y
   gather(point, value,x1:x6) %>%  # wide to long
   split.data.frame(.$xy)  #we split the dataframe based on xy
-  names(xy) <- c("x", "y")
+
+names(xy) <- c("x", "y")
  
 # lott_cl <- 
-lott_poly <- xy$x %>%    # no we join them based on their biweek ID
+lott_poly <- xy_p$x %>%    # no we join them based on their biweek ID
   select(-c(xy)) %>% 
-  inner_join(xy$y, by = c("biweek", "point")) %>% 
+  inner_join(xy_p$y, by = c("biweek", "point")) %>% 
   select(order(colnames(.)))
  
 # and voilà 
@@ -90,9 +146,9 @@ We use jackpots number to create colors
 
 ```{r}
 lott_poly[,"lott_colour"] <- lott_poly %>%
-  unite("colour", matches("^(j|m)"), sep = "", remove = FALSE) %>%
+  unite("colour", matches("^(j|m)"), sep = "", remove = FALSE) %>% # we unite jackpot and multiplier
   mutate(colour = as.numeric(colour)) %>%
-  mutate(red = str_sub(colour, 1, 3 ),
+  mutate(red = str_sub(colour, 1, 3 ),  # we decompose the numbers and we make some rgb colors
          green = str_sub(colour, 3, 5),
          blue = str_sub(colour, 6 , 8)) %>%
   mutate_at(.vars = (ncol(.) - 4) : ncol(.), as.numeric) %>%
@@ -106,68 +162,18 @@ lott_poly[,"lott_colour"] <- lott_poly %>%
 
 ```{r}
 lott_poly %>% 
+  mutate(all_dates = paste0(date.x, " & ", date.y)) %>% 
   ggplot(aes(value.x, value.y, fill = lott_colour)) +
   geom_polygon() +
   scale_fill_identity() +
-  transition_manual(biweek, cumulative = TRUE) +
-  ease_aes() 
+  transition_manual(all_dates, cumulative = TRUE) +
+  theme_bw() +
+  theme(legend.title.align = 0.5,
+        panel.grid.minor  = element_blank(),
+        panel.grid.major = element_blank(),
+        legend.background = element_blank(),
+        legend.box.background = element_rect(colour = "black")) +
+  labs(title = 'MEGAMILLIONS\ndate results: {current_frame}',
+      x = "date1 numbers", 
+      y = "date2 numbers") 
 ```
-# BUBBLES
-
-```{r}
-lott %>%
-  gather(point, value, x1:x6) %>%
-  mutate(point2 = case_when(
-    str_detect(point, "(1|3|5)") ~ "x",
-    str_detect(point, "(2|4|6)") ~ "y"),
-         id = case_when(
-    str_detect(point, "(1|2)") ~ 1,
-    str_detect(point, "(3|4)") ~ 2,
-    str_detect(point, "(5|6)") ~ 3
-    )
-  ) %>% 
-  split.data.frame(.$point2)  #we split the dataframe based on xy
-  
-names(xy) <- c("x", "y")
-
-lott_bub <- xy$x %>%    # no we join them based on their biweek ID
-  select(-c(point, point2, jackpot, megaplier)) %>% 
-  inner_join(xy$y, by = c("date", "id")) %>% 
-  select(order(colnames(.))) %>% 
-  select(-starts_with("p"))
-
-lott_bub %>% 
-  summary()
-    
-```
-
-```{r bubble}
-
-
-lott_bub %>% 
-  ggplot(aes(value.x, value.y, color = jackpot, size = megaplier)) +
-  geom_point(alpha = 0.7) + 
-  # geom_line(size = 1) +
-  scale_size(range = c(1, 10), trans = "exp") +
-  scale_color_jcolors_contin(palette = "rainbow") +
-  labs( x = 'exctraction1', y = 'extraction2') +
-  transition_manual(date, cumulative = TRUE) +
-  ease_aes() 
-
-```
-
-
-
-
-
-```{r example}
-lott_cl %>% 
-  ggplot(aes(value.x, value.y, fill = lott_colour)) +
-  geom_polygon() +
-  scale_fill_identity() +
-  theme_void()
-
-```
-
-
-

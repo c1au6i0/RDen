@@ -2,7 +2,7 @@
     "path" : "~/Documents/R_projects/RDen/content/post",
     "sortOrder" : [
         {
-            "ascending" : true,
+            "ascending" : false,
             "columnIndex" : 2
         }
     ]

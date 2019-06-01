@@ -1,28 +1,43 @@
 ---
-title: "Abstract aRt: visualize 16 years of Megamillions numbers"
+title: "Abstract aRt: 16 years of MegaMillions"
 author: ''
-date: '2019-05-15'
+date: '2019-06-01'
 slug: gganimate-lottery
 categories:
   - R
 tags: 
   - gganimate
   - rvest
-  - visualize
+  - visualization
   - aRt
-lastmod: '2019-05-15T14:02:02-04:00'
-keywords: []
-description: ' visualize lottery numbers'
+lastmod: '2019-06-01T14:02:02-04:00'
+keywords: [gganimate, lottery]
+description: 'visualize lottery numbers'
 comment: yes
 toc: yes
 autoCollapseToc: yes
 contentCopyright: yes
 reward: no
 mathjax: no
+
 ---
-
-
+Today we paint. Our canvas is the Cartesian space, our brushes are `R` and its packages, and the art model is  MegaMillions (16 years of numbers).
 <!--more-->
+<!-- CSS -->
+<style>
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width="700px";
+  height="700px"
+}
+</style>
+
+We will harvest the data from the [MegaMillions](https://www.usamega.com/mega-millions-history.asp?p=) website using the `rvest` package, make the data tidy and then use `ggplot` and `gganimate` to plot...
+...or should we say paint?
+
+Let's start by loading the libraries.
 
 ```{r message=FALSE}
 library(tidyverse)
@@ -35,22 +50,24 @@ library(gganimate)
 library(glue)
 ```
 
-
 ```{r read_RDS, eval=TRUE, include=FALSE}
 lott <- readRDS("/Users/heverz/Documents/R_projects/rden/static/data/data_post6/lott.RDS")
 # saveRDS(lott, "/Users/heverz/Documents/R_projects/rden/static/data/data_post6/lott.RDS")
 ```
 
+The data of the lottery are reported across several `html` pages. We create a function to extract the data (that than we will apply to all the different pages). 
+
+The function takes as  argument the url of the page and use `rvast` to read the html file, and then extract the node containing the data of the table. Because the data is extracted into a vector the rest of the function code is aimed at cleaning it up, and  distributing the values across the appropriate columns.
 ```{r get_megamilion, eval=FALSE}
 extract_table <- function(url) {
   # extract values
   url  %>%  
   read_html() %>% 
   html_nodes(".text td") %>% 
-  html_text() %>%  # is a vector that needs to be cleaned up
+  html_text() %>%  # is a vector  that needs to be cleaned up
   {
-    .[. != ""] %>% 
-    .[10:(length(.)-6)]
+    .[. != ""] %>% # we remove empty cells
+    .[10:(length(.)-6)] # and some first values that are junk
   }  %>% 
   {
     tibble(
@@ -60,49 +77,67 @@ extract_table <- function(url) {
       megaplier = as.numeric(.[str_count(.) == 1])
     )
   } %>% 
+  # all the the 6 extracted numbers are in one single cell:
+  # we need to separate them
   separate(numbers, paste0("x", 1:6)) %>% 
-  mutate_at(vars(starts_with("x")), as.numeric) %>% 
-  mutate(jackpot = as.numeric(str_extract(jackpot,  "[0-9]{1,}")))
+  mutate_at(vars(starts_with("x")), as.numeric) %>%  #make them as numeric
+  mutate(jackpot = as.numeric(str_extract(jackpot,  "[0-9]{1,}"))) # remove word million from jackpot cells
 }
+```
 
+The url of the pages containing the data is the same, with exception of the last digits (that indicate the page). Thus, we can easily create the list of relevant lottery pages and than iterate over it to extract the table of value.
 
+```{r eval=FALSE}
 pages <- 1:62 # pages >63  do not have a megaplier
 urls <- paste0("https://www.usamega.com/mega-millions-history.asp?p=", pages)
 
 lott <- map_dfr(urls, extract_table)
-
-min(lott$date)
 ```
 
+Let's take a look at the data.
+```{r}
+glimpse(lott)
+```
+The columns `x1 to x6` contain the number extracted (first, second, third...), the nature of the other columns is pretty self-explanatory.
+We are almost ready for our first paint.
 
-# BUBBLES
+# Raining Blood
+
+**For each, `date` we plot 3 points, the coordinates of which are determined by the 6 extracted numbers .** Point1 will be (`x1`, `x4`), point2 (`x2`, `x5`), point3 (`x3`, `x6`). **The size of the points is determined by the megaplier, the  colour by the jackpot.**
+
+We need to  reshape the dataframe in order to have a column with `x` coordinates and one with `y` column and thus, each row containing info regarding a single point on the Cartesian space. To do that we `tidyr::gather` the data, mutate it, `split` it and then `inner_join` again.
 
 ```{r}
 xy_b <- lott %>%
-  gather(point, value, x1:x6) %>%
-  mutate(point2 = case_when(
-    str_detect(point, "(1|2|3)") ~ "x",
-    str_detect(point, "(4|5|6)") ~ "y"),
-         id = case_when(
-    str_detect(point, "(1|4)") ~ 1,
-    str_detect(point, "(2|5)") ~ 2,
-    str_detect(point, "(3|6)") ~ 3
+  gather(numb, value, x1:x6) %>% # gather x1 to x6 numbers
+  # the first 3 numbers of each extraction will be X the other Y 
+  mutate(point_coord = case_when(
+    str_detect(numb, "(1|2|3)") ~ "x",  # if the string is x1, x2, x3 than x
+    str_detect(numb, "(4|5|6)") ~ "y"), # if the string is y1, y2, y3 than y (I should have renamed columns before gathering)
+         id = case_when(  
+    str_detect(numb, "(1|4)") ~ 1, # point one has the first number as X and the 4th as Y
+    str_detect(numb, "(2|5)") ~ 2,
+    str_detect(numb, "(3|6)") ~ 3
     )
   ) %>% 
-  split.data.frame(.$point2)  #we split the dataframe based on xy
+  split.data.frame(.$point_coord)  #we split the dataframe based on X and Y
   
 names(xy_b) <- c("x", "y")
 
-lott_b <- xy_b$x %>%    # no we join them based on their biweek ID
-  select(-c(point, point2, jackpot, megaplier)) %>% 
+lott_b <- xy_b$x %>%    # now we join them based on their biweek ID
+  select(-c(numb, point_coord, jackpot, megaplier)) %>% 
   inner_join(xy_b$y, by = c("date", "id")) %>% 
   select(order(colnames(.))) %>% 
   select(-starts_with("p"))
 ```
+This is what we get.
+```{r}
+glimpse(lott_b)
+```
 
+Now We paint!
 ```{r bubble, eval=FALSE}
 lott_b %>% 
-  head(9) %>% 
   ggplot(aes(value.x, value.y, color = jackpot, size = megaplier)) +
   geom_point(alpha = 0.7) + 
   scale_size(range = c(1, 10), trans = "exp") +
@@ -116,6 +151,7 @@ lott_b %>%
         panel.grid.major = element_blank(),
         legend.background = element_blank(),
         legend.box.background = element_rect(colour = "black")) +
+  # gganimate part
   labs(title = 'MEGAMILLIONS\ndate results: {current_frame}',
       x = "numbers (1st to 3d)",
       y = "numbers (4th to 6th)",
@@ -123,32 +159,39 @@ lott_b %>%
   transition_manual(date, cumulative = TRUE)
 ```
 
-# Polygons
+<img src="/post/2019-05-15-lottery_files/bubbles.gif" alt="bubble_graph" width="600px" height="600px" class="center"/>
+
+I called this first painting *[Raining Blood](https://www.youtube.com/watch?v=5RXbhahXRuY)*.
+
+# Mystique, the shapelifter
+
+Let's try something more abstract. **We have six numbers for each draw, and thus if we take 2 draws we have enough numbers to plot six points on the Cartesian space. If we connect this vertices we get a six-sided polygon for each 2 draws.**
 
 ```{r}
 # we need to have 6 values for the x and 6 for the y so we are going to take 2 extractions of numbers
 xy_p <- lott %>% 
   mutate(biweek = rep(1:(nrow(.)/2), each = 2),  # we create a biweek ID (same ID for points of the same shape)
-         xy = rep(c("x", "y"), nrow(.)/2))  %>%  # xy, one extraction will be the x coordinate and one the y
-  gather(point, value,x1:x6) %>%  # wide to long
-  split.data.frame(.$xy)  #we split the dataframe based on xy
+         point_coord = rep(c("x", "y"), nrow(.)/2))  %>%  # xy, one extraction will be the x coordinate and one the y
+  gather(numb, value, x1:x6) %>%  # wide to long
+  split.data.frame(.$point_coord)  #we split the dataframe based on xy
 
-names(xy) <- c("x", "y")
+names(xy_p) <- c("x", "y")
  
 # lott_cl <- 
 lott_poly <- xy_p$x %>%    # no we join them based on their biweek ID
-  select(-c(xy)) %>% 
-  inner_join(xy_p$y, by = c("biweek", "point")) %>% 
+  select(-c(point_coord)) %>% 
+  inner_join(xy_p$y, by = c("biweek", "numb")) %>% 
   select(order(colnames(.)))
  
 # and voilà 
 glimpse(lott_poly)
 ```
-We use jackpots number to create colors
+
+How do we choose the colours them? **We unite the 2 jackpot numbers and the the megaplier. We split the resulting number in 3 numbers to get the level of red, green and blue of the filling colour.**
 
 ```{r}
 lott_poly[,"lott_colour"] <- lott_poly %>%
-  unite("colour", matches("^(j|m)"), sep = "", remove = FALSE) %>% # we unite jackpot and multiplier
+  unite("colour", matches("^(j|m)"), sep = "", remove = FALSE) %>% # we unite jackpot and megaplier
   mutate(colour = as.numeric(colour)) %>%
   mutate(red = str_sub(colour, 1, 3 ),  # we decompose the numbers and we make some rgb colors
          green = str_sub(colour, 3, 5),
@@ -159,6 +202,8 @@ lott_poly[,"lott_colour"] <- lott_poly %>%
     rgb(.$red, .$green, .$blue, maxColorValue = 1000)
   }
 ```
+
+Now we are ready to paint!
 
 ```{r}
 lott_poly %>% 
@@ -174,24 +219,20 @@ lott_poly %>%
         panel.grid.major = element_blank(),
         legend.background = element_blank(),
         legend.box.background = element_rect(colour = "black")) +
+  # gganimation
   labs(title = 'MEGAMILLIONS\ndate results: {current_frame}',
       x = "date1 numbers", 
       y = "date2 numbers") +
   transition_manual(all_dates, cumulative = TRUE)
 ```
 
+<img src="/post/2019-05-15-lottery_files/polygons.gif" alt="polygons" class="center"/>
 
-```{r}
-library(gganimate)
-#> Loading required package: ggplot2
+This is *[Mystique, the shapelifter](https://en.wikipedia.org/wiki/Mystique_(comics))*.
 
-# We'll start with a static plot
-p <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length)) + 
-  geom_point()
+# Conclusions
 
-anim <- p + 
-  transition_states(Species,
-                    transition_length = 2,
-                    state_length = 1)
-```
+In this post, we got hands on 2 very popular `R` packages that helped us to make some aRt.
+We used `rvast` to harvest the data of the MegaMillions lottery of the last 16 years, and using `gganimate` we created 2 animated paintings!
 
+I hope that you enjoyed these animations, if you did not...it is probably because you are not sophisticated enough to appreciate abstract aRt! :P :P

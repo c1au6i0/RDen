@@ -175,7 +175,7 @@ autoplot(mb2)
 To undestand why, we need to take a look at our `amis.csv` data.
 
 ```{r echo=FALSE}
-str(fread("/Users/heverz/Documents/R_projects/muaydata/static/data_post5/amis.csv"))
+str(fread("/Users/heverz/Documents/R_projects/rden/static/data/data_post5/amis.csv"))
 ```
 
 Our data consists of numeric variables and `vroom` advantage over the other packages/fucntions is that *"character data is read from the file lazily; you only pay for the data you use"*. 

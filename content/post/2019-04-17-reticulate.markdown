@@ -178,7 +178,7 @@ ax  = ax.set(ylabel='Time (milliseconds)', xlabel='package')
 plt.show()
 ```
 
-![](2019-04-17-reticulate_files/figure-html/p_libraries-1.png)<!-- -->
+<img src="/post/2019-04-17-reticulate_files/figure-html/p_libraries-1.png" width="672" />
 
 # Conclusion
 

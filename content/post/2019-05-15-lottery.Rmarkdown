@@ -57,7 +57,7 @@ lott <- readRDS("/Users/heverz/Documents/R_projects/rden/static/data/data_post6/
 
 The data of the lottery are reported across several `html` pages. We create a function to extract the data (that than we will apply to all the different pages). 
 
-The function takes as  argument the url of the page and use `rvast` to read the html file, and then extract the node containing the data of the table. Because the data is extracted into a vector the rest of the function code is aimed at cleaning it up, and  distributing the values across the appropriate columns.
+The function takes as  argument the url of the page and use `rvest` to read the html file, and then extract the node containing the data of the table. Because the data is extracted into a vector the rest of the function code is aimed at cleaning it up, and  distributing the values across the appropriate columns.
 ```{r get_megamilion, eval=FALSE}
 extract_table <- function(url) {
   # extract values
@@ -233,6 +233,6 @@ This is *[Mystique, the shapelifter](https://en.wikipedia.org/wiki/Mystique_(com
 # Conclusions
 
 In this post, we got hands on 2 very popular `R` packages that helped us to make some aRt.
-We used `rvast` to harvest the data of the MegaMillions lottery of the last 16 years, and using `gganimate` we created 2 animated paintings!
+We used `rvest` to harvest the data of the MegaMillions lottery of the last 16 years, and using `gganimate` we created 2 animated paintings!
 
 I hope that you enjoyed these animations, if you did not...it is probably because you are not sophisticated enough to appreciate abstract aRt! :P :P

@@ -361,7 +361,7 @@ if (!doNotTrack) {
 </div>
 <p>The data of the lottery are reported across several <code>html</code> pages. We create a function to extract the data (that than we will apply to all the different pages).</p>
 
-<p>The function takes as  argument the url of the page and use <code>rvast</code> to read the html file, and then extract the node containing the data of the table. Because the data is extracted into a vector the rest of the function code is aimed at cleaning it up, and  distributing the values across the appropriate columns.</p>
+<p>The function takes as  argument the url of the page and use <code>rvest</code> to read the html file, and then extract the node containing the data of the table. Because the data is extracted into a vector the rest of the function code is aimed at cleaning it up, and  distributing the values across the appropriate columns.</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt"> 1
@@ -761,7 +761,7 @@ glimpse<span class="p">(</span>lott_poly<span class="p">)</span></code></pre></t
 <h1 id="conclusions">Conclusions</h1>
 
 <p>In this post, we got hands on 2 very popular <code>R</code> packages that helped us to make some aRt.
-We used <code>rvast</code> to harvest the data of the MegaMillions lottery of the last 16 years, and using <code>gganimate</code> we created 2 animated paintings!</p>
+We used <code>rvest</code> to harvest the data of the MegaMillions lottery of the last 16 years, and using <code>gganimate</code> we created 2 animated paintings!</p>
 
 <p>I hope that you enjoyed these animations, if you did not&hellip;it is probably because you are not sophisticated enough to appreciate abstract aRt! :P :P</p>
     </div>

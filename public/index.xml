@@ -1194,7 +1194,7 @@ Take a look Hadly Wickaham&amp;rsquo;s  &lt;a href=&#34;https://adv-r.hadley.nz/
 &lt;span class=&#34;kn&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;tidyverse&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;The number of variables collected for the ADD HEALTH is of several thousands. We will focus our analysis on most of the variables collected in the first wave (first survey in 1994) that include demographic information, friend and social network details, parental information and many others . Our classifier will be a response to a question of fourth wave (2006).
+&lt;p&gt;The number of variables collected for the ADD HEALTH is of several thousands. We will focus our analysis on most of the variables collected in the first wave (first survey in 1994) that includes demographic information, friend and social network details, parental information and many others . Our classifier will be a response to a question of fourth wave (2006).
 A description of all the variables of the study can be found using the
 &lt;a href=&#34;https://www.cpc.unc.edu/projects/addhealth/documentation/ace/tool/topics&#34;&gt;codebook web Explorer&lt;/a&gt;.&lt;/p&gt;
 

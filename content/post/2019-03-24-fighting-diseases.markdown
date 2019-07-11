@@ -58,7 +58,7 @@ library(tidyverse)
 
 
 
-The number of variables collected for the ADD HEALTH is of several thousands. We will focus our analysis on most of the variables collected in the first wave (first survey in 1994) that include demographic information, friend and social network details, parental information and many others . Our classifier will be a response to a question of fourth wave (2006). 
+The number of variables collected for the ADD HEALTH is of several thousands. We will focus our analysis on most of the variables collected in the first wave (first survey in 1994) that includes demographic information, friend and social network details, parental information and many others . Our classifier will be a response to a question of fourth wave (2006). 
 A description of all the variables of the study can be found using the 
 [codebook web Explorer](https://www.cpc.unc.edu/projects/addhealth/documentation/ace/tool/topics). 
 

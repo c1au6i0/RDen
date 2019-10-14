@@ -9,40 +9,71 @@
   </url>
   
   <url>
-    <loc>https://rden.netlify.com/post/gganimate-lottery/</loc>
-    <lastmod>2019-06-01T14:02:02-04:00</lastmod>
+    <loc>https://rden.netlify.com/post/breaking_bad/</loc>
+    <lastmod>2019-10-05T12:42:13-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://rden.netlify.com/categories/</loc>
-    <lastmod>2019-06-01T14:02:02-04:00</lastmod>
+    <lastmod>2019-10-05T12:42:13-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://rden.netlify.com/post/</loc>
-    <lastmod>2019-06-01T14:02:02-04:00</lastmod>
+    <lastmod>2019-10-05T12:42:13-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://rden.netlify.com/categories/r/</loc>
-    <lastmod>2019-06-01T14:02:02-04:00</lastmod>
+    <lastmod>2019-10-05T12:42:13-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://rden.netlify.com/tags/r/</loc>
+    <lastmod>2019-10-05T12:42:13-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://rden.netlify.com/</loc>
-    <lastmod>2019-06-01T14:02:02-04:00</lastmod>
+    <lastmod>2019-10-05T12:42:13-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://rden.netlify.com/tags/</loc>
-    <lastmod>2019-06-01T14:02:02-04:00</lastmod>
+    <lastmod>2019-10-05T12:42:13-04:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://rden.netlify.com/tags/ggplot/</loc>
+    <lastmod>2019-10-05T12:42:13-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://rden.netlify.com/tags/textmining/</loc>
+    <lastmod>2019-10-05T12:42:13-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://rden.netlify.com/tags/twitter/</loc>
+    <lastmod>2019-10-05T12:42:13-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://rden.netlify.com/post/gganimate-lottery/</loc>
+    <lastmod>2019-06-01T14:02:02-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
@@ -200,28 +231,10 @@
   </url>
   
   <url>
-    <loc>https://rden.netlify.com/tags/ggplot/</loc>
-    <lastmod>2018-10-23T18:19:53-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://rden.netlify.com/post/re-di-twitter-ii/</loc>
     <lastmod>2018-10-10T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://rden.netlify.com/tags/textmining/</loc>
-    <lastmod>2018-10-10T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://rden.netlify.com/tags/twitter/</loc>
-    <lastmod>2018-10-10T00:00:00+00:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -232,8 +245,7 @@
   </url>
   
   <url>
-    <loc>https://rden.netlify.com/tags/r/</loc>
-    <lastmod>2018-09-12T00:00:00+00:00</lastmod>
+    <loc>https://rden.netlify.com/post/bb_wordcloud/</loc>
     <priority>0</priority>
   </url>
   

@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>wordcloud2</title>
+<script>(function() {
+  
+  
+  
+  window.HTMLWidgets = window.HTMLWidgets || {};
+
+  
+  var viewerMode = window.HTMLWidgets.viewerMode =
+      /\bviewer_pane=1\b/.test(window.location);
+
+  
+  
+  
+  var shinyMode = window.HTMLWidgets.shinyMode =
+      typeof(window.Shiny) !== "undefined" && !!window.Shiny.outputBindings;
+
+  
+  
+  function querySelectorAll(scope, selector) {
+    if (typeof(jQuery) !== "undefined" && scope instanceof jQuery) {
+      return scope.find(selector);
+    }
+    if (scope.querySelectorAll) {
+      return scope.querySelectorAll(selector);
+    }
+  }
+
+  function asArray(value) {
+    if (value === null)
+      return [];
+    if ($.isArray(value))
+      return value;
+    return [value];
+  }
+
+  
+  function extend(target  ) {
+    if (arguments.length == 1) {
+      return target;
+    }
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+      for (var prop in source) {
+        if (source.hasOwnProperty(prop)) {
+          target[prop] = source[prop];
+        }
+      }
+    }
+    return target;
+  }
+
+  
+  function forEach(values, callback, thisArg) {
+    if (values.forEach) {
+      values.forEach(callback, thisArg);
+    } else {
+      for (var i = 0; i < values.length; i++) {
+        callback.call(thisArg, values[i], i, values);
+      }
+    }
+  }
+
+  
+  
+  
+  
+  
+  
+  
+  function overrideMethod(target, methodName, funcSource) {
+    var superFunc = target[methodName] || function() {};
+    var superFuncBound = function() {
+      return superFunc.apply(target, arguments);
+    };
+    target[methodName] = funcSource(superFuncBound);
+  }
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  function delegateMethod(delegator, delegatee, methodName) {
+    var inherited = delegator[methodName];
+    delegator[methodName] = function() {
+      var target = delegatee;
+      var method = delegatee[methodName];
+
+      
+      
+      if (!method) {
+        target = delegator;
+        method = inherited;
+      }
+
+      if (method) {
+        return method.apply(target, arguments);
+      }
+    };
+  }
+
+  
+  function elementData(el, name, value) {
+    if (arguments.length == 2) {
+      return el["htmlwidget_data_" + name];
+    } else if (arguments.length == 3) {
+      el["htmlwidget_data_" + name] = value;
+      return el;
+    } else {
+      throw new Error("Wrong number of arguments for elementData: " +
+        arguments.length);
+    }
+  }
+
+  
+  function escapeRegExp(str) {
+    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+  }
+
+  function hasClass(el, className) {
+    var re = new RegExp("\\b" + escapeRegExp(className) + "\\b");
+    return re.test(el.className);
+  }
+
+  
+  
+  
+  
+  function filterByClass(elements, className, include) {
+    var results = [];
+    for (var i = 0; i < elements.length; i++) {
+      if (hasClass(elements[i], className) == include)
+        results.push(elements[i]);
+    }
+    return results;
+  }
+
+  function on(obj, eventName, func) {
+    if (obj.addEventListener) {
+      obj.addEventListener(eventName, func, false);
+    } else if (obj.attachEvent) {
+      obj.attachEvent(eventName, func);
+    }
+  }
+
+  function off(obj, eventName, func) {
+    if (obj.removeEventListener)
+      obj.removeEventListener(eventName, func, false);
+    else if (obj.detachEvent) {
+      obj.detachEvent(eventName, func);
+    }
+  }
+
+  
+  
+  
+  function unpackPadding(value) {
+    if (typeof(value) === "number")
+      value = [value];
+    if (value.length === 1) {
+      return {top: value[0], right: value[0], bottom: value[0], left: value[0]};
+    }
+    if (value.length === 2) {
+      return {top: value[0], right: value[1], bottom: value[0], left: value[1]};
+    }
+    if (value.length === 3) {
+      return {top: value[0], right: value[1], bottom: value[2], left: value[1]};
+    }
+    if (value.length === 4) {
+      return {top: value[0], right: value[1], bottom: value[2], left: value[3]};
+    }
+  }
+
+  
+  function paddingToCss(paddingObj) {
+    return paddingObj.top + "px " + paddingObj.right + "px " + paddingObj.bottom + "px " + paddingObj.left + "px";
+  }
+
+  
+  function px(x) {
+    if (typeof(x) === "number")
+      return x + "px";
+    else
+      return x;
+  }
+
+  
+  
+  
+  function sizingPolicy(el) {
+    var sizingEl = document.querySelector("script[data-for='" + el.id + "'][type='application/htmlwidget-sizing']");
+    if (!sizingEl)
+      return null;
+    var sp = JSON.parse(sizingEl.textContent || sizingEl.text || "{}");
+    if (viewerMode) {
+      return sp.viewer;
+    } else {
+      return sp.browser;
+    }
+  }
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  function evalAndRun(tasks, target, args) {
+    if (tasks) {
+      forEach(tasks, function(task) {
+        var theseArgs = args;
+        if (typeof(task) === "object") {
+          theseArgs = theseArgs.concat([task.data]);
+          task = task.code;
+        }
+        var taskFunc = eval("(" + task + ")");
+        if (typeof(taskFunc) !== "function") {
+          throw new Error("Task must be a function! Source:\n" + task);
+        }
+        taskFunc.apply(target, theseArgs);
+      });
+    }
+  }
+
+  function initSizing(el) {
+    var sizing = sizingPolicy(el);
+    if (!sizing)
+      return;
+
+    var cel = document.getElementById("htmlwidget_container");
+    if (!cel)
+      return;
+
+    if (typeof(sizing.padding) !== "undefined") {
+      document.body.style.margin = "0";
+      document.body.style.padding = paddingToCss(unpackPadding(sizing.padding));
+    }
+
+    if (sizing.fill) {
+      document.body.style.overflow = "hidden";
+      document.body.style.width = "100%";
+      document.body.style.height = "100%";
+      document.documentElement.style.width = "100%";
+      document.documentElement.style.height = "100%";
+      if (cel) {
+        cel.style.position = "absolute";
+        var pad = unpackPadding(sizing.padding);
+        cel.style.top = pad.top + "px";
+        cel.style.right = pad.right + "px";
+        cel.style.bottom = pad.bottom + "px";
+        cel.style.left = pad.left + "px";
+        el.style.width = "100%";
+        el.style.height = "100%";
+      }
+
+      return {
+        getWidth: function() { return cel.offsetWidth; },
+        getHeight: function() { return cel.offsetHeight; }
+      };
+
+    } else {
+      el.style.width = px(sizing.width);
+      el.style.height = px(sizing.height);
+
+      return {
+        getWidth: function() { return el.offsetWidth; },
+        getHeight: function() { return el.offsetHeight; }
+      };
+    }
+  }
+
+  
+  var defaults = {
+    find: function(scope) {
+      return querySelectorAll(scope, "." + this.name);
+    },
+    renderError: function(el, err) {
+      var $el = $(el);
+
+      this.clearError(el);
+
+      
+      var errClass = "shiny-output-error";
+      if (err.type !== null) {
+        
+        errClass = errClass + " " + $.map(asArray(err.type), function(type) {
+          return errClass + "-" + type;
+        }).join(" ");
+      }
+      errClass = errClass + " htmlwidgets-error";
+
+      
+      
+      var display = $el.css("display");
+      $el.data("restore-display-mode", display);
+
+      if (display === "inline" || display === "inline-block") {
+        $el.hide();
+        if (err.message !== "") {
+          var errorSpan = $("<span>").addClass(errClass);
+          errorSpan.text(err.message);
+          $el.after(errorSpan);
+        }
+      } else if (display === "block") {
+        
+        
+        
+        $el.css("visibility", "hidden");
+        if (err.message !== "") {
+          var errorDiv = $("<div>").addClass(errClass).css("position", "absolute")
+            .css("top", el.offsetTop)
+            .css("left", el.offsetLeft)
+            
+            
+            
+            .css("maxWidth", el.offsetWidth)
+            .css("height", el.offsetHeight);
+          errorDiv.text(err.message);
+          $el.after(errorDiv);
+
+          
+          
+          var intId = setInterval(function() {
+            if (!errorDiv[0].parentElement) {
+              clearInterval(intId);
+              return;
+            }
+            errorDiv
+              .css("top", el.offsetTop)
+              .css("left", el.offsetLeft)
+              .css("maxWidth", el.offsetWidth)
+              .css("height", el.offsetHeight);
+          }, 500);
+        }
+      }
+    },
+    clearError: function(el) {
+      var $el = $(el);
+      var display = $el.data("restore-display-mode");
+      $el.data("restore-display-mode", null);
+
+      if (display === "inline" || display === "inline-block") {
+        if (display)
+          $el.css("display", display);
+        $(el.nextSibling).filter(".htmlwidgets-error").remove();
+      } else if (display === "block"){
+        $el.css("visibility", "inherit");
+        $(el.nextSibling).filter(".htmlwidgets-error").remove();
+      }
+    },
+    sizing: {}
+  };
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  window.HTMLWidgets.widget = function(definition) {
+    if (!definition.name) {
+      throw new Error("Widget must have a name");
+    }
+    if (!definition.type) {
+      throw new Error("Widget must have a type");
+    }
+    
+    if (definition.type !== "output") {
+      throw new Error("Unrecognized widget type '" + definition.type + "'");
+    }
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    if (definition.factory) {
+      definition = createLegacyDefinitionAdapter(definition);
+    }
+
+    if (!definition.renderValue) {
+      throw new Error("Widget must have a renderValue function");
+    }
+
+    
+    
+    
+    window.HTMLWidgets.widgets = window.HTMLWidgets.widgets || [];
+    
+    var staticBinding = extend({}, defaults, definition);
+    overrideMethod(staticBinding, "find", function(superfunc) {
+      return function(scope) {
+        var results = superfunc(scope);
+        
+        return filterByClass(results, "html-widget-output", false);
+      };
+    });
+    window.HTMLWidgets.widgets.push(staticBinding);
+
+    if (shinyMode) {
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+      var bindingDef = extend({}, defaults, definition);
+
+      
+      var shinyBinding = new Shiny.OutputBinding();
+
+      
+      
+      
+      
+      
+      
+      delegateMethod(shinyBinding, bindingDef, "getId");
+      delegateMethod(shinyBinding, bindingDef, "onValueChange");
+      delegateMethod(shinyBinding, bindingDef, "onValueError");
+      delegateMethod(shinyBinding, bindingDef, "renderError");
+      delegateMethod(shinyBinding, bindingDef, "clearError");
+      delegateMethod(shinyBinding, bindingDef, "showProgress");
+
+      
+      
+
+      shinyBinding.find = function(scope) {
+        var results = bindingDef.find(scope);
+
+        
+        var dynamicResults = results.filter(".html-widget-output");
+
+        
+        
+        
+        
+        
+        if (results.length !== dynamicResults.length)
+          scheduleStaticRender();
+
+        return dynamicResults;
+      };
+
+      
+      
+
+      shinyBinding.renderValue = function(el, data) {
+        Shiny.renderDependencies(data.deps);
+        
+        if (!(data.evals instanceof Array)) data.evals = [data.evals];
+        for (var i = 0; data.evals && i < data.evals.length; i++) {
+          window.HTMLWidgets.evaluateStringMember(data.x, data.evals[i]);
+        }
+        if (!bindingDef.renderOnNullValue) {
+          if (data.x === null) {
+            el.style.visibility = "hidden";
+            return;
+          } else {
+            el.style.visibility = "inherit";
+          }
+        }
+        if (!elementData(el, "initialized")) {
+          initSizing(el);
+
+          elementData(el, "initialized", true);
+          if (bindingDef.initialize) {
+            var result = bindingDef.initialize(el, el.offsetWidth,
+              el.offsetHeight);
+            elementData(el, "init_result", result);
+          }
+        }
+        bindingDef.renderValue(el, data.x, elementData(el, "init_result"));
+        evalAndRun(data.jsHooks.render, elementData(el, "init_result"), [el, data.x]);
+      };
+
+      
+      if (bindingDef.resize) {
+        shinyBinding.resize = function(el, width, height) {
+          
+          
+          if (elementData(el, "initialized")) {
+            bindingDef.resize(el, width, height, elementData(el, "init_result"));
+          }
+        };
+      }
+
+      Shiny.outputBindings.register(shinyBinding, bindingDef.name);
+    }
+  };
+
+  var scheduleStaticRenderTimerId = null;
+  function scheduleStaticRender() {
+    if (!scheduleStaticRenderTimerId) {
+      scheduleStaticRenderTimerId = setTimeout(function() {
+        scheduleStaticRenderTimerId = null;
+        window.HTMLWidgets.staticRender();
+      }, 1);
+    }
+  }
+
+  
+  
+  window.HTMLWidgets.staticRender = function() {
+    var bindings = window.HTMLWidgets.widgets || [];
+    forEach(bindings, function(binding) {
+      var matches = binding.find(document.documentElement);
+      forEach(matches, function(el) {
+        var sizeObj = initSizing(el, binding);
+
+        if (hasClass(el, "html-widget-static-bound"))
+          return;
+        el.className = el.className + " html-widget-static-bound";
+
+        var initResult;
+        if (binding.initialize) {
+          initResult = binding.initialize(el,
+            sizeObj ? sizeObj.getWidth() : el.offsetWidth,
+            sizeObj ? sizeObj.getHeight() : el.offsetHeight
+          );
+          elementData(el, "init_result", initResult);
+        }
+
+        if (binding.resize) {
+          var lastSize = {
+            w: sizeObj ? sizeObj.getWidth() : el.offsetWidth,
+            h: sizeObj ? sizeObj.getHeight() : el.offsetHeight
+          };
+          var resizeHandler = function(e) {
+            var size = {
+              w: sizeObj ? sizeObj.getWidth() : el.offsetWidth,
+              h: sizeObj ? sizeObj.getHeight() : el.offsetHeight
+            };
+            if (size.w === 0 && size.h === 0)
+              return;
+            if (size.w === lastSize.w && size.h === lastSize.h)
+              return;
+            lastSize = size;
+            binding.resize(el, size.w, size.h, initResult);
+          };
+
+          on(window, "resize", resizeHandler);
+
+          
+          
+          
+          
+          
+          
+          
+          if (window.jQuery) {
+            window.jQuery(document).on(
+              "shown.htmlwidgets shown.bs.tab.htmlwidgets shown.bs.collapse.htmlwidgets",
+              resizeHandler
+            );
+            window.jQuery(document).on(
+              "hidden.htmlwidgets hidden.bs.tab.htmlwidgets hidden.bs.collapse.htmlwidgets",
+              resizeHandler
+            );
+          }
+
+          
+          
+          
+          
+          
+          
+          if (window.addEventListener) {
+            
+            
+            
+            on(document, "slideenter", resizeHandler);
+            on(document, "slideleave", resizeHandler);
+          }
+        }
+
+        var scriptData = document.querySelector("script[data-for='" + el.id + "'][type='application/json']");
+        if (scriptData) {
+          var data = JSON.parse(scriptData.textContent || scriptData.text);
+          
+          if (!(data.evals instanceof Array)) data.evals = [data.evals];
+          for (var k = 0; data.evals && k < data.evals.length; k++) {
+            window.HTMLWidgets.evaluateStringMember(data.x, data.evals[k]);
+          }
+          binding.renderValue(el, data.x, initResult);
+          evalAndRun(data.jsHooks.render, initResult, [el, data.x]);
+        }
+      });
+    });
+
+    invokePostRenderHandlers();
+  }
+
+  
+  if (document.addEventListener) {
+    document.addEventListener("DOMContentLoaded", function() {
+      document.removeEventListener("DOMContentLoaded", arguments.callee, false);
+      window.HTMLWidgets.staticRender();
+    }, false);
+  } else if (document.attachEvent) {
+    document.attachEvent("onreadystatechange", function() {
+      if (document.readyState === "complete") {
+        document.detachEvent("onreadystatechange", arguments.callee);
+        window.HTMLWidgets.staticRender();
+      }
+    });
+  }
+
+
+  window.HTMLWidgets.getAttachmentUrl = function(depname, key) {
+    
+    if (typeof(key) === "undefined")
+      key = 1;
+
+    var link = document.getElementById(depname + "-" + key + "-attachment");
+    if (!link) {
+      throw new Error("Attachment " + depname + "/" + key + " not found in document");
+    }
+    return link.getAttribute("href");
+  };
+
+  window.HTMLWidgets.dataframeToD3 = function(df) {
+    var names = [];
+    var length;
+    for (var name in df) {
+        if (df.hasOwnProperty(name))
+            names.push(name);
+        if (typeof(df[name]) !== "object" || typeof(df[name].length) === "undefined") {
+            throw new Error("All fields must be arrays");
+        } else if (typeof(length) !== "undefined" && length !== df[name].length) {
+            throw new Error("All fields must be arrays of the same length");
+        }
+        length = df[name].length;
+    }
+    var results = [];
+    var item;
+    for (var row = 0; row < length; row++) {
+        item = {};
+        for (var col = 0; col < names.length; col++) {
+            item[names[col]] = df[names[col]][row];
+        }
+        results.push(item);
+    }
+    return results;
+  };
+
+  window.HTMLWidgets.transposeArray2D = function(array) {
+      if (array.length === 0) return array;
+      var newArray = array[0].map(function(col, i) {
+          return array.map(function(row) {
+              return row[i]
+          })
+      });
+      return newArray;
+  };
+  
+  
+  
+  function splitWithEscape(value, splitChar, escapeChar) {
+    var results = [];
+    var escapeMode = false;
+    var currentResult = "";
+    for (var pos = 0; pos < value.length; pos++) {
+      if (!escapeMode) {
+        if (value[pos] === splitChar) {
+          results.push(currentResult);
+          currentResult = "";
+        } else if (value[pos] === escapeChar) {
+          escapeMode = true;
+        } else {
+          currentResult += value[pos];
+        }
+      } else {
+        currentResult += value[pos];
+        escapeMode = false;
+      }
+    }
+    if (currentResult !== "") {
+      results.push(currentResult);
+    }
+    return results;
+  }
+  
+  window.HTMLWidgets.evaluateStringMember = function(o, member) {
+    var parts = splitWithEscape(member, '.', '\\');
+    for (var i = 0, l = parts.length; i < l; i++) {
+      var part = parts[i];
+      
+      if (o !== null && typeof o === "object" && part in o) {
+        if (i == (l - 1)) { 
+          if (typeof o[part] === "string")
+            o[part] = eval("(" + o[part] + ")");
+        } else { 
+          o = o[part];
+        }
+      }
+    }
+  };
+
+  
+  
+  
+  window.HTMLWidgets.getInstance = function(el) {
+    return elementData(el, "init_result");
+  };
+
+  
+  
+  
+  
+  
+  
+  
+  
+  window.HTMLWidgets.find = function(scope, selector) {
+    if (arguments.length == 1) {
+      selector = scope;
+      scope = document;
+    }
+
+    var el = scope.querySelector(selector);
+    if (el === null) {
+      return null;
+    } else {
+      return window.HTMLWidgets.getInstance(el);
+    }
+  };
+
+  
+  
+  
+  
+  
+  
+  
+  
+  window.HTMLWidgets.findAll = function(scope, selector) {
+    if (arguments.length == 1) {
+      selector = scope;
+      scope = document;
+    }
+
+    var nodes = scope.querySelectorAll(selector);
+    var results = [];
+    for (var i = 0; i < nodes.length; i++) {
+      results.push(window.HTMLWidgets.getInstance(nodes[i]));
+    }
+    return results;
+  };
+
+  var postRenderHandlers = [];
+  function invokePostRenderHandlers() {
+    while (postRenderHandlers.length) {
+      var handler = postRenderHandlers.shift();
+      if (handler) {
+        handler();
+      }
+    }
+  }
+
+  
+  
+  window.HTMLWidgets.addPostRenderHandler = function(callback) {
+    postRenderHandlers.push(callback);
+  };
+
+  
+  
+  
+  
+  function createLegacyDefinitionAdapter(defn) {
+    var result = {
+      name: defn.name,
+      type: defn.type,
+      initialize: function(el, width, height) {
+        return defn.factory(el, width, height);
+      },
+      renderValue: function(el, x, instance) {
+        return instance.renderValue(x);
+      },
+      resize: function(el, width, height, instance) {
+        return instance.resize(width, height);
+      }
+    };
+
+    if (defn.find)
+      result.find = defn.find;
+    if (defn.renderError)
+      result.renderError = defn.renderError;
+    if (defn.clearError)
+      result.clearError = defn.clearError;
+
+    return result;
+  }
+})();
+
+</script>
+<style type="text/css">#wcLabel {position: absolute;border: 2px solid #fff;box-shadow: 0 0 4px 0 #008;padding: 2px;pointer-events: none; }#wcSpan {position: absolute;top: 100%;left: 0;background-color: rgba(255, 255, 255, 0.8);color: #333;margin-top: 6px;padding: 0 0.5em;border-radius: 0.5em;white-space: nowrap; }</style>
+<script>
+
+
+'use strict';
+
+
+if (!window.setImmediate) {
+  window.setImmediate = (function setupSetImmediate() {
+    return window.msSetImmediate ||
+    window.webkitSetImmediate ||
+    window.mozSetImmediate ||
+    window.oSetImmediate ||
+    (function setupSetZeroTimeout() {
+      if (!window.postMessage || !window.addEventListener) {
+        return null;
+      }
+
+      var callbacks = [undefined];
+      var message = 'zero-timeout-message';
+
+      
+      
+      
+      var setZeroTimeout = function setZeroTimeout(callback) {
+        var id = callbacks.length;
+        callbacks.push(callback);
+        window.postMessage(message + id.toString(36), '*');
+
+        return id;
+      };
+
+      window.addEventListener('message', function setZeroTimeoutMessage(evt) {
+        
+        
+        if (typeof evt.data !== 'string' ||
+            evt.data.substr(0, message.length) !== message
+) {
+          return;
+        }
+
+        evt.stopImmediatePropagation();
+
+        var id = parseInt(evt.data.substr(message.length), 36);
+        if (!callbacks[id]) {
+          return;
+        }
+
+        callbacks[id]();
+        callbacks[id] = undefined;
+      }, true);
+
+       
+      window.clearImmediate = function clearZeroTimeout(id) {
+        if (!callbacks[id]) {
+          return;
+        }
+
+        callbacks[id] = undefined;
+      };
+
+      return setZeroTimeout;
+    })() ||
+    
+    function setImmediateFallback(fn) {
+      window.setTimeout(fn, 0);
+    };
+  })();
+}
+
+if (!window.clearImmediate) {
+  window.clearImmediate = (function setupClearImmediate() {
+    return window.msClearImmediate ||
+    window.webkitClearImmediate ||
+    window.mozClearImmediate ||
+    window.oClearImmediate ||
+    
+    
+    function clearImmediateFallback(timer) {
+      window.clearTimeout(timer);
+    };
+  })();
+}
+
+(function(global) {
+
+  
+  var isSupported = (function isSupported() {
+    var canvas = document.createElement('canvas');
+    if (!canvas || !canvas.getContext) {
+      return false;
+    }
+
+    var ctx = canvas.getContext('2d');
+    if (!ctx.getImageData) {
+      return false;
+    }
+    if (!ctx.fillText) {
+      return false;
+    }
+
+    if (!Array.prototype.some) {
+      return false;
+    }
+    if (!Array.prototype.push) {
+      return false;
+    }
+
+    return true;
+  }());
+
+  
+  
+  var minFontSize = (function getMinFontSize() {
+    if (!isSupported) {
+      return;
+    }
+
+    var ctx = document.createElement('canvas').getContext('2d');
+
+    
+    var size = 20;
+
+    
+    var hanWidth, mWidth;
+
+    while (size) {
+      ctx.font = size.toString(10) + 'px sans-serif';
+      if ((ctx.measureText('\uFF37').width === hanWidth) &&
+          (ctx.measureText('m').width) === mWidth) {
+        return (size + 1);
+      }
+
+      hanWidth = ctx.measureText('\uFF37').width;
+      mWidth = ctx.measureText('m').width;
+
+      size--;
+    }
+
+    return 0;
+  })();
+
+  
+  var shuffleArray = function shuffleArray(arr) {
+    for (var j, x, i = arr.length; i;
+      j = Math.floor(Math.random() * i),
+      x = arr[--i], arr[i] = arr[j],
+      arr[j] = x) {}
+    return arr;
+  };
+
+  var WordCloud = function WordCloud(elements, options) {
+    if (!isSupported) {
+      return;
+    }
+
+    if (!Array.isArray(elements)) {
+      elements = [elements];
+    }
+
+    elements.forEach(function(el, i) {
+      if (typeof el === 'string') {
+        elements[i] = document.getElementById(el);
+        if (!elements[i]) {
+          throw 'The element id specified is not found.';
+        }
+      } else if (!el.tagName && !el.appendChild) {
+        throw 'You must pass valid HTML elements, or ID of the element.';
+      }
+    });
+
+     
+    var settings = {
+      list: [],
+      fontFamily: '"Trebuchet MS", "Heiti TC", "微軟正黑體", ' +
+                  '"Arial Unicode MS", "Droid Fallback Sans", sans-serif',
+      fontWeight: 'normal',
+      color: 'random-dark',
+      minSize: 0, 
+      weightFactor: 1,
+      clearCanvas: true,
+      backgroundColor: '#fff',  
+
+      gridSize: 8,
+      origin: null,
+
+      drawMask: false,
+      maskColor: 'rgba(255,0,0,0.3)',
+      maskGapWidth: 0.3,
+
+      wait: 0,
+      abortThreshold: 0, 
+      abort: function noop() {},
+
+      minRotation: - Math.PI / 2,
+      maxRotation: Math.PI / 2,
+
+      shuffle: true,
+      rotateRatio: 0.1,
+
+      shape: 'circle',
+      ellipticity: 0.65,
+
+      classes: null,
+
+      hover: null,
+      click: null
+    };
+
+    if (options) {
+      for (var key in options) {
+        if (key in settings) {
+          settings[key] = options[key];
+        }
+      }
+    }
+
+     
+    if (typeof settings.weightFactor !== 'function') {
+      var factor = settings.weightFactor;
+      settings.weightFactor = function weightFactor(pt) {
+        return pt * factor; 
+      };
+    }
+
+     
+    if (typeof settings.shape !== 'function') {
+      switch (settings.shape) {
+        case 'circle':
+         
+        default:
+          
+          settings.shape = 'circle';
+          break;
+
+        case 'cardioid':
+          settings.shape = function shapeCardioid(theta) {
+            return 1 - Math.sin(theta);
+          };
+          break;
+
+        
+
+
+        case 'diamond':
+        case 'square':
+          
+          
+          
+          settings.shape = function shapeSquare(theta) {
+            var thetaPrime = theta % (2 * Math.PI / 4);
+            return 1 / (Math.cos(thetaPrime) + Math.sin(thetaPrime));
+          };
+          break;
+
+        case 'triangle-forward':
+          
+          
+          
+          settings.shape = function shapeTriangle(theta) {
+            var thetaPrime = theta % (2 * Math.PI / 3);
+            return 1 / (Math.cos(thetaPrime) +
+                        Math.sqrt(3) * Math.sin(thetaPrime));
+          };
+          break;
+
+        case 'triangle':
+        case 'triangle-upright':
+          settings.shape = function shapeTriangle(theta) {
+            var thetaPrime = (theta + Math.PI * 3 / 2) % (2 * Math.PI / 3);
+            return 1 / (Math.cos(thetaPrime) +
+                        Math.sqrt(3) * Math.sin(thetaPrime));
+          };
+          break;
+
+        case 'pentagon':
+          settings.shape = function shapePentagon(theta) {
+            var thetaPrime = (theta + 0.955) % (2 * Math.PI / 5);
+            return 1 / (Math.cos(thetaPrime) +
+                        0.726543 * Math.sin(thetaPrime));
+          };
+          break;
+
+        case 'star':
+          settings.shape = function shapeStar(theta) {
+            var thetaPrime = (theta + 0.955) % (2 * Math.PI / 10);
+            if ((theta + 0.955) % (2 * Math.PI / 5) - (2 * Math.PI / 10) >= 0) {
+              return 1 / (Math.cos((2 * Math.PI / 10) - thetaPrime) +
+                          3.07768 * Math.sin((2 * Math.PI / 10) - thetaPrime));
+            } else {
+              return 1 / (Math.cos(thetaPrime) +
+                          3.07768 * Math.sin(thetaPrime));
+            }
+          };
+          break;
+      }
+    }
+
+     
+    settings.gridSize = Math.max(Math.floor(settings.gridSize), 4);
+
+     
+    var g = settings.gridSize;
+    var maskRectWidth = g - settings.maskGapWidth;
+
+     
+    var rotationRange = Math.abs(settings.maxRotation - settings.minRotation);
+    var minRotation = Math.min(settings.maxRotation, settings.minRotation);
+
+     
+    var grid, 
+      ngx, ngy, 
+      center, 
+      maxRadius;
+
+     
+    var escapeTime;
+
+     
+    var getTextColor;
+    function random_hsl_color(min, max) {
+      return 'hsl(' +
+        (Math.random() * 360).toFixed() + ',' +
+        (Math.random() * 30 + 70).toFixed() + '%,' +
+        (Math.random() * (max - min) + min).toFixed() + '%)';
+    }
+    switch (settings.color) {
+      case 'random-dark':
+        getTextColor = function getRandomDarkColor() {
+          return random_hsl_color(10, 50);
+        };
+        break;
+
+      case 'random-light':
+        getTextColor = function getRandomLightColor() {
+          return random_hsl_color(50, 90);
+        };
+        break;
+
+      default:
+        if (typeof settings.color === 'function') {
+          getTextColor = settings.color;
+        }
+        break;
+    }
+
+     
+    var getTextClasses = null;
+    if (typeof settings.classes === 'function') {
+      getTextClasses = settings.classes;
+    }
+
+     
+    var interactive = false;
+    var infoGrid = [];
+    var hovered;
+
+    var getInfoGridFromMouseTouchEvent =
+    function getInfoGridFromMouseTouchEvent(evt) {
+      var canvas = evt.currentTarget;
+      var rect = canvas.getBoundingClientRect();
+      var clientX;
+      var clientY;
+       
+      if (evt.touches) {
+        clientX = evt.touches[0].clientX;
+        clientY = evt.touches[0].clientY;
+      } else {
+        clientX = evt.clientX;
+        clientY = evt.clientY;
+      }
+      var eventX = clientX - rect.left;
+      var eventY = clientY - rect.top;
+
+      var x = Math.floor(eventX * ((canvas.width / rect.width) || 1) / g);
+      var y = Math.floor(eventY * ((canvas.height / rect.height) || 1) / g);
+
+      return infoGrid[x][y];
+    };
+
+    var wordcloudhover = function wordcloudhover(evt) {
+      var info = getInfoGridFromMouseTouchEvent(evt);
+
+      if (hovered === info) {
+        return;
+      }
+
+      hovered = info;
+      if (!info) {
+        settings.hover(undefined, undefined, evt);
+
+        return;
+      }
+
+      settings.hover(info.item, info.dimension, evt);
+
+    };
+
+    var wordcloudclick = function wordcloudclick(evt) {
+      var info = getInfoGridFromMouseTouchEvent(evt);
+      if (!info) {
+        return;
+      }
+
+      settings.click(info.item, info.dimension, evt);
+      evt.preventDefault();
+    };
+
+     
+    var pointsAtRadius = [];
+    var getPointsAtRadius = function getPointsAtRadius(radius) {
+      if (pointsAtRadius[radius]) {
+        return pointsAtRadius[radius];
+      }
+
+      
+      var T = radius * 8;
+
+      
+      var t = T;
+      var points = [];
+
+      if (radius === 0) {
+        points.push([center[0], center[1], 0]);
+      }
+
+      while (t--) {
+        
+        var rx = 1;
+        if (settings.shape !== 'circle') {
+          rx = settings.shape(t / T * 2 * Math.PI); 
+        }
+
+        
+        points.push([
+          center[0] + radius * rx * Math.cos(-t / T * 2 * Math.PI),
+          center[1] + radius * rx * Math.sin(-t / T * 2 * Math.PI) *
+            settings.ellipticity,
+          t / T * 2 * Math.PI]);
+      }
+
+      pointsAtRadius[radius] = points;
+      return points;
+    };
+
+     
+    var exceedTime = function exceedTime() {
+      return ((settings.abortThreshold > 0) &&
+        ((new Date()).getTime() - escapeTime > settings.abortThreshold));
+    };
+
+     
+    var getRotateDeg = function getRotateDeg() {
+      if (settings.rotateRatio === 0) {
+        return 0;
+      }
+
+      if (Math.random() > settings.rotateRatio) {
+        return 0;
+      }
+
+      if (rotationRange === 0) {
+        return minRotation;
+      }
+
+      return minRotation + Math.random() * rotationRange;
+    };
+
+    var getTextInfo = function getTextInfo(word, weight, rotateDeg) {
+      
+      
+      
+      var debug = false;
+      var fontSize = settings.weightFactor(weight);
+      if (fontSize <= settings.minSize) {
+        return false;
+      }
+
+      
+      
+      
+      var mu = 1;
+      if (fontSize < minFontSize) {
+        mu = (function calculateScaleFactor() {
+          var mu = 2;
+          while (mu * fontSize < minFontSize) {
+            mu += 2;
+          }
+          return mu;
+        })();
+      }
+
+      var fcanvas = document.createElement('canvas');
+      var fctx = fcanvas.getContext('2d', { willReadFrequently: true });
+
+      fctx.font = settings.fontWeight + ' ' +
+        (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+
+      
+      var fw = fctx.measureText(word).width / mu;
+      var fh = Math.max(fontSize * mu,
+                        fctx.measureText('m').width,
+                        fctx.measureText('\uFF37').width) / mu;
+
+      
+      
+      var boxWidth = fw + fh * 2;
+      var boxHeight = fh * 3;
+      var fgw = Math.ceil(boxWidth / g);
+      var fgh = Math.ceil(boxHeight / g);
+      boxWidth = fgw * g;
+      boxHeight = fgh * g;
+
+      
+      
+
+      
+      var fillTextOffsetX = - fw / 2;
+      
+      
+      
+      var fillTextOffsetY = - fh * 0.4;
+
+      
+      var cgh = Math.ceil((boxWidth * Math.abs(Math.sin(rotateDeg)) +
+                           boxHeight * Math.abs(Math.cos(rotateDeg))) / g);
+      var cgw = Math.ceil((boxWidth * Math.abs(Math.cos(rotateDeg)) +
+                           boxHeight * Math.abs(Math.sin(rotateDeg))) / g);
+      var width = cgw * g;
+      var height = cgh * g;
+
+      fcanvas.setAttribute('width', width);
+      fcanvas.setAttribute('height', height);
+
+      if (debug) {
+        
+        document.body.appendChild(fcanvas);
+        
+        fctx.save();
+      }
+
+      
+      fctx.scale(1 / mu, 1 / mu);
+      fctx.translate(width * mu / 2, height * mu / 2);
+      fctx.rotate(- rotateDeg);
+
+      
+      
+      fctx.font = settings.fontWeight + ' ' +
+        (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+
+      
+      
+      
+      
+      
+      
+      fctx.fillStyle = '#000';
+      fctx.textBaseline = 'middle';
+      fctx.fillText(word, fillTextOffsetX * mu,
+                    (fillTextOffsetY + fontSize * 0.5) * mu);
+
+      
+      var imageData = fctx.getImageData(0, 0, width, height).data;
+
+      if (exceedTime()) {
+        return false;
+      }
+
+      if (debug) {
+        
+        fctx.strokeRect(fillTextOffsetX * mu,
+                        fillTextOffsetY, fw * mu, fh * mu);
+        fctx.restore();
+      }
+
+      
+      var occupied = [];
+      var gx = cgw, gy, x, y;
+      var bounds = [cgh / 2, cgw / 2, cgh / 2, cgw / 2];
+      while (gx--) {
+        gy = cgh;
+        while (gy--) {
+          y = g;
+          singleGridLoop: {
+            while (y--) {
+              x = g;
+              while (x--) {
+                if (imageData[((gy * g + y) * width +
+                               (gx * g + x)) * 4 + 3]) {
+                  occupied.push([gx, gy]);
+
+                  if (gx < bounds[3]) {
+                    bounds[3] = gx;
+                  }
+                  if (gx > bounds[1]) {
+                    bounds[1] = gx;
+                  }
+                  if (gy < bounds[0]) {
+                    bounds[0] = gy;
+                  }
+                  if (gy > bounds[2]) {
+                    bounds[2] = gy;
+                  }
+
+                  if (debug) {
+                    fctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                    fctx.fillRect(gx * g, gy * g, g - 0.5, g - 0.5);
+                  }
+                  break singleGridLoop;
+                }
+              }
+            }
+            if (debug) {
+              fctx.fillStyle = 'rgba(0, 0, 255, 0.5)';
+              fctx.fillRect(gx * g, gy * g, g - 0.5, g - 0.5);
+            }
+          }
+        }
+      }
+
+      if (debug) {
+        fctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+        fctx.fillRect(bounds[3] * g,
+                      bounds[0] * g,
+                      (bounds[1] - bounds[3] + 1) * g,
+                      (bounds[2] - bounds[0] + 1) * g);
+      }
+
+      
+      return {
+        mu: mu,
+        occupied: occupied,
+        bounds: bounds,
+        gw: cgw,
+        gh: cgh,
+        fillTextOffsetX: fillTextOffsetX,
+        fillTextOffsetY: fillTextOffsetY,
+        fillTextWidth: fw,
+        fillTextHeight: fh,
+        fontSize: fontSize
+      };
+    };
+
+     
+    var canFitText = function canFitText(gx, gy, gw, gh, occupied) {
+      
+      
+      var i = occupied.length;
+      while (i--) {
+        var px = gx + occupied[i][0];
+        var py = gy + occupied[i][1];
+
+        if (px >= ngx || py >= ngy || px < 0 || py < 0 || !grid[px][py]) {
+          return false;
+        }
+      }
+      return true;
+    };
+
+     
+    var drawText = function drawText(gx, gy, info, word, weight,
+                                     distance, theta, rotateDeg, attributes) {
+
+      var fontSize = info.fontSize;
+      var color;
+      if (getTextColor) {
+        color = getTextColor(word, weight, fontSize, distance, theta);
+      } else if (settings.color instanceof Array) {
+        color = settings.color.shift() || 'black'; 
+      } else {
+        color = settings.color;
+      }
+
+      var classes;
+      if (getTextClasses) {
+        classes = getTextClasses(word, weight, fontSize, distance, theta);
+      } else {
+        classes = settings.classes;
+      }
+
+      var dimension;
+      var bounds = info.bounds;
+      dimension = {
+        x: (gx + bounds[3]) * g,
+        y: (gy + bounds[0]) * g,
+        w: (bounds[1] - bounds[3] + 1) * g,
+        h: (bounds[2] - bounds[0] + 1) * g
+      };
+
+      elements.forEach(function(el) {
+        if (el.getContext) {
+          var ctx = el.getContext('2d');
+          var mu = info.mu;
+
+          
+          ctx.save();
+          ctx.scale(1 / mu, 1 / mu);
+
+          ctx.font = settings.fontWeight + ' ' +
+                     (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+          ctx.fillStyle = color;
+
+          
+          
+          ctx.translate((gx + info.gw / 2) * g * mu,
+                        (gy + info.gh / 2) * g * mu);
+
+          if (rotateDeg !== 0) {
+            ctx.rotate(- rotateDeg);
+          }
+
+          
+
+          
+          
+          
+          
+          
+          ctx.textBaseline = 'middle';
+          ctx.fillText(word, info.fillTextOffsetX * mu,
+                             (info.fillTextOffsetY + fontSize * 0.5) * mu);
+
+          
+          
+
+
+          
+          ctx.restore();
+        } else {
+          
+          var span = document.createElement('span');
+          var transformRule = '';
+          transformRule = 'rotate(' + (- rotateDeg / Math.PI * 180) + 'deg) ';
+          if (info.mu !== 1) {
+            transformRule +=
+              'translateX(-' + (info.fillTextWidth / 4) + 'px) ' +
+              'scale(' + (1 / info.mu) + ')';
+          }
+          var styleRules = {
+            'position': 'absolute',
+            'display': 'block',
+            'font': settings.fontWeight + ' ' +
+                    (fontSize * info.mu) + 'px ' + settings.fontFamily,
+            'left': ((gx + info.gw / 2) * g + info.fillTextOffsetX) + 'px',
+            'top': ((gy + info.gh / 2) * g + info.fillTextOffsetY) + 'px',
+            'width': info.fillTextWidth + 'px',
+            'height': info.fillTextHeight + 'px',
+            'lineHeight': fontSize + 'px',
+            'whiteSpace': 'nowrap',
+            'transform': transformRule,
+            'webkitTransform': transformRule,
+            'msTransform': transformRule,
+            'transformOrigin': '50% 40%',
+            'webkitTransformOrigin': '50% 40%',
+            'msTransformOrigin': '50% 40%'
+          };
+          if (color) {
+            styleRules.color = color;
+          }
+          span.textContent = word;
+          for (var cssProp in styleRules) {
+            span.style[cssProp] = styleRules[cssProp];
+          }
+          if (attributes) {
+            for (var attribute in attributes) {
+              span.setAttribute(attribute, attributes[attribute]);
+            }
+          }
+          if (classes) {
+            span.className += classes;
+          }
+          el.appendChild(span);
+        }
+      });
+    };
+
+     
+    var fillGridAt = function fillGridAt(x, y, drawMask, dimension, item) {
+      if (x >= ngx || y >= ngy || x < 0 || y < 0) {
+        return;
+      }
+
+      grid[x][y] = false;
+
+      if (drawMask) {
+        var ctx = elements[0].getContext('2d');
+        ctx.fillRect(x * g, y * g, maskRectWidth, maskRectWidth);
+      }
+
+      if (interactive) {
+        infoGrid[x][y] = { item: item, dimension: dimension };
+      }
+    };
+
+    
+
+    var updateGrid = function updateGrid(gx, gy, gw, gh, info, item) {
+      var occupied = info.occupied;
+      var drawMask = settings.drawMask;
+      var ctx;
+      if (drawMask) {
+        ctx = elements[0].getContext('2d');
+        ctx.save();
+        ctx.fillStyle = settings.maskColor;
+      }
+
+      var dimension;
+      if (interactive) {
+        var bounds = info.bounds;
+        dimension = {
+          x: (gx + bounds[3]) * g,
+          y: (gy + bounds[0]) * g,
+          w: (bounds[1] - bounds[3] + 1) * g,
+          h: (bounds[2] - bounds[0] + 1) * g
+        };
+      }
+
+      var i = occupied.length;
+      while (i--) {
+        fillGridAt(gx + occupied[i][0], gy + occupied[i][1],
+                   drawMask, dimension, item);
+      }
+
+      if (drawMask) {
+        ctx.restore();
+      }
+    };
+
+    
+
+    var putWord = function putWord(item) {
+      var word, weight, attributes;
+      if (Array.isArray(item)) {
+        word = item[0];
+        weight = item[1];
+      } else {
+        word = item.word;
+        weight = item.weight;
+        attributes = item.attributes;
+      }
+      var rotateDeg = getRotateDeg();
+
+      
+      var info = getTextInfo(word, weight, rotateDeg);
+
+      
+      if (!info) {
+        return false;
+      }
+
+      if (exceedTime()) {
+        return false;
+      }
+
+      
+      
+      var bounds = info.bounds;
+      if ((bounds[1] - bounds[3] + 1) > ngx ||
+        (bounds[2] - bounds[0] + 1) > ngy) {
+        return false;
+      }
+
+      
+      
+      var r = maxRadius + 1;
+
+      var tryToPutWordAtPoint = function(gxy) {
+        var gx = Math.floor(gxy[0] - info.gw / 2);
+        var gy = Math.floor(gxy[1] - info.gh / 2);
+        var gw = info.gw;
+        var gh = info.gh;
+
+        
+        
+        if (!canFitText(gx, gy, gw, gh, info.occupied)) {
+          return false;
+        }
+
+        
+        drawText(gx, gy, info, word, weight,
+                 (maxRadius - r), gxy[2], rotateDeg, attributes);
+
+        
+        updateGrid(gx, gy, gw, gh, info, item);
+
+        
+        return true;
+      };
+
+      while (r--) {
+        var points = getPointsAtRadius(maxRadius - r);
+
+        if (settings.shuffle) {
+          points = [].concat(points);
+          shuffleArray(points);
+        }
+
+        
+        
+        
+        
+        var drawn = points.some(tryToPutWordAtPoint);
+
+        if (drawn) {
+          
+          return true;
+        }
+      }
+      
+      return false;
+    };
+
+    
+
+    var sendEvent = function sendEvent(type, cancelable, detail) {
+      if (cancelable) {
+        return !elements.some(function(el) {
+          var evt = document.createEvent('CustomEvent');
+          evt.initCustomEvent(type, true, cancelable, detail || {});
+          return !el.dispatchEvent(evt);
+        }, this);
+      } else {
+        elements.forEach(function(el) {
+          var evt = document.createEvent('CustomEvent');
+          evt.initCustomEvent(type, true, cancelable, detail || {});
+          el.dispatchEvent(evt);
+        }, this);
+      }
+    };
+
+     
+    var start = function start() {
+      
+      
+      var canvas = elements[0];
+
+      if (canvas.getContext) {
+        ngx = Math.floor(canvas.width / g);
+        ngy = Math.floor(canvas.height / g);
+      } else {
+        var rect = canvas.getBoundingClientRect();
+        ngx = Math.floor(rect.width / g);
+        ngy = Math.floor(rect.height / g);
+      }
+
+      
+      
+      if (!sendEvent('wordcloudstart', true)) {
+        return;
+      }
+
+      
+      center = (settings.origin) ?
+        [settings.origin[0]/g, settings.origin[1]/g] :
+        [ngx / 2, ngy / 2];
+
+      
+      maxRadius = Math.floor(Math.sqrt(ngx * ngx + ngy * ngy));
+
+      
+
+      grid = [];
+
+      var gx, gy, i;
+      if (!canvas.getContext || settings.clearCanvas) {
+        elements.forEach(function(el) {
+          if (el.getContext) {
+            var ctx = el.getContext('2d');
+            ctx.fillStyle = settings.backgroundColor;
+            ctx.clearRect(0, 0, ngx * (g + 1), ngy * (g + 1));
+            ctx.fillRect(0, 0, ngx * (g + 1), ngy * (g + 1));
+          } else {
+            el.textContent = '';
+            el.style.backgroundColor = settings.backgroundColor;
+          }
+        });
+
+         
+        gx = ngx;
+        while (gx--) {
+          grid[gx] = [];
+          gy = ngy;
+          while (gy--) {
+            grid[gx][gy] = true;
+          }
+        }
+      } else {
+        
+
+        var bctx = document.createElement('canvas').getContext('2d');
+
+        bctx.fillStyle = settings.backgroundColor;
+        bctx.fillRect(0, 0, 1, 1);
+        var bgPixel = bctx.getImageData(0, 0, 1, 1).data;
+
+        
+
+        var imageData =
+          canvas.getContext('2d').getImageData(0, 0, ngx * g, ngy * g).data;
+
+        gx = ngx;
+        var x, y;
+        while (gx--) {
+          grid[gx] = [];
+          gy = ngy;
+          while (gy--) {
+            y = g;
+            singleGridLoop: while (y--) {
+              x = g;
+              while (x--) {
+                i = 4;
+                while (i--) {
+                  if (imageData[((gy * g + y) * ngx * g +
+                                 (gx * g + x)) * 4 + i] !== bgPixel[i]) {
+                    grid[gx][gy] = false;
+                    break singleGridLoop;
+                  }
+                }
+              }
+            }
+            if (grid[gx][gy] !== false) {
+              grid[gx][gy] = true;
+            }
+          }
+        }
+
+        imageData = bctx = bgPixel = undefined;
+      }
+
+      
+      if (settings.hover || settings.click) {
+
+        interactive = true;
+
+         
+        gx = ngx + 1;
+        while (gx--) {
+          infoGrid[gx] = [];
+        }
+
+        if (settings.hover) {
+          canvas.addEventListener('mousemove', wordcloudhover);
+        }
+
+        if (settings.click) {
+          canvas.addEventListener('click', wordcloudclick);
+          canvas.addEventListener('touchstart', wordcloudclick);
+          canvas.addEventListener('touchend', function (e) {
+            e.preventDefault();
+          });
+          canvas.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0)';
+        }
+
+        canvas.addEventListener('wordcloudstart', function stopInteraction() {
+          canvas.removeEventListener('wordcloudstart', stopInteraction);
+
+          canvas.removeEventListener('mousemove', wordcloudhover);
+          canvas.removeEventListener('click', wordcloudclick);
+          hovered = undefined;
+        });
+      }
+
+      i = 0;
+      var loopingFunction, stoppingFunction;
+      if (settings.wait !== 0) {
+        loopingFunction = window.setTimeout;
+        stoppingFunction = window.clearTimeout;
+      } else {
+        loopingFunction = window.setImmediate;
+        stoppingFunction = window.clearImmediate;
+      }
+
+      var addEventListener = function addEventListener(type, listener) {
+        elements.forEach(function(el) {
+          el.addEventListener(type, listener);
+        }, this);
+      };
+
+      var removeEventListener = function removeEventListener(type, listener) {
+        elements.forEach(function(el) {
+          el.removeEventListener(type, listener);
+        }, this);
+      };
+
+      var anotherWordCloudStart = function anotherWordCloudStart() {
+        removeEventListener('wordcloudstart', anotherWordCloudStart);
+        stoppingFunction(timer);
+      };
+
+      addEventListener('wordcloudstart', anotherWordCloudStart);
+
+      var timer = loopingFunction(function loop() {
+        if (i >= settings.list.length) {
+          stoppingFunction(timer);
+          sendEvent('wordcloudstop', false);
+          removeEventListener('wordcloudstart', anotherWordCloudStart);
+
+          return;
+        }
+        escapeTime = (new Date()).getTime();
+        var drawn = putWord(settings.list[i]);
+        var canceled = !sendEvent('wordclouddrawn', true, {
+          item: settings.list[i], drawn: drawn });
+        if (exceedTime() || canceled) {
+          stoppingFunction(timer);
+          settings.abort();
+          sendEvent('wordcloudabort', false);
+          sendEvent('wordcloudstop', false);
+          removeEventListener('wordcloudstart', anotherWordCloudStart);
+          return;
+        }
+        i++;
+        timer = loopingFunction(loop, settings.wait);
+      }, settings.wait);
+    };
+
+    
+    start();
+  };
+
+  WordCloud.isSupported = isSupported;
+  WordCloud.minFontSize = minFontSize;
+
+  
+  if (typeof define === 'function' && define.amd) {
+    define('wordcloud', [], function() { return WordCloud; });
+  } else if (typeof module !== 'undefined' && module.exports) {
+    module.exports = WordCloud;
+  } else {
+    global.WordCloud = WordCloud;
+  }
+
+})(this); 
+</script>
+<script>
+function newlabel(el){
+  var newDiv = document.createElement("div");
+  var newSpan = document.createElement("span");
+  newDiv.id = 'wcLabel';
+  newSpan.id = "wcSpan";
+  el.appendChild(newDiv);
+  document.getElementById("wcLabel").appendChild(newSpan);
+}
+
+
+function cv_handleHover(item, dimension, evt) {
+  var el = document.getElementById("wcLabel");
+  if (!item) {
+    el.setAttribute('hidden', true);
+
+    return;
+  }
+
+  el.removeAttribute('hidden');
+  
+
+  el.style.left = dimension.x + evt.srcElement.offsetLeft + 'px';
+  el.style.top = dimension.y + evt.srcElement.offsetTop + 'px';
+  el.style.width = dimension.w + 'px';
+  el.style.height = dimension.h + 'px';
+
+  this.hoverDimension = dimension;
+
+  document.getElementById("wcSpan").setAttribute(
+    'data-l10n-args', JSON.stringify({ word: item[0], count: item[1] }));
+  document.getElementById("wcSpan").innerHTML =item[0]+":" + item[1];
+
+}
+
+function updateCanvasMask(maskCanvas) {
+    var ctx = maskCanvas.getContext('2d');
+    var imageData = ctx.getImageData(
+        0, 0, maskCanvas.width, maskCanvas.height);
+    var newImageData = ctx.createImageData(imageData);
+
+    var toneSum = 0;
+    var toneCnt = 0;
+    for (var i = 0; i < imageData.data.length; i += 4) {
+        var alpha = imageData.data[i + 3];
+        if (alpha > 128) {
+            var tone = imageData.data[i]
+                + imageData.data[i + 1]
+                + imageData.data[i + 2];
+            toneSum += tone;
+            ++toneCnt;
+        }
+    }
+    var threshold = toneSum / toneCnt;
+
+    for (var i = 0; i < imageData.data.length; i += 4) {
+        var tone = imageData.data[i]
+            + imageData.data[i + 1]
+            + imageData.data[i + 2];
+        var alpha = imageData.data[i + 3];
+
+        if (alpha < 128 || tone > threshold) {
+            
+            newImageData.data[i] = 0;
+            newImageData.data[i + 1] = 0;
+            newImageData.data[i + 2] = 0;
+            newImageData.data[i + 3] = 0;
+        }
+        else {
+            
+            
+            newImageData.data[i] = 255;
+            newImageData.data[i + 1] = 255;
+            newImageData.data[i + 2] = 255;
+            newImageData.data[i + 3] = 255;
+        }
+    }
+
+    ctx.putImageData(newImageData, 0, 0);
+    console.log(maskCanvas.toDataURL());
+}
+
+
+
+
+function maskInit(el,x){
+  console.log(1)
+  str = x.figBase64;
+  
+  var newImg = new Image();
+  newImg.src = str;
+  newImg.style.position = 'absolute';
+  newImg.style.left = 0;
+  
+  newImg.width = el.clientWidth;
+  newImg.height = el.clientHeight;
+  
+  vvalue = 128
+
+  ctx = el.firstChild.getContext('2d');
+
+                ctx.drawImage(newImg, 0, 0, canvas.width, canvas.height);
+                updateCanvasMask(ctx);
+
+
+
+
+
+            WordCloud(el.firstChild, { list: listData,
+                  fontFamily: x.fontFamily,
+                  fontWeight: x.fontWeight,
+                  color: x.color,
+                  minSize: x.minSize,
+                  weightFactor: x.weightFactor,
+                  backgroundColor: x.backgroundColor,
+                  gridSize: x.gridSize,
+                  minRotation: x.minRotation,
+                  maxRotation: x.maxRotation,
+                  shuffle: x.shuffle,
+                  shape: x.shape,
+                  rotateRatio: x.rotateRatio,
+                  ellipticity: x.ellipticity,
+                  clearCanvas: false,
+                  drawMask: true,
+                  hover: x.hover || cv_handleHover,
+                  abortThreshold: 3000
+                  });
+}
+
+</script>
+<script>HTMLWidgets.widget({
+
+  name: 'wordcloud2',
+
+  type: 'output',
+
+  initialize: function(el, width, height) {
+    var newCanvas = document.createElement("canvas");
+    newCanvas.height = height;
+    newCanvas.width = width;
+    newCanvas.id = "canvas";
+
+    el.appendChild(newCanvas);
+    newlabel(el);
+    return(el.firstChild);
+  },
+  renderValue: function(el, x, instance) {
+  
+        listData=[];
+        for(var i=0; i<x.word.length; i++){
+          listData.push([x.word[i], x.freq[i]]);
+        }
+     if(x.figBase64){
+
+        maskInit(el,x);
+        console.log(3)
+
+      }else{
+        WordCloud(el.firstChild, { list: listData,
+                        fontFamily: x.fontFamily,
+                        fontWeight: x.fontWeight,
+                        color: x.color,
+                        minSize: x.minSize,
+                        weightFactor: x.weightFactor,
+                        backgroundColor: x.backgroundColor,
+                        gridSize: x.gridSize,
+                        minRotation: x.minRotation,
+                        maxRotation: x.maxRotation,
+                        shuffle: x.shuffle,
+                        shape: x.shape,
+                        rotateRatio: x.rotateRatio,
+                        ellipticity: x.ellipticity,
+                        drawMask: x.drawMask,
+                        maskColor: x.maskColor,
+                        maskGapWidth: x.maskGapWidth,
+                        hover: x.hover || cv_handleHover
+                        });
+      }
+    },
+      resize: function(el, width, height) {
+      }
+
+});
+</script>
+</head>
+<body style="background-color: white;">
+<div id="htmlwidget_container">
+<div id="htmlwidget-7ff4f3fcddf3c1f0ac9f" class="wordcloud2 html-widget" style="width:960px;height:500px;">
+
+</div>
+</div>
+<script type="application/json" data-for="htmlwidget-7ff4f3fcddf3c1f0ac9f">{"x":{"word":["13th","15k","15th","16th","18th","1950s","1960s","1st","20th","21st","23rd","24k","2gs","2nd","3a","40s","4th","50s","50th","60s","661oozbg","70s","80s","8s","9th","a.k.a","a.m","a.p.d","aa","aaahhh","aaay","aah","aahh","abandoned","abc","abduction","abductor","abi","abide","abilities","ability","able","aboard","abode","abq","abrupt","abs","absence","absent","absolutely","abuse","abuses","academy","accelerated","accept","acceptable","acceptance","accepted","accepting","accepts","access","accessible","accessories","accessory","accid","accident","accidentally","acclimated","accommodation","accomplice","accomplish","accomplished","accomplishes","according","account","accountable","accountant","accounted","accounting","accounts","accumulated","accurate","accurately","accusation","accusations","accused","accusing","ace","acetone","aches","achieves","acid","acid's","acknowledges","acknowledging","aclu","acquaintance","acquaintances","acre","acres","across","act","acted","acting","action","actions","activate","active","actively","activities","activity","acts","actual","actually","ad","adam","adapt","add","added","addict","addicted","addiction","addictive","adding","addition","address","adds","adenocarcinoma","adequately","adios","adjust","adjusting","adjustment","adjustments","adjusts","administration","admission","admit","admitted","admittedly","admitting","adobe","adolf","adorable","adottar","adrian","ads","adult","adulterants","adults","advanced","advantage","advantages","adventure","adversarial","advertise","advertised","advertisement","advertising","advice","advise","advised","advising","advocate","aerodynamic","affair","affairs","affect","affected","affects","affiliation","afford","affordable","afloat","afraid","african","afternoon","afternoons","afterward","age","aged","agent","agent's","agents","ages","aggressive","agh","agitated","agitation","ago","agree","agreeable","agreed","agreeing","agreement","agrees","ah","aha","ahead","ahem","ahh","ahhh","ai","aids","aim","aimless","ain't","air","aircraft","airline","airliner","airmen","airplane","airport","airs","aisle","aka","alamos","alan","alarm","alarms","alaska","alaska's","albert","albertson's","albuminoids","albuquerque","albuquerque's","alcohol","alcoholic","alert","alex","algebra","alias","alibi","alien","aliens","alike","alive","alkaline","all's","alleged","allegedly","allergenic","allergy","alleviate","alley","allow","allowance","allowed","almonds","almost","alone","along","alongside","alpha","alpine","already","also","alternate","alternative","although","altimeter","altitude","aluminum","alvin","always","amalgam","amazed","amazes","amazing","amber","ambition","ambitious","ambulance","ambushed","amc's","ameliorate","amenable","amendment","amends","america","american","americans","americone","amidst","amigo","amigos","amination","ammonia","amnesia","among","amount","amount's","amounted","amounts","amp","amped","amperage","amps","amsden","ana","anal","analogy","anaranjado","ancient","andoni199","andorian","andr","andrea","andrea's","andrew","andy","añejo","anesthetise","angel","angle","angles","angrier","angry","aniline","animal","animals","ankle","announce","annoy","annoying","annual","annually","anode","anomaly","anonymous","anonymously","another","answer","answered","answering","answers","ant","anthony","anthrax","anti","anticipate","anticipated","anticipation","antiemetic","antique","antithesis","antitussive","antoine","antonio","ants","anus","anxiety","anxious","anybody","anybody's","anyhow","anymore","anyone","anyone's","anyplace","anything","anytime","anyway","anyways","anywhere","apart","apartment","apd","apd's","ape","apiece","apologetic","apologies","apologise","apologize","apologized","apologizing","apology","apparent","apparently","appeal","appealing","appearances","appeared","appearing","appears","appetite","applaud","apple","apples","appliances","application","applications","applied","apply","applying","appointement","appointment","appointments","appreciate","appreciated","appreciates","apprehended","apprised","approach","appropriate","approve","approved","april","aprotic","aquamarine","aquarium","aqueous","arabs","arbitrary","arcade","arches","archuleta","archy","area","area's","argue","arguing","argument","arizona","arm","armada","armed","armpit","armrest","arms","army","around","arouse","arrange","arrangement","arrangements","arrest","arrested","arresting","arrests","arrival","arrivals","arrive","arriving","arrogant","arrow","arrows","arroyo","arsiniega","art","article","articles","artie","artificial","artificially","artillery","artist","artists","asac","asap","ascertained","ash","ashamed","ashtray","asian","aside","ask","asked","asking","asks","asleep","aspect","aspiring","ass","assailant","assassin","assassinate","assassination","assassins","assault","assed","assembly","asses","assessment","asset","assets","asshead","asshhole","asshole","assholes","assign","assignment","assist","assistance","assistant","associate","associated","associates","associating","association","assume","assumed","assuming","assurance","assurances","assure","assured","asswad","astounded","astronaut","astronomer","astronomical","asylum","asystole","at's","ata","ate","atm","atoms","atta","attaboy","attached","attack","attacked","attempt","attend","attended","attending","attention","attentive","attic","attitude","attorney","attorneys","attracted","attraction","attractive","attracts","auction's","audit","audited","auditor","aunt","aunt's","auntie","ausa","australia","authorisation","authorise","authorities","authority","authorized","auto","automated","automatic","automatically","autopsy","autotransformer","available","ave","average","averages","averaging","avoid","avoided","avoiding","avvilito","aw","await","awaited","awake","award","aware","away","awe","awesome","awful","awhile","awkward","awol","aww","ax","axe","axes","axle","ay","ayon","ayonda","b","babe","babes","babineaux","baby","baby's","babysit","babysitting","bachelor's","back","backfire","backfiring","backflips","background","backing","backroom","backs","backslid","backup","backwardo","backwards","backyard","bacon","bacteria","bacterial","bad","badass","baddest","badge","badger","badger's","badges","badly","bag","bagged","bagger","bags","bail","bailed","bails","bake","baked","balance","bald","balder","bales","ball","balloon","balloons","ballpark","balls","bam","banana","bananas","band","bandage","banditos","bands","bandying","bang","banged","banger","bangers","banging","banjo","bank","bankroll","bankrolling","bankrupt","bankruptcy","banks","bar","barbecue","barber","barely","bargain","barge","barking","barn","barnyard","barrel","barrels","barret","barriers","barring","barry","bars","bartender's","base","baseball","based","basement","bases","basic","basically","basics","basing","basis","basket","bass","bassinet","bassinets","bastard","bastards","bat","batch","bath","bathroom","bathrooms","baths","bathtub","batter","batteries","battery","battery's","battles","battling","bay","beach","beaker","beakers","beam","beamed","beams","bean","beaner","beanie","beans","beanstalk","beantown","bear","bears","beast","beat","beater","beatin","beating","beats","beau","beaucoup","beautiful","beautifully","beauts","beauty","beaver","became","becky","becky's","become","becomes","becoming","bed","bedpans","bedroom","bedrooms","bedtime","bee","beefs","beep","beeps","beer","beers","beg","began","beggars","begging","begin","beginning","begins","begorrah","begun","behalf","behave","behaving","behavior","behavioral","behaviour","behind","behinds","behold","behooves","beige","beings","bekaris","belarus","believable","believe","believed","believes","believing","belize","bell","bellied","bells","belly","belong","belonged","belonging","belongs","belt","ben","bench","bend","beneath","benefactor","benefactors","beneficiary","benefit","beneke","beneke's","benjies","benjis","benny","bent","bentley","benzene","bergamot","berklee","bernalillo","berries","berth","beryls","besides","best","bet","betrayed","bets","better","betterment","betting","beverage","beverages","bewildering","beyond","bianchi","bias","biatch","bib","bible","bicycle","bicycles","bidding","bide","big","big's","bigfoot","bigger","biggest","bike","biker","biking","bikini","bilaterally","bill","billable","billboard","billboards","billing","billion","billions","billionth","bills","bin","bingo","binoculars","bins","biology","biotite","bird","birdie","birds","birgit","birth","birthday","birthdays","birthright","bishop","bit","bitch","bitches","bite","bites","bits","bitter","bitterness","bivalve","blabs","black","black's","blackjack","blackmail","blackmailing","blackout","blacks","blacktop","bladder","blah","blame","blameless","blanca","blank","blanket","blasted","blattner","blattodea","blaze","bleach","bled","bleed","bleeding","bleeds","blend","blender","bless","blew","blind","blinded","blindfold","blinds","blink","blinking","block","blocked","blocking","blocks","blond","blonde","blood","blooded","bloodhound","bloodied","bloodshed","bloody","blooming","blouse","blow","blowback","blowfish","blowfishing","blowing","blown","blowout","blows","blue","blue's","blueberries","blueberry","bluetooth","bluff","bluffing","blunt","bluray","bmw","bo","board","boarding","boat","boats","bock","bodacious","bodega","bodes","bodies","bodily","body","body's","bodyguard","boetticher","boetticher's","bog","bogarting","bogdan","bogdan's","boil","boiled","boiling","bold","bolsa","bolt","bolts","bom","bomb","bombed","bombs","bon","bona","bond","bonded","bonds","bone","boned","bonehead","boner","bones","bong","boning","bonnie","bonus","boo","boob","booger","book","booked","booking","bookkeeper","bookkeeper's","bookmobile","books","boom","boonies","boost","boosted","booster","boosting","booted","booths","boots","booty","booyah","borage","border","bore","bored","boring","born","borrow","borrowing","boss","boss's","boston","botched","bother","bothered","bothering","bottle","bottleneck","bottles","bottom","bought","boulevard","bounce","bouncing","bouncy","bound","bounder","bounders","bounds","bout","bow","bowel","bowie","bowl","bowling","bowling's","box","boxes","boy","boy's","boys","boz","bozos","bp","brace","bracelets","brachial","bradley","bragging","brain","brainer","brains","brainstorm","brainstorming","brake","brakes","braking","bran","branches","brand","brandon","braniac","branson","brass","brassiere","brat","brave","bravenec","bravo","brawn","bread","break","breakage","breakdown","breaker","breakfast","breakfasts","breaking","breaks","breast","breath","breathe","breathed","breathing","breaths","bred","breeze","breezed","breezy","brew","brewed","brewing","brey","bribe","bribes","brick","bricklaying","bricks","bridge","brief","briefly","bright","brighten","brilliance","brilliant","brimming","bring","bringing","brings","bro","brock","brock's","broke","broken","brothel","brother","brother's","brotherly","brothers","brought","brown","brownie","brownish","bruce","bruises","bruising","brunt","brush","brutality","btus","bubble","bubblegum","buck","bucket","bucking","buckle","buckled","bucks","buddies","buddy","budget","buds","bueller","bueno","buff","bug","bugged","bugging","buggy","bugs","bugsy","buh","buick","build","building","buildings","builds","buildup","built","bulgarian","bulk","bullet","bulletproof","bullets","bullshit","bullshitter","bum","bummer","bump","bumped","bumper","bumping","bumps","bun","bunch","bundle","bunk","bunsen","bupkis","burden","bureau","burger","burgermeister","burgers","burglars","burial","buried","burn","burned","burner","burners","burning","burns","burro's","burst","bursts","burt","bury","burying","bus","buses","bush","bushes","business","businesses","businessman","businessmen","businesswoman","bust","busted","buster","busting","busy","busywork","butchers","butt","butte","butter","button","buttoned","buttons","butts","buy","buyer","buyer's","buyers","buyin","buying","buyout","buys","buzz","buzzard","buzzards","buzzer","buzzes","buzzing","bwaaa","bye","byes","bzzz","c","c'mon","c3","c4","cab","caballo","cabbage","cabeza","cable","caca","cacti","caddy","cadere","cafeteria","cages","cake","cakewalk","cal","calamity","calcium","calcium's","calculate","calculated","calculator","calendar","cali","caliber","calibrated","california","call","called","caller","calling","calls","calm","calma","cam","camacho","camcorder","came","camel's","camera","cameras","camp","camper","camping","camry","can","canada","canary","cancel","canceling","cancer","cancer's","candelaria","candles","candy","cane","cankenstein","canned","cannibalism","cannon","cannons","cans","cantar","canterna","cantillo","canyon","canzon","cap","cap'n","capable","capacity","capelli","capital","capo","capone","capped","captain","car","car's","cara","carats","carbon","carbons","card","cardboard","cardio","cards","care","cared","career","careful","carefully","careless","carelessness","cares","cargo","carlo","carlton","carmen","carol","carol's","carpentry","carpet","carpool","carpools","carrots","carrottop","carry","carrying","cars","cartel","cartels","carts","casa","case","cases","cash","cashier","cashier's","cashiers","casing","casings","casino","casinos","casita","cast","castanares","casters","castles","castor","casual","casualty","cat","cataloging","catalogs","catalyst","catalytic","catch","catches","catching","cathode","cats","caucasian","caught","cause","caused","causes","caution","cautious","cavalry","cavalry's","cavanaugh","cave","caved","caving","ccp's","cd","ce","ceases","cefazolin","ceiling","celebrate","celebrating","celebration","celebrities","cell","cellar","cellblock","cellphone","cells","cellular","cement","cent","center","centers","centimeters","central","centre","cents","century","ceramic","cereal","cerebral","ceremony","certain","certainly","certainty","cesar","cetera","ch","chad","chad's","chain","chaining","chair","chairs","chalk","chalkboard","challenge","challenger","challenging","chalupa","chamber","chamomile","champ","champagne","chance","chances","chancy","change","changed","changes","changing","channel","channels","chaos","chapel","chapter","character","charge","charged","charges","charging","charitable","charity","charles","charlie","charlotte","charlton","charming","chart","chase","chased","chasing","chat","chauffeuring","che","cheap","cheat","cheated","cheater","check","check's","checkbook","checked","checking","checks","cheddar","cheek","cheer","cheerful","cheers","cheese","cheetos","chef","chef's","chekov","chekov's","chem","chemical","chemically","chemicals","chemist","chemistry","chemists","chemo","chemotherapy","cherry","chest","chestnuts","chevrolet","chevy","chh","chick","chick's","chicken","chickens","chicky","chiclets","chief","child","childhood","children","children's","chile","chilean","chili","chili's","chilies","chill","chilli","chime","china","china's","chinese","chink","chip","chipper","chips","chiral","chirality","chiropractor","chivo","chk","chka","chloride","chocolate","chocolatey","choice","choices","choir","choke","cholesterol","choose","choosers","chop","chopped","chopper","choppers","chopping","chords","chose","chow","chris","chrissakes","christ","christ's","christian","christmas","chromatograph","chrysanthemum","chrysler","chuck","chump","chumps","chunk","church","churchill","churn","churning","churros","cibola","cid","cigarette","cigarettes","cigars","cinco","cinder","cinnabon","ciocche","circle","circles","circuit","circulation","circumstances","circus","cisco","cite","citing","citizen","citizens","city","civil","civilian","claim","claiming","claims","clandestine","clap","clapton","clapton's","clarence","clarify","clark","class","classes","classic","classical","classify","classy","clawing","claws","clay","clean","clean's","cleaned","cleaner","cleaning","clear","cleared","clearing","clearly","clears","cleavage","clerks","clich","click","client","client's","clientele","clients","climactic","climates","climb","climbing","clinton","clo","clock","clockwork","close","closed","closely","closer","closest","closet","closing","closure","clothes","clothing","clouds","cloudy","clovis","clown","clowned","clowns","club","clubhouse","clue","clued","clumsy","clunker","co","co2","coach","coached","coast","coat","coating","coca","cocaine","cockroach","cockroaches","cocky","code","coded","coffee","coffin","coffman","cohen","coin","coincidence","coins","cojones","coke","cola","colada","cold","colder","cole","coliseum","collapse","collapses","collar","collateral","colleagues","collect","collecting","collection","collector","collects","colleen","college","collision","colombian","colonel","color","color's","colorado","colored","colorful","coloring","colors","colour","columbus","column","columns","coma","combination","combine","combo","combo's","come","comens","comes","comfort","comfortable","comfortably","comforting","comin","coming","comings","comma","command","commando","commemorative","commerce","commercial","commercials","commission","commit","commitment","committed","committing","commodity","common","communicate","communicating","communication","community","commutator","como","compact","companies","company","company's","comparable","compare","compared","comparing","compassion","compelled","compensated","competition","competitors","complain","complained","complaing","complaining","complaint","complete","completely","completing","completion","complex","complicated","complicating","complication","compliment","complimentary","composite","composting","compounds","comprende","compressions","compressor","compromise","compromised","compromises","compute","computed","computer","computer's","computers","con","conceal","concealed","concealing","concentrate","concentrated","concept","concepts","concern","concerned","concerns","concluded","conclusion","concrete","concur","concussion","condensation","condensed","condenser","condensers","condescending","condition","conditions","condo","condolences","conduct","conductor","cones","conference","confess","confession","confidence","confident","confidential","confidentiality","configuration","confines","confirm","confirming","confiscated","confuse","confused","confuses","confusing","confusion","congenital","conglomerate","congrats","congratulations","conjecture","connect","connected","connecting","connection","connections","conquistadors","conscience","conscious","consciousness","consent","consenting","consequences","conservatively","consider","considerable","considerations","considered","considering","considers","consignment","consistent","conspiracy","constant","constitutes","constitution","construction","construed","consult","consulting","contact","contacted","contacting","contacts","container","containing","contains","contaminant","contaminants","contaminated","contaminating","contamination","contar","contemplated","contemptible","contend","contender","contents","contest","continental","contingency","continue","continued","continues","continuing","continuity","contract","contractor","contracts","contradict","contradicts","contribute","contributed","contribution","contributions","contrition","control","controlled","controls","contusion","conversation","conversing","convertible","convict","convicted","conviction","convince","convinced","convincing","coochie","cook","cooked","cookie","cookies","cooking","cookout","cooks","cool","cooled","cooper","cooperating","cooperation","coordinates","cop","copasetic","copies","copped","copper","copperfield","cops","copy","copying","cordillera","corleone","corn","corner","corner's","cornflakes","cornflower","corolla","coroner","corporate","corps","corpse","correct","correction","correctional's","correctly","correlate","corrosion","corrugator","corundum","cosa","cost","costco","costing","costner","costs","cot","cotton","couch","cough","coughing","could've","counsel","counsel's","counselling","counsellor","counselor","count","countdown","counted","counter","counteract","counterproductive","counters","countertops","counting","country","counts","county","couple","couples","course","court","courtesy","courting","cousin","cousins","covalent","cover","coverage","coverall","covered","covering","covers","cow","coward","cowboy","cows","cozy","crab","crack","cracker","crackers","cracks","cram","cranial","crank","cranked","cranky","crap","crapa","crapper","crash","crashed","crashes","crashing","craving","crawled","crawls","crawlspace","craze","crazed","crazy","cream","creamery","creaming","create","created","creation","creative","cred","credibility","credible","credit","creditors","creek","crème","cretin","crew","crew's","crews","crib","cribs","crime","criminal","criminal's","criminality","criminals","crimp","cripple","crippled","crisis","crispies","cristos","criterion","critical","critique","croaked","cross","crossed","crossing","crossroads","crossword","crowd","crownpoint","cruces","cruel","cruise","cruiser","cruising","crunch","crunching","crush","crushed","crushing","crust","crusty","crutches","cry","crybaby","crying","crystal","crystallizing","crystallography","crystals","ct","cuban","cube","cue","cueball","cuff","cuffs","culpable","culture","cunning","cuomo","cup","cupcake","curable","curb","cure","cured","curfew","curiosity","curious","curl","curlies","currency","current","currently","curriculum","cursed","curtain","curtains","curve","cushion","cushions","custer's","custody","customarily","customer","customer's","customers","cut","cute","cuts","cutter","cutters","cutting","cuvée","cuz","cv","cyber","cycle","cynthia","czech","d","d.a","d.b","d.c","d.f","d.l","da","dà","dab","dad","dad's","daddy","daddy's","dagger","daily","dairy","daisy","dal","damage","damaged","damages","damn","damned","damp","dan","dance","dancing","dang","danger","dangerous","dangerously","dangling","daniel","dank","danny","danny's","dare","dark","darkest","darkness","darla","darlin","darling","darling's","darn","darrow","darth","dash","data","date","dates","dating","daughter","daughter's","daunting","dave","dave's","david","dawg","dawm","dawn","day","daylight's","days","dbaa","de","dea","dea's","dead","deader","deaf","deal","deal's","dealer","dealers","dealership","dealie","dealing","dealings","deals","dealt","dean","dear","dearly","death","debate","debated","debrief","debris","debt","debts","decades","decay","deceit","decency","decent","decibels","decide","decided","decides","decision","decisions","declan","declare","decline","declined","decontaminate","decor","deductions","dee","deed","deep","deeper","deeply","deer","defaced","defeating","defects","defend","defended","defender","defense","defensive","defib","deficit","define","defined","definite","definitely","degenerate","degrading","degree","degrees","dehumidifiers","dehydrated","déjà","del","delayed","delcavoli","delcavoli's","deli","delicate","delicious","delineate","deliver","deliveries","delivering","delivery","delores","deluso","deluxe","demand","demanding","demands","dementia","demise","demo","democratic","den","deniability","denise","denmark","dennis","denny's","denomination","denominations","dent","deny","denying","department","departments","depend","dependable","depends","deposit","deposited","depot","depots","depreciation","depressed","depressing","depth","derek","derived","derives","descale","descend","describe","described","description","dese","desert","deserve","deserved","deserves","design","designed","designer","designing","desire","desired","desk","desks","desktops","despair","desperate","desperately","despise","despises","destined","destroy","destroyed","destroys","destruct","destruction","detached","detail","detailed","detailing","details","detained","detection","detective","detectives","detectors","detention","detergents","determination","determine","determined","detour","deuce","development","device","devil","devil's","devised","diagnosed","diagnosis","diagnostic","dial","dialing","dialogue","dialysis","diameters","diamond","diamonds","diaper","diapers","diaphoretic","dibs","dice","dick","dickhead","dicking","dickish","dicks","dickwad","diddling","die","died","diekirch","dies","diesel","diet","difference","differences","different","differently","difficult","difficulty","dig","digestion","diggin","digging","digital","digress","digs","diligence","dillinger","dilution","dime","dimed","diminishes","dimly","dimple","diner","ding","dinging","dingus","dining","dinner","dinner's","diolefins","dion","dioxide","dioxide's","dippie","dipping","dipshit","direct","direction","directions","directly","dirt","dirtbags","dirtball","dirtballs","dirty","dis","disabled","disabling","disagree","disagreement","disagreements","disappear","disappearance","disappeared","disappearer","disappearing","disappears","disappoint","disappointed","disappointing","disappointment","disarm","disassociate","disaster","disbarment","disbursed","disc","discard","discernible","discharged","disciplined","disclose","disclosure","discomfort","discomfort's","disconnected","discount","discourse","discovers","discovery","discredit","discreet","discs","discuss","discussed","discussing","discussion","disease","disgusting","dish","dishes","disincorporation","disoriented","dispatch","disperare","disperse","displacement","display","disposal","dispose","dispute","disputes","disregard","disrespect","disrespected","disrespectful","disrupter's","dissimilar","dissolution","dissolve","dissolving","distance","distant","distillate","distillation","distinction","distinctive","distinguished","distinguishing","distortion","distract","distribution","distributor","distributors","district","disturbance","disturbing","ditch","ditched","diversification","diversified","divided","division","divisions","divorce","divorced","divorcing","dizzy","dl","dmv","dmz","doable","dobkins","dockers","doctor","doctor's","doctorate","doctors","dodge","dodged","doff","dog","dog's","dogging","dogs","doh","doin","doings","dojo","dolby","dollar","dollars","dolphins","domain","domestic","domicile","domingo","don","donald","donation","donations","done","donut","donuts","doo","doob","doogie","doom","door","doorjamb","doorman","doors","doorstep","doorway","doos","doozy","dope","doped","dopey","dosage","dose","doses","doswell","dot","dots","double","doubling","doubt","doubtful","doubts","douche","douchebag","douchebags","dough","doughnuts","downer","downers","downs","downstairs","downtown","doyle","doze","doze's","dozen","dozens","dr","drabs","draft","draft's","drag","dragging","drains","drakkar","drama","dramatic","dramatically","drank","drano","drapes","draw","drawer","drawing","drawings","drawn","dream","dreaming","dreamt","dreamy","dreck","dress","dressed","dresser","drew","dribbling","dribs","dried","drift","drill","drilled","drilling","drink","drinking","drinks","drivable","drive","driven","driver","driver's","drivers","drives","driveway","driving","drop","dropped","dropping","drops","drove","drowning","drug","druggie","druggy","drugs","drugstore","drugstores","drum","drunk","dry","dryer","drying","dually","duane","duck","ducking","ducks","duct","dude","dude's","dudes","duds","due","dues","duffel","duh","duke","dukes","duly","dumb","dumbass","dumber","dumbest","dummy","dump","dumped","dumpster","dunce","dune","dunk","dunno","duration","duress","dust","dutch","duty","dvd","dvds","dye","dying","dysfunction","e","eager","ear","earful","earl","earlier","early","earn","earned","earning","earnings","earns","earrings","ears","earth","earthly","earthquake","ease","easier","easiest","easily","east","eastern","easy","eat","eater","eating","eats","ebola","eccentric","echinacea","echoes","economically","economics","economy","economy's","ecstatic","ed","edge","edgewise","edison","editor","educated","educating","education","educations","educators","edward","effect","effective","effects","efficacy","efficiency","effort","egg","egghead","eggs","ego","eh","ehrmantraut","eight","eighth","eighty","einstein","either","ejector","el","elaborate","eladio","elbow","elbows","eldest","electric","electricians","electricity","electrolyte","electrolytes","electrolytically","electromagnets","electromotive","electronic","electronics","electrons","element","elementary","elements","elephant","elephants","eleven","eli","eliminate","eliminates","elliot","elliott","elliott's","else","else's","elsewhere","em","embarrassed","embarrassing","embarrassingly","emergencies","emergency","emeril","emetic","emetics","emilio","emission","emo","emotion","emotional","emotionally","emotions","empire","employ","employed","employee","employees","employer","employs","empty","emt's","enabling","enact","enantiomerically","enchantment","encrusted","encrypted","encumber","encumbered","encyclopedia","end","endanger","endangerment","endearing","endeavors","ended","endless","endocarditis","endorsement","ends","enemies","enemy","energy","enforcement","enforcers","engage","engaged","engages","engine","engineer","engineer's","engineering","engines","english","enjoy","enjoyed","enjoying","enlighten","enormous","enough","enrique","ensure","enter","entering","enterprise","entertain","enthusiastic","enties","entire","entirely","entitles","entrepreneurs","entries","entry","environment","environmental","envy","enzyme","epa","ephedrine","epic","epileptic","episode","epperman","equal","equalization","equals","equate","equates","equation","equipment","equity","er","erased","erasers","erectile","eric","erlenmeyer","erotic","errand","errands","errol","error","erythromycin","escalara","escalate","escalated","escalating","escape","escobar","ese","esmeralda","esophagus","especially","esquire","essence","establish","established","establishment","estate","estate's","estimate","estimated","estimating","estimation","estranged","et","eternity","ether","ethically","ethnic","etiquette","eu","eubank","eubank's","euphemisms","europe","european","evaluation","evaporation","evasion","evasive","even","evening","event","events","eventually","ever","every","everybody","everybody's","everyday","everyone","everyone's","everything","everything's","everywhere","evidence","evil","evoked","ewelry","ex","exact","exactly","exaggerates","example","excellent","except","exception","exceptions","exchange","excited","excitement","exciting","excluding","excuse","excused","excuses","executioner","executive","exercise","exfoliate","exhibit","exhibition","exist","existed","existent","exists","exit","exothermic","expand","expanding","expect","expectation","expectations","expected","expecting","expenditure","expense","expenses","expensive","experience","experiential","experimentation","expert","expertise","expired","explain","explained","explaining","explains","explanation","explicitly","explodes","exploiting","exploratory","explorer","exploring","explosion","explosions","explosive","explosives","exponential","exponentially","expose","exposing","exposure","express","expressing","expression","extended","extending","extends","extension","extent","extenuating","exterminator","extra","extract","extraction","extraditing","extraordinaire","extraordinarily","extrapolating","extras","extravagant","extreme","extremely","exuberant","exxon","eye","eyeballed","eyebrows","eyed","eyes","eyeshade","eyewitness","f","f.o","fa","fà","fabric","fabricators","fabulous","face","faced","faces","facilitating","facility","facing","fact","factor","factors","factory","facts","faculty","faggot","fail","failed","failing","failure","faint","fainted","fair","fairgrounds","fairly","fairness","fairy","faith","fake","faking","fall","fallacies","fallen","falling","falls","fallujah","false","fame","familiar","families","family","family's","famous","fan","fancy","fannie","fantastic","fantasy","far","farley","farm","farmington","fart","farting","farts","fascinating","fashion","fashioned","fast","fastback","faster","fastidiousness","fat","father","father's","fatigued","fatten","fatty","fault","faulty","faux","favor","favorite","favors","favour","favours","fbi","fbi's","fe","fear","feasible","feature","features","fed","federal","federale","federales","feds","fee","feed","feedback","feedback's","feeding","feel","feelers","feeling","feelings","feels","fees","feet","fell","fella's","fellow","felon","felonious","felony","felt","female","femur's","fence","fences","fender","feng","fermented","fern","fernando","ferrous","fester","fetish","fibre","fiction","fidc","fiddling","fide","field","fifteen","fifth","fifty","fig","fight","fighting","fights","figs","figure","figured","figures","figuring","file","filed","files","filing","fill","filled","filling","filter","filtered","filth","filthy","filtration","final","finally","finance","financial","financials","financing","find","finder's","finding","finds","fine","fined","finest","finger","fingerprint","fingerprints","fingers","fingertips","finish","finished","finishes","finishing","fire","firearm","firecrackers","fired","fireplace","firewall","firing","firm","first","fish","fishing","fist","fisted","fit","fits","fitted","five","fix","fixable","fixated","fixed","fixer","fixing","fixtures","flaccid","flagstaff","flames","flamingo","flare","flash","flashed","flashlight","flashy","flask","flasks","flat","flatbed","flaw","flaws","flaxseed","fleet","fleeting","flew","flexible","flexing","flight","flights","flimsy","fling","flip","flipped","flipper","flipper's","flipping","flips","float","floating","floats","flomax","flood","flooded","floor","floors","florida","flour","flow","flowed","flower","flowers","flowing","flows","flu","flue","fluid","fluids","flunk","flunked","flunkies","flurry","flush","flushed","flushes","flute","fly","fly's","flying","flynn","flynn's","flyswatter","fo","fo'd","foam","focus","focuses","focusing","fodder","foggers","foil","fold","folk","folk's","folks","follow","followed","following","follows","fond","fonzie","food","food's","foods","fool","fooling","foolish","fools","foot","football","foothold","footies","footstep","forbid","forbidden","force","forced","forcing","forehead","foremost","foresee","foreseeable","forest","forever","forfeit","forget","forgets","forgetting","forgive","forgot","fork","forklift","forklifts","forks","form","formed","former","forms","formula","formulas","forniture","fort","forth","forthright","fortunately","fortune","fortuno","forty","forward","forwarding","fos","found","founded","fountain","four","fourteen","fourteen's","fourth","fra","fraction","fractured","fradei","frame","framed","fran","france","francesca","francisco","frankie","frankly","fraud","freak","freaked","freakin","freaking","freaky","fredo","free","freebie","freebies","freedom","freeze","freezer","freezes","freezing","freight","french","frenzy","frequencies","fresh","freshener","fresheners","fresher","frickin","fricking","friction","friday","fridge","fried","friend","friend's","friendly","friends","friendship","friggin","frigging","frightened","fring","fring's","frisky","fritada","fritos","frog","frogs","front","fronted","fronting","froot","frozen","fruit","fruitful","fruiting","fruity","frustrated","frustration","fry","fryer","fu","fuck","fucked","fucking","fucks","fuel","fugue","full","fully","fulminated","fulminative","fumes","fumigate","fumigated","fumigation","fun","fun's","function","fund","fundraiser","funds","funeral","fungus","funneling","funnels","funny","funyuns","furnace","furnaces","furnishing","furniture","furthering","furthermore","futile","future","fuzzy","fyi","g","g.a","g's","g5","gadget","gag","gai","gain","gak","gal","gale","gale's","gallardo","galley","gallon","gallons","gallup","gals","galvanic","galvanized","gambit","gamble","gambling","game","gamers","games","gamma","gander","gang","gangbang","gangbangers","gangbusters","ganged","gangs","gangsters","ganja","gap","gaps","garage","garages","garbage","garcia's","garden","gardiner","garduno's","garlic","garnets","gary","gas","gasket","gasoline","gasoline's","gasparza's","gate","gateway","gather","gathering","gatorade","gauge","gave","gavet","gay","ge","gear","gearing","gee","geez","geezer","gelled","gem","gemini","general","generalissimo","generate","generates","generator","generic","generous","generously","genes","genetic","genie","genius","geniuses","genny","gentle","gentleman","gentlemen","gently","geode","geodes","george","georgetown","georgia","gerber","german","germane","germans","germany","germs","gertrude","geste","gesture","get","gets","gettin","getting","getz","ghe","ghetto","ghost","ghosts","giant","gift","gifts","gimmick","gimp","ginny","ginny's","ginormous","girl","girlfriend","girlfriends","girls","give","given","gives","giving","glad","glamour","glare","glaring","glass","glasses","glassware","glen","glide","global","globe","glock","glorified","glossier","glove","glow","glue","glynco","go","goal","gobi","god","god's","goddamn","goddamned","goes","going","goings","gold","goldberg","golden","gomey","gomez","gomie","gone","gonna","gonzo","goo","good","goodbye","goodies","goodman","goodman's","goodness","goodnight","goods","google","goomba","goon","goose","gor","gordie","gordon","gorgeous","gory","gosh","got","got's","gotcha","gotta","gotten","government","government's","governments","gps","grab","grabbed","grabber","grabbing","grabby","grabs","graces","grad","grade","grader's","gradual","graduated","graduation","grain","gram","grams","grand","granddad","granddaddy","granddaughter","granddaughter's","grandma","grandma's","grandmas","grandmother","grandpa","grandson","granite","granny","grant","granted","grape","grapefruit","graphite","grasp","grasping","grateful","gratis","gratitude","gravel","gravely","gravitated","gravity","gray","grease","greased","greasy","great","greater","greatest","greatly","greed","greedy","greek","green","greet","grenade","gretchen","gretchen's","grew","grey","grid","grief","griffin","grill","grilled","grim","grind","grinding","groceries","grocery","groin","groove","gross","groucho","ground","groundhog","groundskeepers","groundwork","group","grove","grow","growing","grown","grownups","growth","grumpy","grunt","grunting","gs","guacamole","guangzhou","guarantee","guaranteed","guard","guarded","guardedly","guardian","guarding","guards","guess","guessing","guest","guests","guidance","guilt","guilted","guilty","guinness","gulf","gully","gulp","gum","gums","gun","gunk","gunky","gunman","gunned","gunning","guns","gunshot","gus","gus's","gustav","gustavo","gut","gutierrez","guts","gutters","guy","guy's","guys","gym","h","h.t","ha","habit","habits","hack","hacker","haemoglobin","hag","hagen","hair","haircut","hairstylist","hairy","haji's","half","halfway","hall","hallway","hallways","halo","halon","hamburgers","hammacher","hammer","hamper","hampshire","hand","handcuffs","handed","handedly","handful","handi","handicapped","handing","handle","handled","handles","handling","handout","hands","handsome","handy","hang","hanging","hangovers","hangs","hank","hank's","hanover","happen","happened","happening","happens","happier","happily","happiness","happy","harassed","harassment","harbor","hard","hardass","hardcover","hardened","hardens","harder","hardest","hardly","hardon","hardship","hardware","hardwood","hardworking","hardy","harm","harmed","harmless","harrelson","hartwell","hash","hassles","hat","hatcheries","hate","hated","hates","hating","hatred","hats","haul","hauled","hauling","haunches","haunt","haunted","haute","hawaii","hawing","hay","hayek","hazard","hazardous","hazeltine","head","headaches","headcheese","headed","headfirst","heading","headlights","headline","headphones","headquarters","heads","headway","heal","healing","health","healthier","healthwise","healthy","hear","heard","hearin","hearing","hears","hearsay","heart","heart's","heartburn","hearted","hearts","hearty","heat","heat's","heated","heater","heaven","heavily","heavy","heck's","hectic","hector","hectoring","hedges","hee","heh","height","heil","heir","heisenberg","heisenberg's","heist","heists","held","helicopter","hell","hell'd","hell's","hellfire","hello","hells","helm","helmet","help","helped","helpful","helping","helpless","helps","hematoma","hemming","hemoglobin","hemp","hen","hence","henchmen","hepa","herbs","hereby","hereto","hermanos","hernia","hero","heroes","heroin","hesitate","hesitation","heston","hey","hi","hiatus","hiccup","hid","hidden","hide","hideous","hiding","high","higher","highest","highlighted","highlights","highly","highway","hijack","hike","hilarious","hill","hills","hinky","hint","hinted","hip","hippie","hippocampus","hips","hire","hired","hires","hiring","historically","history","hit","hitchhiked","hither","hitler","hitler's","hitmen","hits","hitter","hitters","hittin","hitting","hiyah","hm","hmm","hmo","ho","hoax","hob","hobbies","hobby","hobos","hoffa","hoffman","hog","hold","holder","holders","holdin","holding","holds","holdup","hole","holed","holes","holistic","holler","hollow","holly","holster","holt","holy","home","homeboys","homeland","homeless","homeowners","homer","homes","homework","homey","homicidal","homicide","homicides","homie","homies","homing","homo","hon","honduras","honest","honestly","honesty","honey","honeys","honk","honking","honor","honors","honour","hoo","hood","hoof","hook","hooked","hookups","hoops","hooptie","hooray","hoover","hop","hope","hopeful","hopefully","hopeless","hopes","hoping","hopper","hormones","horn","hornet's","horrible","horrified","horror","horrors","horse","horsepower","horses","hose","hosed","hospah","hospital","hospitals","hostage","hostess","hot","hotdogs","hotel","hotline","hotter","hottest","houdini","hour","hourly","hours","house","housefly","household","houseplants","houses","housewarming","housing","houston","hover","how'd","howdy","however","howitzer","howser","hr","hubby's","huckleberry","hue","huell","huell's","huevos","hug","huge","hugo","hugo's","huh","hulk","human","humanities","humanity","humble","humbly","humidity","humiliated","humming","humour","hump","hunch","hundred","hundreds","hung","hungry","hunk","hunt","hunting","huntington's","hurry","hurt","hurting","hurts","husband","husband's","hush","hustle","hy","hydrated","hydride","hydrofluoric","hydrogen","hydrogenation","hydrous","hydroxide","hydroxyl","hyena","hypnosis","hypo","i.c.e","i.d","ice","icebreaker","icebreakers","iced","icing","icu","id","idea","ideal","ideas","ident","identical","identification","identified","identify","identities","identity","idiot","idiotic","idle","ids","ie","ieds","ignacio","igneous","ignition","ignorance","ignorant","ignore","ii","ill","illegal","illegally","illegals","illicit","illness","illusion","illustrator","image","images","imaginable","imaginary","imaginative","imagine","imbecile","imbecility","immediate","immediately","immigrated","imminent","immune","immunity","impact","impatient","impeccable","imply","import","important","importantly","imported","impossible","impound","impressed","impression","impressive","imprint","imprisoned","improve","improved","improvement","improving","impunity","inactive","incalculable","incautious","incendiary","inch","inchers","inches","incident","incidentals","inclined","include","included","including","income","incoming","inconspicuous","inconvenience","increase","increased","increases","increasingly","incredible","incredibly","incriminate","indeed","indefinite","indefinitely","indentured","independent","indestructible","indexes","indian","indic","indicated","indication","indigo","indisposed","indistinctly","individual","individuals","indoor","industrial","industries","industry","inertia","inevitable","infant","infantilize","infected","infection","infelice","inferior","inferred","infested","infidelity","inflammation","inflation","influence","inform","informant","informants","information","informed","informs","infrastructure","infusion","ingredient","ingredients","inhale","inhaled","inhaler","inheritance","iniquity","initial","initiation","initiative","inject","injun","injured","injuries","injury","ink","inkling","inlaid","inmates","innocence","innocent","inoperable","inosilicate","inpatient","input","inquiries","inroads","insane","insanely","insensitive","inside","insight","insignificant","insist","insistent","insistently","insisting","inspect","inspection","inspections","inspector","inspiration","inspirational","inspire","inspiring","installation","installment","instance","instances","instant","instantaneously","instantly","instead","instinct","instituted","institution","instructed","instruction","instructions","instructor","instrument","insult","insulted","insulting","insurance","insured","insurer","intact","intake","inte","integration","intelligence","intend","intended","intense","intent","intention","intentions","interact","interaction","interactions","intercepted","interdiction","interest","interested","interesting","interests","interfere","interior","internal","international","internationally","internet","interpretation","interrupting","interruptus","interval","intervene","intervened","intervention","interview","interwoven","intestinal","intestines","intimidating","intimidation","intro","introduce","introduced","introducing","introductions","invade","invent","invented","invention","inventory","inventory's","invest","invested","investigate","investigated","investigating","investigation","investigations","investigator","investigators","investing","investment","invitation","invite","invited","invites","inviting","invoice","involve","involved","involvement","involves","involving","io","ioad","iocal","ionic","iooking","iota","ira","ira's","iraq","irc","ireland","irian","irish","iroc","iron","ironclad","ironed","ironical","ironically","ironside","irrelevant","irresponsible","irrevocable","irritated","irritation","irs","ish","islamabad","islamic","island","islands","isolated","isomer","issue","issues","it'd","it'll","italy","itch","item","items","ivs","j","j.p","jack","jacked","jacket","jackie","jacking","jackoff","jackoffs","jackpot","jackshit","jackson","jacocks","jagoff","jail","jails","jake","jam","james","jane","jane's","janet","janice","janitor","jar","javelinas","jaw","jay","jaya","jazz","jazzed","jealous","jeans","jeez","jeffersons","jeffrey","jehovah's","jelly","jerk","jerked","jerking","jerkoff","jerry","jerry's","jerseys","jes","jess","jesse","jesse's","jesus","jet","jeter","jethro","jew","jhps","jib","jibbhead","jim","jimmy","jimmy's","jive","jizz","joan","joaquin","job","job's","jobs","jock","joe","joey","jog","john","johnny","join","joining","joint","jointly","joints","joke","jokers","joking","jolly","joseph","journal","journalist","joy","joyce","joyride's","jr","ju","juan","juana","juanita","juarez","judge","judged","judgement","judgements","judging","judgment","judgmental","judgments","jugs","juice","juicy","julie","juliet","julius","july","jump","jumped","jumping","jumps","jumpsuit","jun","june","jungle","junior","junior's","junk","junkie","junkies","junkyard","jurisdiction","jury","just","justice","justifiable","justifies","justify","juvie","k","kafkaesque","kalanchoe","kanga","kangaroo","kangaroos","karaoke","kart","karts","kathi","kaylee","kaylee's","kdk","keels","keen","keep","keepball","keeper","keeping","keeps","keith","keller","keller's","kelly","kenny","kept","ketchup","kettle","kevin","kevlar","key","keyed","keys","kfc","kgb","khakis","kick","kicked","kicking","kicks","kid","kid's","kidding","kiddo","kidney","kids","kilbourne","kilkelly","kill","killed","killer","killers","killing","kills","kilo","kim","kind","kinda","kindergarten","kindly","kindness","kindnesses","kinds","king","kingair","kingpin","kings","kira","kirk","kirks","kirtland","kiss","kissing","kitchen","kitchen's","kitchens","kite","kits","kitty","kjeldahl","kleenex","kleinman","kleinman's","kleptomaniac","knee","kneecap","kneel","kneeling","knees","knew","knife","knifed","knight","knights","knives","knobjobs","knock","knocked","knocking","knockoff","knocks","knot","know","knowing","knowledge","known","knows","knox","kojak","kotter","koyama","kraft","kraze","krazy","kub","kuby","kuby's","kudos","kurtz","l","la","lab","lab's","label","labor","laboratories","laboratory","labs","labware","lace","lack","lacks","ladder","ladder's","laden","ladies","lady","laid","lake","lalique","lalo","lambert","lame","lamentar","land","landings","landline","lane","language","lap","laptop","laredo","large","larger","largest","lariat","lark","larks","larry","larvae","las","lasagna","laser","lasers","last","lastly","lasts","lat","latch","latching","late","lately","later","latest","latino","laugh","laughed","laughing","laughingly","laughs","launch","launder","laundered","laundering","launders","laundromat","laundry","laureate","lavoisier","law","law's","lawless","lawman","lawn","lawnmower","lawns","laws","lawsuit","lawyer","lawyer's","lawyers","lay","layaway","layer","layer's","layered","layering","laying","layman","laziest","lazy","lcd","ldpe","leach","lead","leader","leadership","leading","leads","leaf","league","leak","leaking","leaks","lean","leap","learn","learn'd","learned","learner's","learnin","learning","lease","leased","leases","leasing","least","leather","leave","leaves","leaving","lecture","led","leeching","left","leftovers","leg","legacy","legal","legally","legend","legit","legitimate","legos","legs","lemon","lend","length","leno","lens","lentil","leonel","leotard","less","lesson","lester","let","lethal","letter","letters","letting","level","levels","leverage","leveraged","levers","lex","lf","li","li'l","liability","liaison","liar","liberal","libertarian","liberties","liberty","licence","license","licensed","licensure","lick","lid","lie","lien","lies","lieutenant","lieutenants","life","life's","lifeblood","lifeguard","lifer","lifesaver","lifetime","lifetimes","lift","lifted","lifting","lifts","light","lighten","lighter","lighting","lightish","lightly","lights","lightweight","like","liked","likely","likeness","likes","likewise","liking","lily","limb","lime","limit","limited","limits","line","liner","lines","lingered","lingering","lingo","lining","link","linkas","links","linn","lip","lips","lipton's","liquid","liquor","list","listed","listen","listened","listening","listing","lists","lit","literally","liters","litre","litres","litter","little","live","lived","liver","livers","lives","living","lizard","lo","load","loaded","loading","loads","loaf","loan","loath","lobby","lobectomies","lobectomy","lobster","local","locally","locate","location","locations","lock","lockdown","locked","locker","locks","locksmith","lockup","loco","locomotive","lodge","logic","logical","logistics","lojack","loky","lolly","london","lone","long","longer","longest","longtime","loo","look","looked","lookin","looking","lookit","lookout","looks","looky","loop","loopholes","loops","loose","lord","los","lose","loser","loses","losing","loss","losses","lost","lot","lots","lottery","loud","louder","loudly","louis","louis's","lousy","love","loved","lovely","lover","loves","lovin","loving","low","lower","lowlife","lowrider","lowriders","loyal","loyalty","lp","lsd","lubalox","lucía","lucid","luck","luckier","luckily","lucky","lucy","lucy's","lug","luggage","luis","lukewarm","lullaby","lumps","lunas","lunatic","lunatics","lunch","lung","lunged","lungs","lure","lurking","luthor","luxembourg","lydia","lying","lymph","lysol","m","m16","ma","ma'am","mach","machine","machines","macho","mackerel","macking","mad","made","madhouse","madrid","madrigal","madrigal's","mae","maestro","mafia","mag","magazine","magazines","magic","magical","magnet","magnets","magnificent","magnum","magoo","maid","maiden","mail","mailbox","main","mainly","maintain","maintainer","maintenance","major","majorly","make","makes","making","male","malfunction","mall","malverde","mama","mama's","mamama","man","man's","manage","managed","management","management's","manager","managers","manages","managing","mandated","maneuver","manganese","manger","manhattan","manhunt","maniac","manicures","manifest","manifesto","manipulated","manipulating","manner","mannered","manners","manson","manual","manufacture","manufactured","manufacturer","manufacturers","manufactures","many","map","marathons","marching","marco","margaret","margarine","margarita","margin","marginally","margins","margo","margolis","maría","mariano","marie","marie's","marijuana","marin","marina","marine","mario","mark","marked","marker","market","market's","marketplace","marking","markowski","marks","marriage","married","marron","marrow","marry","mars","marshals","mart","martinez","mary","mascot","mash","mashed","mask","masks","mass","massage","massive","master","master's","mastercard","mastercard's","mastermind","masturbation","masturbator","match","matchbooks","matches","mate","material","materials","math","mathematical","mathematically","mathematician","matic","mats","matt","matter","matters","mattress","maui","maury","maverick","max","maxextract","maximino","maximum","may","maybe","mayhew","mayo","mayonnaise","mazatlan's","mccoy","mcduck","mcgee","mcgill","mckinley","mcmahon","mcquade","mdc","mdc's","meal","meals","mean","meaning","means","meant","meantime","meanwhile","measure","measured","measures","meat","mechanics","mechanism","media","median","medical","medically","medicated","medication","medications","medicine","medicines","mediocre","medium","meds","meet","meeting","meetings","meisterburger","mel","melinda","melon","melt","melting","member","members","membership","memo","memories","memorize","memory","memphis","men","menaul","mend","mending","mental","mentally","menthe","mention","mentioned","mentioning","mentored","menu","mercedes","mercenaries","merck","mercuric","mercury","merits","merkert","meryl","mescal","mess","messag","message","messages","messed","messenger","messes","messing","messy","met","metal","metaphor","metaphors","metastases","metastasised","meter","meth","meth's","methamphetamine","methamphetamines","method","methyl","methylamine","methylaminopropane","methylene","meticulousness","metric","metropolitan","mex","mexican","mexicans","mexico","mexico's","mi","miami","mic","mica","mice","michael","michelangelo","michoac","michvanilly","mickey","microchip","microwave","microwaves","mid","middle","midsection","miei","might","might've","mighty","migrants","mike","mike's","mil","mild","mildly","mile","mileage","miles","milf","milf's","milk","miller","milligrams","milliliter","milliliters","millimeter","million","millionaire","millions","millionth","miltie","mimi","mince","mind","minded","minding","minds","mine","mineral","minerals","minga","minimalist","minimum","minimums","minivan","minneapolis","minnesota","minnow's","minor","mint","minus","minute","minutes","miracle","miracles","miriam","mirror","mirrored","miscalls","misconceptions","misdemeanor","miserable","misgivings","mismatched","misplaced","misread","miss","missed","misses","missing","mission","mississippi","missouri","mistake","mistakes","mister","mistrial","misunderstanding","misuse","mit","mitts","mix","mixed","mixing","mm","mmm","mmmh","mo","moan","mobile","mode","model","modeling","modern","modicum","modifications","modified","moe","mofo","mofos","moisture","moisturizer","molded","mole","molecular","molecules","moles","molina","moll","molls","mom","mom's","moment","moment's","momentarily","moments","mommy","mommy's","monday","money","money's","monitor","monk","monkey","monoalkenes","monroe","monster","monsters","monstrous","montana","monte","montezuma's","month","month's","months","montreal","moo","mood","mood's","moody","mookjaiaporn","moon","moose","mop","moping","moral","morality","morally","morganite","morgo","morgue","morning","moron","moronic","morons","mortgage","mortgages","mosaic","moses","mosquito's","mosquitoes","mostly","motel","mother","mother's","motherfuck","motherfucker","motherless","motivate","motivated","motivating","motivation","motivator","motor","motory","motto","mound","mountain","mountains","mounted","mouth","mouths","move","moved","movement","movements","mover","movers","moves","movie","movies","movin","moving","mr","mri","mrs","ms","much","muckity","mucks","muddle","mug","mugged","muh","mule","mules","multi","multinational","multiple","multiplier","multitask","mum's","munchkin","munn","murder","murdered","murderer","murders","murray","muscle","muscles","museum","music","musician","musicianship","must","must've","mustache","mustard","mutt","mutual","mutually","mwah","myshout","mystery","n","n17t01","na","nab","nachos","nada","nah","nail","nailed","naive","naivete","naked","name","name's","named","nameless","names","namesake","naming","nana","nanny","nap","napa","napkin","napkins","narcotics","narrare","narrative","narrow","nasa","nasdaq","nasty","nation","national","nationals","native","natural","naturalized","naturally","nature","nausea","nauseated","navajo","navy","nazi","nazis","ne","near","nearest","nearly","neat","neatly","nebraska","necessarily","necessary","neck","necklaces","necks","neckties","need","needed","needing","needle","needs","neg","negative","negligible","negotiable","negotiate","negotiated","negotiating","negra","neighbor","neighborhood","neighborhoods","neighbors","neighbour","neighbourhood","neighbourhood's","neigorhood","neither","nelson","nelson's","neo","nephew","nephew's","nephews","nerd","nerd's","nerdiest","nerve","nervous","nescafé","ness","nest","net","netted","netting","network","neural","neurons","neutral","nevada","never","new","newborn","newborns","newcombe","newman","newport","news","newspaper","newsroom","next","nice","nicely","nicer","nicest","nick","nickel","nickel's","nickname","niece","night","nighter","nightmare","nights","nil","nine","niner","ninety","nitrate","nitrobenzene","nitrogen","nixed","nixon","nob","nobel","nobodies","nobody","nobody's","nodes","nofederales","noi","noir","noise","nomenclature","non","none","nonexistent","nonrefundable","nonsense","nonsensical","nonstop","nonviolent","noodles","noon","nope","norfolk","normal","normally","norte","north","northern","northwest","nose","notarised","notch","note","notebook","noted","notes","nothin","nothing","nothing's","notice","noticed","noticing","notify","noting","notoriously","notwithstanding","novel","novella","now","now's","nowhere","nozzle","npns","ns","nsf","ntete","ntion","nu","nuanced","nub","nuclear","nudist","nuke","number","number's","numbers","numbnuts","nurse","nursery","nurses","nursing","nut","nuts","nymphs","o","o.g","o'clock","o'keeffe","oath","oberlin","obits","obligated","oblige","obliged","obliterated","oboe","obscene","obscenity","observation","observed","obsessed","obsessive","obtained","obvious","obviously","occasion","occasionally","occupational","occupied","occurrence","occurs","ocean","odd","odds","odometer","odor","odourless","ods","offence","offender","offense","offer","offer's","offered","offering","offers","office","officer","officers","official","officially","offing","offshore","often","og","oh","ohh","ohhh","oi","oil","oiled","oilier","okay","okie","oklahoma","oktoberfest","ol","ol'raging","old","old's","older","olive","olives","olympics","omaha","omelet","omelets","onassis","oncologist","oncology","one","one's","ones","oneself","onetime","ongoing","onion","online","ono","ontario","onto","oof","ooh","oop","op","open","opened","opening","opens","opera","operate","operates","operating","operation","operational","operations","operators","opinion","opinions","opossum","opportunities","opportunity","opposite","opr","oprah","ops","optimal","optimism","optimistic","option","options","orale","orange","oranges","orbital","ordeal","order","ordered","ordering","orders","ordinary","oregon","organic","organisation","organisation's","organization","organized","oriented","original","originality","originally","ormai","ortega","oscar","ostensibly","oster","osuna","ot","other's","others","otherwise","oughtta","ounce","ounces","outback","outcomes","outlaw","outlawed","outlook","outpatient","output","outraged","outreach","outright","outs","outside","outstanding","outta","oven","overages","overall","overblown","overcome","overcomplicate","overdose","overdrawn","overdue","overestimate","overhead","overlap","overlook","overly","overnight","overqualified","overreacting","overreaction","overseas","oversee","overseeing","overslept","overstated","overstating","overtime","overweening","overwhelm","overwhelmed","overwhelming","overwhelms","ow","owe","owed","owes","owing","owned","owner","owner's","owners","owning","owns","oxidation","oxide","oxidizes","oxygen","oyster","ozone","p","p.d","p.i","p.m","p.m.a","p.t","p2p","pablo","pace","paces","pacific","pack","package","packed","packets","packing","packs","paco","padding","paddle","padlock","padlocked","pads","page","pages","paging","paid","paila","pain","painful","painkillers","painless","pains","paint","painted","painter","painting","paintings","pair","pairs","pal","palace","pale","palmer","palomita","palp","palsy","pan","pancake","pancakes","pancho","panel","panic","panicked","panicking","panini","pans","panties","pants","papa","papadoumian","paper","papers","paperwork","par","parade","paradise","paralegal","parallel","paralysis","paralyzed","parameters","parametric","paramount","paranoid","paraphernalia","pardon","parenting","parents","paris","parish","park","parked","parking","parlors","parsecs","part","part's","partake","parte","partial","participate","particles","particular","particularly","parties","parting","partner","partner's","partnered","partners","partnership","parts","party","partying","paseo","paso","paso's","pass","passable","passed","passes","passing","passion","passionate","passive","passport","passports","past","paste","patch","patches","patent","patents","path","pathetic","pathetically","paths","patience","patient","patiently","patients","patio","patrick","patrol","patrol's","patron","patronize","patted","patterns","patting","paul","paulson","paused","pavilion","pay","payable","payback","paying","payment","paypal","payroll","pays","pbj","pd","pe","pea","peace","peach","peanut","peanuts","pear","pearlescent","pearly","peas","pecking","pedal","peddling","pediatric","pee","peed","peeing","peek","peekaboo","peels","peep","peeping","pees","pegged","pegs","pelada","pelato","pellet","pemberton","pen","penalized","penalties","penalty","pencil","pencil's","pendejo","pending","penetrate","penis","penitentiary","pennies","penny","pension","pensions","people","people's","pepper","peppery","pepto","per","perceived","percent","percentage","percentages","percentile","perchance","perez","perfect","perfection","perfectly","perfecto","performance","performing","performs","perhaps","period","periodic","peripheral","perks","permanent","permission","permit","perps","persecution","persistence","person","person's","personal","personality","personally","persons","perspective","persuasion","pertains","pertinent","peruvian","pervert","pest","pesticide","pet","pete","pete's","peter","pets","peyketewa","pfizer","ph","pharmaceutical","pharmacy","phenyl","phenylacetic","phenylacetone","pheromones","phil","philadelphia","philanthropy","philly","phoenix","phone","phone's","phones","phosphate","phosphine","phosphorous","phosphorus","photo","photograph","photographer","photographs","photos","photoshop","phrase","phraseology","physical","physically","physicist","physicists","pi","piccolo","pick","picked","picking","pickup","pickups","picky","picnic","picture","picture's","pictures","picturing","piddling","pie","piece","piecemeal","pieces","piercings","pies","pig","pike","pile","piled","pillow","pillows","pills","pilot","pima","pimiento","pimple","pin","pinch","pinched","pine","pink","pinkman","pinkman's","pinned","pinochet's","pipe","pipeline","pipes","piss","pissed","pissing","pistol","piston","pitch","pitched","pitchers","pitches","pity","pizza","pizzas","pl","pla","place","placed","placement","places","placing","plain","plan","plan's","plane","planet","plank","planned","planner","planning","plans","plant","planted","plants","plasma","plastered","plastic","plate","plated","plates","platinum","plausible","play","played","player","players","playing","plays","plaything","plaza","plaza's","plead","pleasant","please","pleased","pleasee","pleasure","pledge","plenty","pliers","plot","plotted","ploy","plug","plugging","plumbing","plural","plus","plywood","pneumonitis","pocket","pockets","poem","poetic","point","pointed","pointies","pointing","pointless","points","poised","poison","poisoned","poisoning","poisons","poke","poker","pokin","poking","pol","poland","pole","police","policies","policy","politics","pollos","pollutant","pollution","polyenes","polyethylene","polymer","polyphenols","polyps","ponytail","poo","poochie","poof","pookums","pool","poop","poopie","poor","pop","popcorn","pope","popeye","popping","pops","popularity","populated","population","porch","porn","port","portions","portsmouth","posada","posed","position","positive","positivity","positron","posse","possess","possession","possessions","possibilities","possibility","possible","possibly","possum","post","postage","postal","posters","postponed","posts","pot","potassium","potato","potatoes","potential","potentially","pothead","pottery","pouch","pouches","poultry","pounce","pound","pounding","pounds","pour","poured","pouty","povero","povich","powder","power","powered","powerful","powerless","powers","powwow","pr","practically","practice","practioner","pragmatic","prague","praises","pray","praying","pre","preach","preaching","precautions","precious","precise","precisely","precision","precursor","predates","predators","predecessor","predicate","prednisone","prefer","preferable","preferred","pregnant","premises","premium","prenatal","preoccupation","preoccupied","prepaid","preparation","prepare","prepared","presbyterian","preschool","prescribe","prescription","prescriptions","presence","present","presentable","presented","presently","presents","preservation","president","presidents","press","pressed","presses","pressing","pressure","pressure's","presume","presumed","presumption","pretend","pretended","pretending","pretty","pretzels","prevent","prevention","previous","previously","prey","price","prices","pricing","prick","pricks","pride","prideful","priest","primarily","primary","prime","primitive","prince","princes","princess","principal","principle","print","printed","printer","printing","prints","prior","priorities","priority","prison","prisoner","prissy","privacy","private","privilege","privileged","privileges","pro","probability","probable","probably","probation","probing","problem","problem's","problems","procedure","procedures","proceed","proceedings","proceeds","process","prodigal","produce","produced","producer","produces","product","product's","production","productive","products","professional","professionalism","professionals","professor","profile","profit","profitable","profits","profusely","program","programme","programs","progress","progression","prohibition","project","prolonged","prolonging","prom","promise","promised","promises","promising","promoting","promotion","pronounce","proof","proofing","propane","proper","properly","property","prophylactic","proportions","propose","proposition","proprietary","props","pros","prosciutto","prosecute","prosecution","prosecution's","prosecutor","prospect","prosthetic","protect","protected","protecting","protection","protective","protector","protects","protein","protest","protic","protocol","proud","prova","prove","proved","proven","proverbial","provide","provided","provider","providers","provides","providing","provincial","provisional","provocation","proximity","prying","prying's","pseudo","pseudo's","pseudonym","psyched","psychedelic","psychiatric","psycho","psychological","psychotic","pt","public","publicly","publish","published","pudding","pueblo","puerto","puff","puffs","pull","pulled","pulling","pulls","pulse","pump","pump's","pumping","punch","punching","punctual","punctured","punish","punishing","punitive","punk","punking","puppet","puppies","puppy","purchase","pure","purebred","purely","purer","purest","purging","purity","purple","purpose","purposely","purposes","purse","pursuant","pursuing","pursuit","push","pushed","pushing","puss","pussy","put","puts","putt","putting","putty","puzzle","puzzles","qb","quadrant","quaker","quali","qualifications","qualified","qualifies","quality","quandary","quantico","quanties","quantity","quarter","quarterlies","quarterly","quarters","quatloos","quayle","queen","quel","quentin","questa","question","questioned","questioning","questions","quick","quicken","quicker","quickly","quiet","quieter","quinic","quit","quite","quits","quivering","quota","quotas","quote","r","rabanne","rabid","race","racehorse","rack","racket","radar","radiation","radiator","radio","radiologists","radius","rage","raid","raided","rail","railroad","rails","rain","rained","raining","rainy","raise","raised","raisin","raking","rallied","rallies","ralsto's","ram","rambo","ramen","ramey","ramey's","ramp","rampage","ramping","ran","rancher","rancheros","rancho","rand","random","rang","range","ranger","ranking","rankings","rant","rap","raped","rapid","rare","rascal","rash","rashly","raspberry","rat","ratasnitch","rate","rated","rates","rather","ratings","rational","rationales","rationalizing","rats","ratted","rattle","rattling","raw","ray","razor","re","reach","reached","reaches","reaching","react","reactants","reaction","reactions","read","reader","readily","reading","reads","ready","real","realise","realised","realistic","realistically","reality","realization","realize","realized","really","realm","rear","reason","reasonable","reasonably","reasoning","reasons","reassess","reassign","rebecca","rebel","rebooting","rebuilding","rebuilt","rec","recall","recalling","receipt","receipts","receivable","receive","received","receives","receiving","recent","recently","reception's","recess","recessed","recipe","recipient","recite","recited","recognizable","recognize","recognizing","recommend","recommendation","recommended","reconciliation","reconsider","reconsidered","record","recorded","recording","records","recovering","recovery","recreational","rectum","recumbent","recur","recurring","recycle","red","red's","redheaded","redial","redone","reduce","reduced","reducer","reduction","reductive","reefer","reeling","reenter","refer","referred","refill","reflux","refrain","refresh","refreshments","refrigerator","refuse","refused","refuses","refusing","regarding","regardless","regards","regional","register","registered","registration","regret","regrets","regretting","regroup","regular","regularly","regulation","regulations","rehab","rehabilitated","reimburse","reimbursed","reinforced","reinforcement","reinforces","relapse","related","relates","relating","relation","relational","relations","relationship","relationships","relative","relatives","relax","relaxed","relaxes","released","relentless","reliable","relief","relies","relieved","religious","reload","remain","remainder","remaing","remains","remakes","rember","remember","remembered","remembering","remembers","remind","reminder","reminds","remission","remorse","remote","remotely","remotest","removal","remove","removed","removing","renaldo","renewed","renounce","renovated","renovations","rent","rental","rented","renting","reopen","reorganize","rep","repaid","repair","repairs","repay","repeat","repeatedly","replace","replaced","replacement","replacing","replicator","repo'd","report","report's","reported","reports","represent","representation","represented","representing","represents","reprisals","reproducible","republic","reputable","reputation","reputed","request","requested","require","requirement","requires","requiring","resale","reschedule","rescue","research","researching","reservation","reserve","reset","residence","residency","resident","residential","residentiary","residue","resist","resistant","resisted","resisting","resized","resolve","resolved","resolving","resort","resources","respect","respectable","respected","respectful","respectfully","respects","respirator","respirators","respiratory","respond","responded","responders","responding","responsability","responsabilty","response","responsibilities","responsibility","responsible","rest","restart","restaurant","restaurants","resting","restocking","restrain","restraining","restroom","result","resulted","results","resumes","retaliate","retard","retarded","rethinking","retire","retired","retirement","retiring","retreat","retrofit","return","returned","returning","revenge","revenue","revenues","reverend","reverse","review","reviewing","revisit","revolver","reward","rewarded","rewarding","rewards","rewindo","rewrite","reynolds","rez","rhinoceros","rhodonite","rhythms","ri","rib","ribbon","ribs","rice","ricer","rich","richards","riches","ricin","ricine","ricky","rico","rid","ride","rides","ridiculous","riding","rifle","rig","rigel","rigging","right","rights","righty","rigid","rignon","rigs","rile","riled","rims","ring","ringing","ringo","rings","rinsed","rio","riot","rip","ripcord","ripe","ripped","rippin","ripping","risen","rises","risin","risk","risking","risks","risky","ritz","rival","rivals","river","roaches","road","roadblocks","roadie","roads","roaming","roast","rob","robbed","robbery","robbing","robert","roberts","robin","robot","rock","rocket","rockies","rocks","rocky","rodarte","rode","roger","rogers","roget","role","roll","rolled","rollicking","rolling","rolls","romanian","ron","ron's","roof","roofing","room","roomba","roommate","rooms","roomy","root","roped","rose","roswell","rot","rote","rotting","rough","roughly","round","rounding","routine","rover","row","rows","rt","rubbed","rubber","rude","rudimentary","rug","ruin","ruined","ruining","rule","rules","ruling","rumblings","rumours","run","rundown","runner","runnin","running","runoff","runs","rupture","rural","rush","rushing","russell","russian","rust","rustle","rusty","ruthless","rv","rv's","rvs","s","s.s","s'mores","s'up","sabbatical","sabotage","sabre","sac","sack","sacred","sacrifice","sacrifices","sacrificial","sacrilege","sad","saddened","sadly","safe","safe's","safely","safer","safest","safety","sage","said","sail","sailed","sailing","sails","saint","sainthood","sake","sakes","salad","salamanca","salamanca's","salary","sale","sales","salesmanship","salesperson","saline","salma","salmon","salon","salon's","salt","salt's","salvage","salvation","sam's","samaritan","sample","samples","samsung","san","sand","sandals","sandblasted","sanded","sanders","sandia","sandor","sandoval","sandwich","sandwiches","sang","sangre","santa","sappy","sarge","sat","satellite","satellite's","satin","satisfaction","satisfied","satisfy","saturday","saturn","sauce","saul","saul's","sausages","savage","savages","save","saved","saver","saves","savewalterwhite.com","saving","savings","savvy","saw","saxitotoxin","say","saying","says","scab","scabby","scaggs","scale","scales","scan","scanner","scans","scante","scar","scare","scared","scares","scarface","scarier","scariest","scaring","scars","scary","scenario","scene","scented","scents","schedule","scheduled","scheme","schist","schlemmer","schlongus","scholarship","school","school's","schooled","schools","schoolteacher","schrader","schrader's","schraderbrau","schuler","schultz","schwag","schwartz","science","scientific","scientist","scientists","scissors","scoop","scooter","scope","score","scorpions","scott","scottsdale","scotty","scotty's","scour","scout","scrabble","scram","scrambler","scrap","scrape","scraps","scratch","scream","screaming","screams","screech","screeching","screen","screen's","screening","screw","screwed","screwing","screws","script","scrooge","scrounge","scrub","scrubbing","sculpture","scumbag","scumbags","scurrying","scuse","scythe","sd","se","sea","seafood","seal","sealed","sealing","search","searched","searches","searching","season","seat","seatbelt","seated","seats","seattle","sebenti","sec","second","secondhand","secondly","seconds","secrecy","secret","secret's","secretly","secrets","section","secular","secure","securing","security","sedan","see","seed","seeing","seek","seem","seemed","seemingly","seems","seen","sees","seesaws","seizure","select","selected","self","selfish","selfishness","sell","seller","sellers","selling","sells","semester","seminar","senator","send","sending","sends","senior","seniority","seniors","sense","senseless","senses","sensing","sensitive","sent","sentence","senti","sep","separate","separated","separately","separation","sergeant","serial","series","serious","seriously","sermon","servant","serve","served","server","serves","service","services","servitude","session","sessions","set","setback","sets","setting","settle","settled","settling","setup","setups","seven","seventeen","seventy","several","severed","sex","sexist","sexual","sh","shacked","shacking","shacks","shaddock","shade","shadow","shady","shaft","shake","shakedown","shaker","shakers","shaking","shall","shame","shampoo","shania","shanking","shape","shaped","shards","share","shared","shares","sharing","sharks","sharp","sharp's","sharper","shattered","shattering","shaving","shed","sheesh","sheet","sheets","shelf","shell","shelled","shellfish","shelling","shelter","shemp","sheriff","sheriffs","shh","shielded","shift","shifted","shine","shiner","shining","shiny","ship","shipment","shipments","shipped","shipping","ships","shirt","shit","shithole","shitin","shiting","shitless","shittiest","shittin","shitting","shitty","shiz","shizzle","shmoley","shock","shocked","shocker","shockingly","shoddy","shoe","shoe's","shoelace","shoelaces","shoes","shoot","shooter","shooters","shooting","shootout","shop","shoplifter","shoplifting","shopping","shore","short","shortcomings","shortcuts","shortfall","shorthand","shorthanded","shortly","shortness","shortsighted","shot","shotgun","shots","should've","shoulder","shout","shove","shoved","shovel","shoveling","shovelling","show","showed","shower","shower's","showing","shown","shows","shred","shrimp","shrink","shrugged","shrunk","shucked","shui","shut","shutting","shuttles","shy","si","sick","sickness","side","sidekick","sides","sidewalk","sideways","siegel","sierra","siesta","sight","sights","sign","signal","signals","signature","signatures","signed","significant","signifies","signing","signori","signs","silence","silent","silk","silky","sill","silly","silver","silverfish","silverware","silverware's","simmer","simmons","simpatico","simple","simpler","simply","since","sing","singing","single","singles","sings","singular","sink","sinking","sins","sinus","siphon","sir","sistance","sister","sistine","sit","site","sits","sitter","sitting","situation","situations","six","sixe","sixteen","sixth","sixty","sizable","size","sizeable","sized","sizes","sizzle","skank","skate","skater","skaters","skeevy","skeleton","skells","ski","skid","skies","skill","skills","skim","skimmed","skimp","skin","skinnier","skinny","skip","skipped","skittish","skull","skunk","sky","skyl","skyler","skyler's","skymall","sl","sl550","slack","slam","slap","slate","slavic","slaw","sleek","sleep","sleeping","sleeplessness","sleepover","sleeps","sleestak","sleeved","sleeves","slept","slice","slick","slide","sliding","slight","slightest","slightly","slim","slinging","slip","slipped","slit","slivered","slizz","slob","sloppiness","sloppy","slow","slowed","slower","slowly","sludge","slung","slurring","slushie","smack","smackhead","small","smaller","smallest","smart","smarter","smartest","smell","smelled","smelling","smells","smile","smoke","smoked","smoker","smokes","smokin","smoking","smooshed","smooth","smoother","smug","smuggle","smuggling","smurfing","smurfs","snack","snag","snaking","snap","snappy","snapshots","snatch","sneak","sneaked","sneakers","sneaking","sneaky","sniff","sniffers","sniffing","snipe","sniper","snitch","snitch's","snitched","snitches","snort","snorts","snot","snowball","snub","snuck","so's","soaked","soaking","soap","sober","sobriety","soccer","social's","socially","socials","society","socket","socks","soda","sodium","soft","softball","softener","softer","softy","sold","soldier","soldiers","soliciting","solicitous","solid","solo","solution","solve","solvent","solver","solving","somebody","somebody's","someday","somehow","someone","someone's","someplace","something","something's","sometime","sometimes","somewhat","somewhere","somewhere's","son","son's","sonar","sonically","soon","sooner","soothes","soprano","sorcher","sore","sorr","sorry","sorrys","sort","sorting","sought","soul","sound","sounded","sounds","soup","source","sources","south","southwest","soy","spa","space","spaced","spaces","spacious","spain","spanish","spare","spared","sparing","sparkles","sparkly","sparky","sparse","speak","speaker","speaking","speaks","special","speciality","specializes","specialty","specific","specifically","specificly","specifics","speck","spectacular","speculation","speech","speeches","speed","speedboats","speeding","spell","spelling","spend","spending","spent","spice","spicing","spill","spillage","spilled","spilling","spills","spin","spine","spinning","spiraling","spirit","spit","spitballing","spite","splash","splattered","split","splitsville","spock","spock's","spoil","spoiled","spoke","spoken","spokes","sponge","sponges","sponsor","sponsors","spooge","spoon","spoonful","spoons","sports","spot","spots","spotted","spouting","spray","spraying","sprays","spread","spree","springer","sprinklers","sprung","spun","spur","spy","spying","squad","squander","square","squash","squatters","squawk","squeaking","squeaky","squeeze","squeezed","squeezers","squirts","ss","ss4g","st","stabbed","stabbing","stabilize","stabilized","stable","stacey's","stack","stacking","stacks","stadium","staff","stage","stages","stain","stairs","stairway","stakeout","stakeouts","staking","stale","stalking","stalled","stamped","stan","stand","standard","standards","standing","standpoint","stands","stang","staples","star","starbucks","stare","staring","stars","starship","start","started","starter","starting","starts","starving","stash","stashed","state","statement","statements","states","stateside","station","station's","stationed","statistical","statistics","stature","status","stay","stayed","staying","stays","steady","steakhouse","steaks","steal","stealing","steals","stealth","steam","steaming","steel","steely","steep","steer","steered","steering","stellar","stench","stenciling","step","step's","stepdad","stephanie","stepladder","stepped","stepping","steps","stereospecific","sterling","sterno","steve","steven's","stevia","stew","stick","sticker","sticking","sticks","sticky","stiff","still","stimulated","stimulating","sting","stinging","stink","stinks","stinky","stirred","sto","stock","stoked","stole","stolen","stomach","stomp","stone","stoner","stones","stood","stooges","stop","stopgap","stoplight","stopped","stopping","stops","storage","store","stored","storeroom","stores","storia","stories","storm","storms","story","story's","stove","straight","straighten","straightened","straightforward","strain","stranded","strange","stranger","strangers","strangle","strap","strat","strategy","stratocaster","straws","streaks","stream","streamlined","streep","street","street's","streets","stressed","stresses","stressful","stressing","stretch","strict","strictly","strictures","strike","striker","string","strings","strip","stripped","stripper","stripping","strips","strive","stroke","strokes","strolling","strong","stronger","strongest","strongly","struck","structure","structured","struggle","struggling","stub","stucco","stuck","stud","student","students","studied","studio","study","stuff","stuff's","stumbling","stump","stumpy","stunned","stunt","stuntman","stupid","style","sub","subaru","subatomic","subchapter","subdural","subfloor","subject","submission","submit","submitted","subsfactory","subsidiary","substance","substances","substandard","substantial","substitute","subtle","subtract","subtracted","subwoofers","success","successes","successful","successfully","suck","sucked","sucker","suckers","sucks","sudden","suddenly","sue","sued","suffer","suffered","suffering","suffers","sufficient","sufficiently","sugar","suggest","suggesting","suggestion","suggestions","sui","suicidal","suicide","suit","suite","suits","sum","sumatran","summer","sun","sunburned","sunday","sunglasses","sunscreen","sunset","sunshine","suong","super","superlab","supermarket","supermarkets","supermodels","superpower","supervise","supervising","supervision","supervisor's","supper","supplied","supplier","suppliers","supplies","supply","supplying","support","supporting","supportive","suppose","supposed","supposedly","suppression","sure","surely","surf","surface","surgeons","surgery","surgical","surpass","surprise","surprised","surprising","surrender","surrounding","surroundings","surveillance","surveilling","survival","survivalist","survive","survived","surviving","susan","susceptible","suspect","suspects","suspend","suspended","suspense","suspension","suspension's","suspicion","suspicions","suspicious","suss","sustainable","suvs","svenson","swabbed","swampscott","swap","swapped","swapping","swarming","swastikas","swatter","swear","swearing","swears","sweat","sweated","sweating","sweaty","swedish","sweep","sweepstakes","sweet","sweeten","sweetest","sweetheart","sweetie","sweetness","swelling","swift","swim","swimming","swimmy","swing","swinging","switch","switched","switching","swollen","swoop","swore","sworn","swsub","swung","symbol","sympathetic","sympathy","symptoms","sync","synch","synchro","synchrotrons","synthesis","synthesize","synthesized","synthetic","system","systems","t","ta","table","tablecloths","tableside","tabo","tabs","tacks","taco","tactic","tactical","tad","tag","tagged","tagging","tahoe","tail","tailed","tailing","tails","take","taken","takeout","takers","takes","taking","tal","tale","talent","talent's","talented","talents","talibans","talk","talked","talker","talkin","talking","talks","tall","taller","talos","tampico","tan","tangle","tank","tank's","tanker","tankless","tanks","tannins","tanto","tanya","tap","tape","taped","tapering","tapped","target","targets","tarp","tarts","tas","task","taskforce","taste","tasted","tastes","tastic","tat","tattoo","tattooed","tattoos","taught","tax","taxable","taxes","taxi","tay","tbd","tck","te","tea","teach","teacher","teachers","teaches","teaching","team","teamwork","tear","tears","teasing","tech","technical","technically","technician","technicians","techniques","technologies","technology","ted","ted's","teddy","tee","teenage","teenager","teenagers","teener","teeners","teenth","teeth","telenovels","telephone","telephoto","television","tell","telling","tells","temp","temp's","temper","temperature","tempers","temporarily","temporary","temptation","ten","tenant","tend","tendency","tending","tenerife","tens","tense","tent","tented","tenth","tenths","tenting","tents","tenure","tepid","term","terminal","terminator","termite","termites","terms","terre","terrible","terribly","terriblys","terrier","terrified","territory","terrorism","test","tested","testicular","testify","testifying","testimony","testing","tests","tesuque","tetris","tex","texas","textbook","th","thai","thailand","thailand's","thalidomide","thank","thanked","thankful","thanking","thanks","thanksgiving","that'd","that'll","theft","them's","theoretically","theories","theory","therapeutic","therapist","therapists","therapy","there'a","there'd","there'll","therefore","thermal","thermally","thermite","thermocouple","thermometer","thermostat","thesaurus","thesis","thick","thief","thieves","thin","thing","thing's","things","think","thinker","thinkin","thinking","thinks","third","thirds","thirsty","thirteen","this'll","thither","thomas","thorium","thorough","though","thought","thoughtful","thoughts","thousand","thousands","thready","threat","threaten","threatened","threatening","threats","three","threshold","threw","thrill","thrilled","thriving","throat","throughout","throw","throwing","thrown","thru","thumbs","thunder","thursday","thursday's","thus","ti","tiara","tick","ticket","ticking","tide","tidy","tie","tied","ties","tig","tiger","tight","tight's","tightened","tijuana","tile","tiles","till","tim","timbuktu","time","time's","timer","timers","times","timetable","timing","timmy","tin","tinfoil","tingle","tinker","tinkle","tint","tiny","tio","tip","tips","tire","tired","tires","tissue","title","titration","tits","tj","toast","tobacco","tock","today","today's","todd","todd's","toddy","toe","toes","tofu","together","toilet","toilets","toke","told","tolerance","toll","tom","tomas","tomás","tomato","tomography","tomorrow","tomorrow's","ton","tone","tonight","tonight's","tons","tony","took","tool","tools","toothbrush","toothbrushes","toothpick","toothpicks","top","topic","topped","tops","torch","torched","tore","tori","torn","torque","torso","tortillas","tortoise","tortuga","torture","torturing","toss","tossed","tossing","total","totaled","totally","touch","touched","touching","tough","toughest","tour","tourist","tourmaline","toute","tow","toward","towards","towed","towel","tower","towing","town","tox","toxic","toxicology","toxins","toy","toying","toys","trace","traced","tracing","track","tracked","tracker","trackers","tracking","tracks","tracy","trade","traded","tradition","traffic","tragedy","trail","trailed","trailers","trailing","trails","train","trained","trainer","training","trampled","tranquil","tranquila","trans","transact","transaction","transcript","transfer","transferred","transformation","transformed","transient","transit","transition","translation","transparency","transparent","transplant","transport","transportation","transporter","transporters","transporting","transpositional","trap","trapped","traps","trash","travel","traveled","traveling","travels","travertine","trays","tread","treat","treatable","treated","treating","treatment","treatments","treats","tree","treeline","trees","treks","tremendous","trent","trespassing","tress","tri","trial","triangle","triangulate","tribal","tribe","trick","trickier","trickle","tricks","tricky","tried","trienes","tries","trigger","triggers","trip","triple","triplicate","tripped","tripping","trips","tro","trooper","troopers","trouble","troubled","troubles","trough","truck","trucks","true","truly","trunk","trust","trusted","trusting","trustworthy","truth","try","trying","tsa","tsk","tub","tube","tucked","tucker","tucker's","tuco","tuco's","tuesday","tuggie","tuition","tulaberries","tulaberry","tulips","tull","tumescent","tummy","tumor","tumors","tune","tuned","tunes","tung","tunnel","turbans","turbinado","turds","turf","turf's","turkey","turn","turned","turning","turns","turquoise","turtei","turtle","tutor","tutorial","tv","twain","tweak","tweaked","tweaker","tweakers","tweeters","twelve","twenty","twerp","twice","twins","twist","twisted","twitter","two","twot","tying","tyno","type","types","typical","typically","tyrus","tzu","u","u.s","ugh","uglies","ugly","uh","uhh","uhura","ultimate","ultimatum","ultra","ultrasound","um","umbrella","un","unable","unacceptable","unadulterated","unanimous","unannounced","unattractive","unavailability","unbelievable","unclaimed","uncle","uncle's","uncomfortable","unconscious","uncook","uncool","undamaged","undead","underachiever","undercover","undercutting","underestimate","undergo","underground","underneath","underoos","underside","understand","understandable","understanding","understands","understood","underwriting","undo","undocumented","undone","unemployed","unemployment","unencumbered","unexpected","unfair","unfaithful","unfamiliar","unfinished","unfixable","unfortunate","unfortunately","ungrateful","unhappiness","unhappy","unharmed","unicorn","uniformed","unimpeachable","union","unique","unit","unit's","united","units","universal","universe","university","unknown","unlawful","unless","unlike","unlimited","unloaded","unlock","unm","unnecessary","unorthodox","unpleasant","unplugged","unplugging","unpredictable","unquote","unravel","unravelling","unreal","unrelated","unreliable","unreported","unresponsive","unrestricted","unsafe","unsolvable","unsubs","unsuspicious","untaxed","untenable","unti","untie","untied","untraceable","unturned","unusual","unusually","unwanted","unwarranted","unwise","update","upkeep","uploaded","upon","upped","upper","uppers","upright","uproot","ups","upset","upshot","upside","upstairs","upstanding","upswing","uptight","upwards","upwind","upwood","urban","urge","urgent","urine","us","usable","use","used","useful","useless","user","uses","using","usps","usual","usually","utah","utilities","utility","v","vacate","vacation","vacuum","vader","vagina","vaginas","vague","valdez","valencia","valid","valley","valuable","valuables","value","values","valve","valves","vamonos","vamos","van","vanco","vancouver","vanilla","vanish","vanished","vans","varies","variety","vase","vasectomy","vast","vat","vato","vats","vault","vaults","vedo","vegan","vegans","vegetation","veggie","vehicle","vehicles","vein","vending","vendor","vendors","venezia's","vengeance","vent","ventilation","ventually","venture","verge","verify","vernita","version","versus","vertebrae","vessel","vest","vestiges","vests","vet","vetted","vfw","via","viable","vibe","vibrant","vice","vicious","vicky","victim","victim's","victimless","victims","victor","victor's","victory","video","videos","vietnamese","view","viewing","vig","vigilant","villa","violation","violence","violent","virginia","virtual","virtually","virtues","virus","vis","visa","visible","vision","visit","visited","visiting","visitor","visitors","visits","visualise","vitae","vital","vitamin","vitamins","vito","vo","vocal","vodka","voglio","voi","voice","voicemail","voices","voila","volt","volts","volume","volumetric","volvo","vote","voted","voting","vouch","vouched","voyage","vu","vulcan","vulnerable","w","w.w","wa","wachsberger","wad","waddle","waddling","waffen","waffle","wagon","waist","waistband","wait","waited","waiting","waitress","waiving","wake","wakes","waking","wal","walk","walked","walking","walks","wall","wallace","wallet","walls","walnut","walt","walt's","walter","walter's","wand","wandered","wandering","wanders","wang","wangs","wanna","wannabe","want","wanted","wanting","wants","war","warbucks","warehouse","warheads","waring","warm","warmer","warn","warned","warning","warnings","warp","warrant","warrants","warranty","warts","wash","washboard","washcloths","washed","washer","washers","washes","washing","washington","waste","wasted","wastes","wasting","watch","watched","watches","watching","water","water's","watered","waterfall","watergate","waters","wave","waved","waving","wax","waxes","way","way.fr","wayfare","wayfarer","wayne","ways","wazoo","weak","weaker","weakness","wealthy","weapon","weapons","wear","wearing","wears","weather","weather's","weatherman","web","website","wedge","wednesday","weed","weeds","week","weekend","weekends","weekly","weeks","weigh","weighed","weighing","weighs","weight","weights","weird","welcome","welded","welder","welding","welker","well","wendell","wendy","went","werner","west","western","wet","wh","wha","whack","whacked","whacking","what'd","what'll","whatchamacallit","whatever","whatever's","whatnot","whatsoever","wheaten","wheel","wheelchair","wheelchairs","wheels","whenever","whens","where'd","where've","whereabouts","wherever","whet","whether","whiff","whining","whip","whipped","whirl","whiskers","whistle","white","white's","whites","whitman","whiz","who'd","whoa","whoever","whoever's","whole","wholesale","wholesaling","whomever","whoo","whoop","whoops","whoosh","whore","whorehouse","whose","why'd","whyte","wide","width","wielding","wife","wife's","wifey","wig","wiggle","wild","wilhelm","willed","willful","willie","willing","willy","wilson","win","wind","winder","windjamming","window","windows","winds","windshield","windshield's","windy","windys","wine","wing","winging","wings","wingtips","winnebago","winner","winning","winnings","wins","winslow","winston","winter","wipe","wiped","wire","wired","wires","wiring","wisconsin","wise","wised","wish","wished","wishes","wite","withdrawal","withdrawn","within","without","witness","witnesses","wives","woke","wolf","wolverine","wolynetz","woman","woman's","womb","women","won","wonder","wonderbra","wondered","wonderful","wondering","wonka","wood","wooden","woodrow","woods","woodwinds","woodworking","woody","word","word's","words","wordsmith","work","workaround","worked","worker","working","works","world","world's","worm","worried","worries","worry","worrying","worse","worsened","worst","worth","worthless","worthy","would've","wound","wounded","wounds","wow","wrap","wrapped","wrapping","wrath","wreckage","wrecked","wrecking","wrench","wrestled","wrestling","wrist","wrists","write","writer's","writing","written","wrong","wrongdoing","wrote","www.addic7ed.com","www.forocoches.com","www.forom.com","www.sub","www.tvsubtitles.net","wynne","x","xanax","xerox","xeroxed","y","y'all","ya","yada","yadda","yamaha's","yank","yanked","yankee","yankees","yapping","yard","yards","yawn","yawp","yay","ye","yeah","year","year's","years","yeast","yell","yelled","yeller","yeller's","yelling","yellow","yeoman","yep","yes","yesterday","yet","yi","yield","yields","yo","yogurt","yoko","yon","york","yorks","young","younger","youngest","yountville","youtube","yowsa","yuck","yum","yup","zachary's","zafiro","zapped","zdorovje","zealand","zebra","zebrawood","zero","zeroes","zeroing","zetas","zinc","zip","zippy","zircons","zits","zombie","zombies","zone","zones","zonked","zzzzt"],"freq":[1,2,1,1,3,1,1,1,1,1,2,1,1,2,2,1,1,4,4,1,1,2,6,2,1,1,2,1,1,1,1,11,1,4,2,1,1,1,1,1,1,42,1,1,6,1,1,1,3,79,4,1,1,1,16,5,2,3,3,1,4,1,1,1,1,11,3,1,1,1,1,2,4,2,17,1,1,1,6,7,1,3,1,1,3,1,1,1,1,1,1,8,1,2,1,1,1,1,1,1,20,16,3,15,8,7,1,3,1,4,8,2,15,129,3,1,1,15,4,3,2,2,1,2,1,18,3,2,1,1,1,2,2,1,2,6,1,21,2,1,2,1,1,3,1,1,1,3,2,3,2,1,1,1,2,1,1,1,2,21,5,3,1,2,1,13,1,3,2,6,1,10,1,1,6,1,11,1,3,6,1,42,1,14,2,3,1,3,2,46,22,1,7,2,4,1,46,1,61,10,9,1,3,1,1,1,66,30,2,1,1,1,2,5,1,1,2,2,1,6,3,5,1,1,2,1,31,1,1,2,1,1,1,1,3,1,1,2,24,1,7,1,1,1,1,1,1,5,1,14,1,41,33,25,2,2,1,94,30,1,2,6,1,1,7,1,107,2,5,1,14,1,1,1,3,1,9,2,2,2,1,10,6,1,1,1,1,1,1,1,1,2,16,1,1,5,2,1,1,2,1,1,3,1,2,1,1,1,1,15,1,1,1,1,1,1,3,2,1,18,2,3,4,2,1,1,1,1,1,3,1,4,1,95,42,2,6,7,1,1,1,4,1,1,1,1,1,1,1,1,1,1,1,1,1,55,1,1,44,53,1,1,191,12,96,7,37,7,9,16,4,2,2,1,4,2,14,3,1,4,1,21,1,1,5,1,1,3,4,1,2,4,2,2,1,3,6,1,1,5,1,43,3,1,1,1,3,2,1,1,2,1,1,1,3,1,1,1,1,2,1,8,2,4,6,6,7,8,1,2,2,1,10,1,132,2,3,3,1,22,15,4,1,1,1,2,2,1,1,3,7,1,11,2,1,1,1,1,1,3,1,9,1,1,1,4,2,2,9,97,41,58,3,7,2,1,100,1,2,1,1,2,3,1,2,5,1,3,4,1,1,33,3,1,1,1,2,8,9,1,7,1,1,11,3,9,1,1,4,2,1,1,1,2,1,1,1,1,1,8,9,2,1,2,2,7,8,3,3,1,2,14,1,2,3,13,1,1,2,1,1,1,5,2,1,30,2,1,1,2,1,1,2,3,1,2,1,2,3,3,1,4,1,3,1,1,4,1,2,1,11,1,1,12,1,3,94,1,21,6,5,1,1,1,2,2,1,1,1,1,1,26,9,2,3,96,3,3,1,1,439,1,1,2,7,1,1,2,1,10,1,5,6,11,1,1,128,2,1,4,28,3,2,3,31,1,1,12,2,1,1,1,1,4,2,1,1,11,2,3,1,13,4,2,2,5,1,1,1,1,6,1,2,1,1,1,15,2,1,3,1,2,16,1,1,15,2,2,2,4,1,23,14,1,1,1,2,6,1,5,2,7,13,2,8,8,1,1,2,3,1,1,1,22,3,2,29,11,18,2,2,5,1,2,13,2,1,1,1,4,4,1,1,1,2,2,2,1,11,1,1,1,1,1,21,1,1,5,3,1,1,25,1,1,1,1,4,4,1,11,3,1,26,1,8,4,1,2,1,1,1,26,2,6,1,1,6,12,6,2,1,1,1,1,1,4,1,1,31,1,1,2,2,1,1,1,2,113,3,1,1,7,8,1,3,5,6,1,1,5,4,4,4,2,1,3,1,1,5,25,4,1,1,1,4,1,2,2,1,1,1,1,1,18,107,36,2,2,179,1,3,1,1,1,7,1,1,3,1,1,4,1,2,2,177,1,1,13,14,4,2,1,1,1,12,1,1,1,1,2,1,1,16,3,3,2,3,1,1,4,2,1,4,7,51,2,1,1,24,96,12,9,1,2,1,1,1,1,23,2,5,5,3,1,2,1,2,11,12,2,1,2,1,1,1,1,2,2,3,4,3,1,1,1,4,6,4,1,1,1,4,1,12,3,1,3,1,1,31,2,1,1,1,1,1,1,11,1,13,1,1,5,1,1,78,2,2,1,1,1,1,1,1,1,1,5,3,9,2,1,1,1,1,8,1,15,1,3,19,8,1,1,18,1,1,1,5,3,2,1,2,12,22,3,2,1,1,8,2,9,6,1,1,1,5,2,1,2,1,3,1,1,15,2,2,3,1,1,12,10,5,2,3,2,2,1,1,5,2,1,1,17,4,1,6,8,3,1,41,1,4,1,3,2,2,12,1,2,16,24,1,9,3,1,5,3,2,2,2,1,2,1,6,1,2,20,9,71,3,21,3,1,1,1,1,1,1,1,25,1,4,1,1,10,6,1,2,1,8,15,2,1,3,1,1,1,1,4,1,3,42,3,2,4,18,1,30,1,3,16,19,1,5,1,1,1,1,1,3,2,2,1,1,1,1,1,4,3,1,6,4,1,1,8,1,70,20,8,21,42,1,26,11,1,95,3,1,2,36,5,1,1,1,1,1,1,1,1,1,3,1,3,3,1,1,1,18,3,60,3,1,1,1,1,12,4,1,2,2,1,9,1,7,14,1,1,1,7,1,3,16,1,5,33,1,6,1,6,1,3,1,1,1,22,1,1,2,1,1,1,3,1,1,2,1,7,16,1,4,1,8,1,2,1,1,1,2,1,9,1,2,1,167,2,7,1,1,12,10,1,4,19,1,1,11,1,3,7,1,1,1,64,2,1,6,1,23,1,3,6,1,3,5,2,1,1,60,1,1,15,2,1,1,2,1,1,3,5,2,1,2,1,1,1,8,1,3,1,4,1,1,1,1,1,1,1,1,1,247,73,1,40,23,20,3,2,1,1,80,1,6,6,2,3,2,1,703,4,1,1,1,59,3,2,5,3,1,1,1,1,1,1,1,1,2,3,1,1,5,2,12,3,1,4,1,1,1,4,173,5,4,1,12,1,26,2,1,13,89,4,9,18,2,1,1,8,3,3,1,9,3,1,1,2,2,1,4,1,7,4,15,32,2,1,2,59,4,49,3,2,1,2,2,3,2,2,1,1,1,1,1,1,1,4,1,1,2,1,31,5,7,3,4,2,27,65,1,1,1,10,1,1,1,3,3,1,1,1,1,2,1,2,4,3,2,1,42,2,1,1,2,1,1,2,14,1,1,7,1,4,2,1,2,1,1,20,21,1,1,1,3,1,1,13,1,2,1,4,1,1,1,3,1,2,4,3,3,47,7,1,57,29,7,9,9,3,2,1,4,7,17,2,12,2,1,12,1,1,2,1,3,1,8,1,7,1,1,2,1,1,1,1,88,2,4,18,11,8,4,3,5,1,6,13,4,10,1,6,1,1,13,4,13,18,43,3,8,5,1,8,1,1,2,2,3,1,23,1,1,1,5,11,1,37,2,2,2,7,1,1,13,1,1,2,1,8,1,6,1,1,4,2,1,1,1,4,1,7,1,26,8,1,2,2,10,1,8,1,1,1,1,1,2,8,1,1,30,3,4,10,1,2,1,2,1,1,2,6,1,1,1,1,1,2,15,2,1,1,1,1,1,1,1,1,1,6,2,1,1,1,2,1,11,2,2,2,1,1,2,1,1,1,2,1,3,12,3,3,2,1,3,1,1,2,53,1,4,2,9,43,6,1,14,2,3,1,1,2,20,1,1,3,1,1,7,1,1,1,10,1,51,8,2,8,1,4,4,1,7,3,1,7,3,8,1,1,3,1,6,1,1,1,3,2,1,1,1,3,1,1,4,1,1,1,6,1,27,1,1,1,10,2,4,1,5,2,1,13,1,1,1,1,1,1,2,1,1,1,8,1,1,3,18,2,1,3,15,2,5,1,1,2,1,2,1,4,1,1,2,1,14,2,533,1,40,3,14,1,2,2,145,2,1,2,1,1,1,2,3,2,2,1,4,1,1,4,1,1,3,3,1,2,1,2,22,4,1,1,1,1,1,1,1,3,2,3,2,2,3,2,12,30,1,1,1,9,1,1,1,3,1,1,3,1,3,1,1,1,1,1,1,5,1,1,2,1,2,1,4,2,2,1,15,20,11,1,2,1,1,2,1,1,1,2,1,11,1,5,2,3,1,1,4,3,2,3,2,2,1,1,1,1,1,1,1,3,1,2,4,1,2,1,24,8,2,2,1,7,10,1,1,1,1,1,1,5,1,13,1,1,1,10,1,1,2,1,1,1,4,1,1,1,1,25,1,1,1,2,1,2,4,1,2,1,6,1,1,1,1,1,1,1,1,1,9,2,1,2,2,3,2,2,1,2,1,1,2,1,4,29,3,1,1,12,1,1,1,2,2,7,4,1,2,124,20,2,2,46,1,11,73,1,1,2,1,2,20,1,3,2,3,1,37,8,1,1,2,1,10,1,1,1,1,1,9,2,1,16,1,1,3,1,1,1,3,1,21,3,1,2,3,1,1,3,3,4,12,2,1,1,2,3,20,2,2,7,1,1,1,1,17,9,1,4,81,1,73,7,8,1,13,6,1,12,3,1,11,3,2,8,3,1,2,1,1,6,1,1,1,1,3,4,1,1,32,5,2,8,2,1,1,2,1,1,1,1,1,26,9,1,2,3,1,1,1,1,1,1,12,2,1,1,1,23,1,3,6,1,14,23,1,1,2,1,1,1,2,1,1,1,1,1,1,10,4,4,1,3,3,1,2,1,1,1,3,3,2,3,7,1,1,1,3,6,2,4,28,1,2,3,4,2,1,2,1,1,2,1,4,1,1,8,1,1,1,1,2,1,1,7,2,1,1,13,13,1,1,1,2,2,1,2,1,12,1,4,1,12,59,8,2,2,1,4,1,1,1,1,2,1,6,8,1,1,5,1,1,7,3,1,129,9,14,1,1,3,2,1,1,8,3,1,120,2,1,8,2,1,1,28,7,1,1,1,1,15,1,4,11,1,2,1,1,3,1,5,1,1,1,4,9,2,1,29,3,1,12,2,3,1,1,1,178,1,84,4,6,92,5,99,1,1,105,2,23,15,1,1,10,2,9,6,1,7,2,24,3,1,4,3,2,1,1,1,1,1,11,1,7,8,4,19,3,2,2,2,1,2,1,1,1,1,21,2,3,3,1,1,1,1,1,2,6,1,1,1,1,1,2,47,4,1,6,5,1,1,1,1,2,4,1,1,2,4,1,5,3,3,7,3,1,3,5,1,2,2,1,1,2,1,2,1,1,10,3,1,1,3,3,4,9,1,2,2,5,9,1,2,1,1,2,1,1,1,1,1,1,1,4,1,1,1,17,13,2,3,2,1,1,1,2,1,7,1,1,1,4,1,1,1,1,9,4,1,1,1,1,9,3,2,12,1,1,6,2,1,1,1,1,1,1,4,1,1,11,5,3,1,3,6,1,3,2,1,1,1,3,2,5,5,1,1,3,8,2,3,1,2,1,1,25,13,1,6,5,2,10,3,32,2,4,1,8,1,1,2,1,1,3,1,1,1,7,1,1,1,1,2,1,1,1,2,39,2,1,1,2,1,1,4,3,4,4,3,2,13,1,1,1,11,2,1,1,1,1,1,6,4,5,1,1,2,1,2,1,1,1,1,7,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,4,1,1,1,22,5,4,9,7,3,1,2,1,1,1,1,1,1,1,7,1,2,1,1,2,1,2,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,20,6,1,3,2,3,6,1,1,1,1,9,1,9,5,1,1,1,5,1,5,2,1,20,4,1,13,2,1,1,14,2,2,6,1,1,2,1,1,22,29,1,1,2,4,4,8,2,3,5,143,1,3,4,1,1,1,71,1,1,5,2,1,2,2,8,1,1,1,2,1,2,1,1,17,2,10,2,2,8,1,1,1,1,1,1,3,8,4,2,3,1,4,2,10,2,2,1,3,3,1,1,1,2,1,2,1,1,9,4,3,2,1,8,1,2,1,1,4,1,1,7,1,2,1,2,2,2,1,23,6,2,1,50,1,3,2,1,4,7,27,39,14,3,4,11,1,63,1,1,11,3,1,3,5,12,1,1,1,1,3,2,1,2,73,13,11,1,16,1,1,2,1,1,3,12,2,1,1,2,9,1,1,1,2,1,1,1,1,2,1,2,1,1,1,10,1,26,2,8,1,1,4,16,6,14,1,1,2,2,7,7,4,1,2,15,1,3,8,1,54,38,2,12,5,3,1,1,1,1,1,3,2,1,2,4,1,1,1,1,1,5,1,1,2,2,5,3,1,1,3,2,1,3,1,4,18,19,1,1,1,40,1,18,1,2,2,1,1,1,1,1,3,2,1,1,6,2,1,1,4,1,2,1,2,2,1,1,1,4,30,1,112,3,4,36,3,1,1,2,5,1,1,1,18,1,1,1,4,1,2,9,1,2,1,15,8,1,5,1,1,1,1,2,1,1,1,1,1,70,1,1,1,1,7,1,1,1,8,4,4,11,9,1,1,1,1,3,3,1,1,2,11,13,2,1,2,4,139,3,3,4,3,2,1,1,1,44,2,1,1,1,7,7,2,1,1,1,1,3,1,1,1,3,1,1,1,1,1,17,1,1,1,1,1,1,3,1,2,4,1,3,1,1,1,1,4,4,2,6,5,1,9,1,1,2,2,1,5,1,1,1,1,1,3,1,1,1,3,1,1,1,2,1,1,7,1,1,1,1,1,254,1,4,2,6,137,131,42,7,2,35,4,135,18,8,22,2,1,1,4,12,103,1,4,14,19,1,2,3,2,2,5,1,57,2,4,1,1,4,1,1,1,4,1,1,5,6,1,3,2,23,1,4,7,4,1,4,1,11,13,1,1,6,4,1,36,3,4,1,6,1,1,2,1,1,1,2,3,1,1,3,2,1,1,1,5,1,3,4,2,1,3,2,1,1,19,1,1,1,1,2,1,1,1,2,6,1,2,31,1,4,3,38,1,1,2,1,1,3,1,1,2,55,2,5,1,1,5,35,7,1,7,8,3,1,1,4,1,1,1,1,20,1,5,1,2,4,4,2,9,8,1,6,3,1,3,1,3,8,155,2,2,6,6,1,8,1,52,1,6,2,2,1,1,3,1,2,23,1,7,1,16,31,1,1,1,1,19,2,1,21,4,1,2,1,4,1,9,12,2,2,2,3,5,1,1,18,8,8,1,1,1,102,1,51,6,21,2,28,4,1,3,1,1,7,5,6,1,8,2,1,1,1,1,2,1,1,1,1,5,1,1,1,6,1,3,6,1,17,3,2,1,48,28,4,3,7,5,2,2,8,5,3,5,2,1,6,4,11,32,1,5,2,2,132,2,7,9,173,1,3,6,1,10,7,1,18,12,1,3,23,3,5,10,1,1,1,1,145,8,1,1,1,13,3,2,71,13,1,1,8,2,3,1,1,2,2,1,1,1,1,1,1,11,1,12,1,1,2,1,1,1,4,1,2,5,1,1,1,13,3,1,1,2,1,3,1,1,1,3,1,19,2,1,1,5,1,2,2,3,2,6,1,1,4,1,1,1,1,3,1,1,1,23,1,2,34,1,1,1,1,1,7,1,2,1,1,1,2,1,1,18,20,5,15,1,1,1,27,1,2,4,2,2,1,8,4,1,1,1,3,1,8,4,2,1,1,2,3,4,16,1,30,2,3,8,18,2,2,1,1,5,2,11,2,12,1,1,3,5,1,2,1,1,1,12,1,1,73,1,1,51,3,1,4,1,3,1,5,2,2,2,1,5,1,1,2,2,8,3,3,9,3,1,45,1,1,3,3,4,1,2,2,1,1,1,7,2,4,1,3,2,1,11,2,3,34,1,2,24,1,3,1,2,62,15,2,2,2,1,1,45,1,1,1,5,2,2,1,1,1,3,4,1,1,9,1,7,1,2,7,47,6,1,1,4,1,1,1,17,1,2,4,1,4,3,1,1,1,13,5,2,1,1,8,1,2,1,16,2,1,3,1,2,2,1,1,1,2,1,2,48,4,1,1,5,19,1,6,1,3,1,2,21,27,1,6,1,2,3,1,1,1,1,2,2,1,1,1,7,1,8,1,2,1,1,2,1,2,26,1,3,1,1,7,2,2,1,1,3,63,1,2,1,4,1,7,3,2,1,2,1,8,1,2,2,2,1,3,2,1,2,1,12,1,1,2,1,19,1,1,1,2,2,6,1,3,1,1,3,1,2,1,2,960,73,1,110,1,5,1,1,1,10,7,2,2,2,1,1,1,35,6,1,7,250,14,12,40,26,1,1,2,22,7,2,2,1,2,1,1,1,1,2,1,2,2,712,1,1,274,8,3,1,68,506,2,8,1,4,8,18,21,62,532,17,1,742,8,1,26,7,1,1,2,1,1,2,1,1,1,1,2,1,3,906,1,2,171,8,10,2,1,11,25,2,1,2,2,1,1,2,9,1,1,3,1,1,1,6,28,1,1,7,1,5,3,1,1,1,2,1,1,4,3,2,2,1,2,1,3,1,1,1,2,1,1,7,2,1,1,143,1,4,2,1,7,4,22,1,1,22,1,2,1,2,1,2,5,3,1,2,1,1,1,1,1,3,1,20,1,1,1,6,1,14,6,5,1,5,1,1,1,2,2,1,9,3,3,4,1,1,2,4,144,4,6,1,1,4,1,7,1,1,1,1,1,1,50,1,1,1,1,1,7,2,90,5,2,22,3,1,5,1,248,25,178,1,11,1,31,2,2,1,1,1,1,1,27,1,1,1,1,54,5,9,1,1,2,2,3,1,7,2,4,65,6,7,1,2,1,1,1,31,1,1,2,1,44,3,1,36,15,1,1,314,15,1,68,104,26,56,3,3,1,51,2,4,1,68,1,1,1,1,5,2,3,1,1,2,1,1,1,3,1,1,1,4,2,1,5,1,25,2,3,2,1,3,4,1,1,1,1,1,1,1,1,2,1,7,2,1,104,2,1,9,1,7,2,1,1,2,25,1,1,2,16,1,1,5,118,68,1,18,1,2,15,2,2,1,1,1,12,1,2,2,2,1,9,1,1,12,1,1,2,3,4,1,1,50,7,3,1,7,3,233,1,13,1,89,3,2,2,178,9,8,17,1,4,1,1,1,1,1,1,1,1,1,1,1,9,1,11,1,6,1,1,1,638,93,1,1,1,1,12,1,8,71,8,2,1,1,10,4,1,1,4,4,1,1,3,1,4,1,1,1,12,5,2,2,1,16,76,1,1,2,1,1,6,2,2,1,6,1,6,75,2,11,1,1,1,1,1,2,1,1,68,1,1,1,15,1,1,16,1,6,1,2,2,31,1,2,10,160,1,2,1,3,1,6,4,1,2,3,1,2,1,1,1,4,1,16,12,4,64,2,1,1,1,3,1,6,5,1,6,5,2,2,1,1,3,2,38,5,4,3,3,15,1,1,2,1,4,1,3,1,7,2,3,6,1,1,36,2,2,1,26,3,3,1,1,1,1,31,2,64,178,1,2,1,4,1,2,1,1,11,1,16,1,1,1,1,1,1,18,5,1,2,8,8,1,188,1,10,1,1,3,1,2,1,1,2,2,1,23,3,1,18,1,1,1,1,12,28,5,2,32,5,4,1,1,1,1,2,4,1,1,2,1,1,1,1,1,2,27,1,1,1,1,1,6,85,1,5,2,1,1,3,4,4,2,8,3,2,2,1,1,1,1,4,3,1,3,2,3,13,1,3,2,1,1,2,4,4,1,1,1,9,1,1,2,14,2,2,2,1,5,1,1,1,1,35,1,1,2,1,3,3,2,1,1,1,4,2,1,1,1,1,2,1,5,1,4,7,1,1,2,5,4,7,3,1,2,1,2,1,2,3,2,1,8,1,1,1,2,1,1,2,1,1,1,1,2,1,6,3,1,5,1,2,2,4,3,1,1,1,1,2,3,1,1,2,2,1,1,3,1,14,1,1,1,1,2,2,1,1,1,1,1,1,1,2,1,1,4,1,2,3,1,1,1,2,8,4,1,1,4,1,1,7,1,1,57,2,1,3,1,1,2,1,2,1,3,1,1,1,1,1,1,8,1,1,1,2,23,1,1,1,1,1,2,1,1,1,2,2,18,1,1,1,2,1,2,1,5,3,1,1,5,1,2,1,1,1,4,21,18,16,6,3,1,2,2,1,7,2,1,1,2,1,1,3,2,1,1,1,2,2,2,2,1,1,1,1,2,3,1,12,1,3,3,2,2,3,15,1,1,1,1,8,3,3,6,1,2,1,5,11,1,4,1,1,1,1,3,1,1,3,1,1,1,1,1,4,1,7,1,1,1,1,1,1,1,1,1,1,13,2,2,1,1,1,2,2,14,17,7,42,2,1,4,3,1,5,2,54,1,3,1,1,1,1,1,1,7,1,1,23,2,2,1,10,11,3,1,5,1,2,1,1,1,1,4,1,2,2,9,1,1,1,2,2,1,3,1,1,1,1,1,3,326,11,138,2,1,1,1,1,1,1,1,9,2,1,1,2,4,98,1,3,1,3,1,1,3,1,5,2,4,1,2,12,1,5,1,1,1,1,1,1,1,17,2,8,2,1,2,10,1,2,1,6,7,1,2,1,14,1,1,4,1,4,11,1,5,1,2,1,1,5,31,5,3,11,5,3,1,3,1676,1,1,1,2,1,6,3,1,3,1,1,1,1,2,1,6,2,2,1,1,194,1,3,33,23,1,6,3,1,3,24,1,1,2,1,22,1,30,2,1,1,29,8,7,3,93,11,26,1,1,74,1,3,111,59,6,2,18,5,1,1,167,15,1,2,3,1,10,5,1,2,3,2,5,1,2,5,1,6,1,1,1,1,1,2,1,3,1,2,2,1,1,2,9,53,7,2,1,1,2,1,23,4,1,1,1,1,1669,11,6,21,88,1,1,1,2,1,1,15,1,7,2,1,1,4,7,80,3,2,8,1,2,2,1,1,4,1,2,1,1,10,18,2,2,1,2,3,6,1,5,1,1,9,3,2,8,2,11,4,1,2,1,1,1,1,2,4,10,3,165,1,1,1,1,1,45,30,58,4,1,2,2,3,1,1,1,6,2,12,1,3,22,1,1,85,4,1,1,1,1,1,11,1,45,1,7,15,1,1,1,1,2,1,1,1,1,1,2,1,16,2,1,1,7,2,3,3,2,1,3,1,22,2,9,1,1,5,1,1,2,1,82,1,120,7,36,1,1,1,116,1,7,5,12,4,1,2,1,1,14,3,1,1,1,1,1,1,1,33,3,1,243,1,10,1,5,23,5,3,1,1,1,3,1,1,3,2,7,1,1,1,1,1,5,5,1,4,3,20,1,9,1,1,74,3,1,1,1,1,4,1,9,2,4,1,24,1,3,3,1,4,7,2,1114,10,9,1,10,1,2,2,3,1,1,2,3,44,1,4,1,1,1,3,3,1,1,1,1,1,1,2,3,24,4,185,5,16,1,2,1,4,1,2,1,4,271,50,8,1,1,30,32,1,2,9,7,1,1,2,3,1,1,1,2,1,9,1,1,4,3,11,1,12,2,4,1,6,2,1,4,2,2,1,1,1,1,2,3,130,25,1,1,2,487,24,1,121,2,1,58,2,4,2,1,12,2,11,24,5,1,5,9,1,26,124,7,5,9,1,1,22,1,3,71,10,3,2,5,1,1,23,4,1,1,1,4,3,1,4,1,1,1,26,1,2,28,3,1,1,1,2,1,1,1,4,5,1,12,17,1,3,3,1,1,2,24,22,2,2,11,1,6,18,1,14,3,1,1,1,19,113,1,1,13,1,1,4,2,1,1,1,11,3,8,3,1,1,1,1,2,6,3,5,2,8,1,3,14,1,299,54,57,2,3,3,1,8,6,4,480,13,10,4,2,1,9,1,1,3,1,1,3,1,2,2,4,1,3,1,2,1,2,1,1,1,2,4,2,5,1,1,54,2,2,1,2,1,1,2,2,3,1,2,1,1,6,172,16,10,1,1,1,1,7,1,1,19,1,1,4,2,2,5,11,2,2,2,7,1,2,1,2,1,1,1,5,4,3,1,1,9,1,2,1,4,1,1,4,1,4,1,1,1,7,1,2,1,1,1,2,76,6,1,1,1,1,1,1,1,3,97,319,8,1,1,1,2,1,1,1,2,1,1,3,1,14,2,582,8,61,10,8,6,3,1,4,8,1,1,2,1,13,1,1,2,2,4,1,1,4,3,55,31,5,1,5,1,1,1,1,1,2,1,1,1,1,14,1,39,1,1,1,4,1,1,13,3,2,1,2,2,1,1,1,4,1,5,1,2,16,1,29,9,9,1,1,2,1,20,6,1,1,1,1,3,119,1,18,1,4,1,58,1,1,1,1,1,1,10,3,29,1,1,1,1,1,1,4,1,1,13,1,1,1,1,5,14,1,1,113,4,2,1,122,10,1,6,2,11,1,23,1,1,7,2,1,3,3,3,69,2,8,1,1,1,1,85,1,1,6,46,6,4,5,1,2,1,1,1,1,1,5,4,8,70,54,2,2,1,2,1,1,1,1,5,1,1,1,1,25,10,2,30,3,1,1,27,3,9,1,6,1,1,1,7,1,2,40,17,1,2,1,2,2,5,1,1,2,1,1,1,2,1,2,1,1,2,1,4,1,1,1,2,71,8,32,2,1,2,11,2,5,307,5,3,1,4,1,1,2,1,1,2,3,1,30,2,54,1,1,5,1,1,1,4,1,1,2,4,1,1,1,1,2,69,1,4,2,7,2,1,1,2,1,8,1,43,3,1,2,1,1,3,1,7,1,5,1,2,1,2,2,1,28,5,71,10,3,1,1,1,6,14,4,1,24,210,2,22,10,239,1,1,1,4,1,2,3,3,1,1,3,1,1,2,1,1,21,15,2,1,2,9,2,6,4,1,1,35,10,2,4,1,7,1,3,1,5,9,8,2,1,1,1,27,8,1,1,1,5,129,14,15,1,24,1,1,1,4,5,3,1,1,1,1,1,1,1,1,4,2,3,1,1,7,1,2,4,2,1,2,2,6,2,6,19,1,9,3,1,2,4,7,4,1,2,1,449,25,1,6,40,1,6,1,2,5,2,3,7,2,10,1,3,1,1,1,1,13,1,1,1,11,2,1,3,1,1,1,2,1,1,3,3,1,2,7,1,1,3,3,186,170,1,1,1,1,1,61,4,1,130,134,1,1,1,3,1,1,2,1,106,1,3,11,1,20,2,5,1,1,2,1,1,3,1,1,35,10,2,1,1,1,2,1,18,27,1,1,2,1,2,1,1,2,14,2,9,2,1,7,2,1,12,1,2,2,4,4,1,1,197,10,17,9,1,1,1,1,2,4,1,689,2,17,2,1,1,1,1,1,1,1,1,2,1,2,50,1,10,1,3,1,2,4,7,6,1,20,1,2,6,1,1,1,1,1,1,1,2,1,2,1,1,1,1,1,7,17,1,1,3,4,1,2,5,6,5,1,1,1,1,2,1,9,29,1,6,12,1,45,10,4,5,4,1,1,7,1,635,36,1,1,9,1,1,924,1,1,1,1,1,115,1,6,1,1,1,1,1,2,1,2,2,618,17,13,1,1,10,2,4,1,1,7,1,11,1,2,57,2,4,3,2,1,1,3,33,3,1,1,13,1,2,1,15,3,1,1,2,2,1,2,23,10,2,9,4,1,1,34,6,1,2,1,1,3,1,1,1,2,1,2,1,1,1,4,1,1,3,1,1,2,8,14,1,8,5,1,1,2,1,2,1,2,2,1,3,1,46,6,6,1,1,2,1,1,1,3,1,1,1,2,2,1,3,2,1,2,1,1,1,1,2,2,1,1,1,1,1,1,1,4,31,3,1,1,4,12,2,6,1,7,1,2,1,5,1,1,9,1,3,2,1,2,6,2,1,1,1,16,3,7,1,2,1,2,1,1,1,1,3,11,5,1,39,1,7,3,2,3,2,15,6,1,1,3,5,1,11,5,2,1,1,1,1,1,1,5,1,3,3,2,1,1,1,2,13,1,2,22,6,5,2,1,1,2,2,1,1,1,1,1,4,1,2,1,13,2,1,4,9,9,1,1,58,1,1,1,1,1,2,14,4,3,2,58,2,1,14,5,8,27,4,1,17,1,20,1,10,4,2,1,1,2,1,1,20,1,1,1,1,1,3,5,1,2,1,10,1,4,2,3,4,2,1,1,1,1,1,5,1,1,1,93,3,2,25,4,3,6,8,1,1,1,1,8,1,2,1,1,1,1,5,1,1,1,1,3,2,1,4,5,1,1,1,1,1,1,5,1,1,1,5,1,1,2,2,1,1,3,1,1,1,4,4,3,1,138,2,4,2,1,19,1,15,1,1,1,1,2,35,1,11,1,1,1,1,19,8,1,1,1,1,5,1,1,2,3,57,1,15,1,14,2,1,1,3,1,1,2,3,1,11,6,1,10,2,4,1,1,1,2,3,4,2,2,1,1,1,1,4,128,2,6,1,3,1,3,7,1,3,1,7,1,3,1,13,3,1,1,4,2,43,21,6,2,5,1,1,13,2,6,4,1,6,29,1,4,1,2,1,2,3,1,7,1,6,3,1,1,1,4,4,1,2,12,103,4,1,1,8,1,2,11,10,1,4,1,3,1,1,1,1,15,1,1,1,129,4,2,8,2,3,51,2,9,5,2,5,1,10,8,4,4,2,3,1,9,12,1,2,1,2,35,4,9,4,13,2,1,3,1,2,1,287,1,1,18,1,20,1,1,1,3,1,1,1,3,28,1,3,14,7,2,4,83,3,1,1,2,7,1,18,11,5,1,1,2,1,1,1,1,1,86,2,2,4,12,1,1,1,1,1,1,1,1,5,1,4,1,9,1,2,16,16,2,1,3,2,5,1,1,1,2,1,1,2,1,1,1,4,22,1,1,1,1,4,1,1,5,26,14,2,3,1,1,1,1,1,26,2,3,4,9,2,1,2,3,1,1,1,22,1,52,3,1,1,1,1,8,13,1,1,1,1,2,1,11,5,1,1,1,1,3,3,4,1,1,1,2,4,3,1,6,1,1,1,1,1,11,1,1,7,2,2,1,1,1,1,1,8,5,2,1,2,3,1,3,15,1,1,1,2,1,3,1,7,2,1,6,9,1,3,2,1,3,2,2,94,1,2,1,3,11,3,22,3,1,3,2,7,1,1,1,2,4,1,1,1,4,2,1,1,1,1,1,4,2,2,8,32,2,1,4,10,3,1,4,4,1,7,77,5,1,84,1,13,1,1,4,1,1,16,1,7,1,1,1,53,1,5,1,1,25,2,2,2,4,4,2,4,2,2,4,1,7,1,1,2,2,1,1,36,5,2,4,2,4,2,8,1,2,10,2,15,1,1,1,1,1,1,1,1,2,1,1,1,1,1,19,1,6,8,1,1,2,3,1,1,1,19,1,12,1,2,2,8,6,2,2,3,5,1,3,1,1,4,1,13,2,1,1,1,1,8,1,1,2,13,1,1,1,2,1,1,3,2,34,12,12,3,4,5,1,4,1,1,1,1,2,2,1,7,1,1,1,1,2,15,1,1,1,5,1,7,1,6,1,3,5,1,1,1,13,3,6,1,5,195,5,2,21,1,2,3,1,2,1,1,4,2,1,6,1,1,1,2,11,1,2,1,1,9,2,1,1,1,27,1,3,34,20,3,2,4,20,1,1,20,25,1,1,2,1,5,5,1,2,2,1,1,2,5,6,1,6,1,2,1,3,1,1,1,2,7,1,1,3,5,4,3,2,1,1,1,2,1,1,6,1,1,1,1,20,1,1,2,1,4,5,3,1,1,1,1,3,1,1,7,1,1,1,1,16,1,10,2,2,10,1,1,1,1,5,2,1,2,2,8,1,5,7,3,1,2,1,1,9,2,15,1,1,4,2,72,99,2,4,2,1,1,1,6,3,417,1,1,44,5,1,1,12,1,1,1,1,1,1,2,1,5,1,4,4,2,1,5,2,2,8,8,1,1,1,5,1,1,1,1,4,1,8,1,1,1,1,3,22,2,2,11,1,11,3,1,1,1,4,1,12,1,1,1,2,1,2,1,5,1,1,1,1,3,1,1,2,1,1,2,3,4,1,2,4,1,7,2,1,6,5,5,2,1,1,2,11,2,1,1,12,1,2,1,1,1,1,1,8,1,1,2,1,1,3,1,1,3,20,7,1,1,2,1,6,1,2,1,1,6,1,1,1,1,2,122,7,2,1,5,2,3,9,1,2,1,1,1,2,3,2,1,1,1,1,1,7,3,4,2,1,1,1,1,6,1,2,1,1,6,3,2,2,1,1,11,1,4,5,3,1,3,3,1,1,1,6,1,2,1,2,2,2,1,3,1,1,1,1,4,1,3,1,2,3,2,1,1,1,3,2,1,1,1,1,2,1,1,1,1,23,1,2,1,1,2,1,4,1,1,3,1,1,1,1,4,6,2,5,54,1,16,4,2,1,3,4,1,2,2,7,1,1,2,3,1,1,1,2,3,2,1,16,1,5,5,9,5,1,3,2,1,1,1,3,1,1,1,1,1,1,2,1,1,1,1,1,1,1,3,2,9,1,1,21,2,2,4,10,19,1,10,7,1,1,1,1,1428,9,1,2,1,1,1,1,1,12,5,2,2,1,4,2,5,1,3,1,1,2,1,1,1,23,1,1,3,1,1,1,9,2,26,1,1,1,1,2,6,11,7,1,1,1,1,2,20,2,1,6,3,5,1,2,3,1,1,16,1,1,10,4,1,3,1,5,1,51,1,1,3,1,4,1,2,1,4,1,1,6,1,14,1,3,1,15,1,1,2,3,5,1,2,4,7,1,6,11,1,1,1,75,1,2,1,51,1,6,1,1,4,2,2,2,2,1,3,1,41,1,1,19,1,1,1,1,1,1,2,7,2,1,2,1,1,5,1,1,57,1,3,6,1,9,4,247,1,1,2,1,3,1,13,2,4,25,1,3,8,7,2,1,2,1,2,7,1,3,1,2,1,1,2,1,2,1,3,2,2,1,1,2,2,1,1,4,2,1,1,9,1,1,5,3,1,1,2,5,1,10,1,1,81,3,1,1,1,19,13,2,1,2,7,9,1,62,1,443,142,65,1,2,3,4,1,8,1,2,3,2,4,32,1,2,1,1,1,1,7,8,12,1,2,14,3,1,1,1,1,4,66,1,1,1,3,45,4,2,2,2,1,7,9,3,3,1,1,1,1,1,6,2,1,2,3,2,1,3,2,1,1,1,3,1,9,3,4,1,1,1,8,1,1,11,12,6,2,4,1,1,1,3,1,8,3,1,1,1,1,6,4,1,1,3,1,19,4,2,3,5,22,2,1,1,1,1,2,69,1,1,14,1,16,1,1,8,7,1,2,1,18,1,444,1,31,1,20,14,1,42,63,11,1,3,1,1,13,2,1,61,1,1,35,6,2,1,1,29,10,3,4,1,1,34,1,4,1,1,10,3,1,1,8,4,2,1,3,2,4,34,88,1,1,2,6,2,1,12,2,1,1,3,51,2,4,6,11,4,3,4,1,16,2,1,6,1,3,2,3,5,1,1,1,1,5,3,2,2,12,1,1,1,2,12,4,1,2,2,4,2,1,25,1,1,3,1,8,1,2,1,1,1,1,2,1,4,2,1,1,1,1,1,1,2,1,16,1,2,1,2,1,2,3,13,2,1,1,3,1,5,134,1,1,1,2,2,1,2,1,1,1,1,1,1,1,1,1,5,1,1,1,6,27,2,1,8,1,8,2,3,7,1,22,2,1,1,1,2,1,1,1,55,3,12,6,6,2,4,1,3,1,1,76,9,12,1,6,3,10,4,1,3,1,3,1,1,93,1,1,2,2,27,2,41,1,8,1,3,1,1,1,13,1,23,3,2,2,2,7,2,1,1,1,3,4,4,1,1,1,3,3,1,1,1,1,1,1,31,1,14,62,3,6,13,1,1,3,4,1,1,1,1,72,1,15,1,67,9,2,1,26,34,2,45,1,3,3,1,1,17,1,1,1,1,30,1,1,1,1,1,1,2,4,1,1,4,1,1,2,7,1,16,3,4,1,3,1,29,1,216,9,3,1,1,2,3,1,1,1,1,1,25,9,1,1,2,1,1,1,4,4,3,4,1,1,1,4,1,8,5,1,1,1,1,1,1,2,27,1,1,6,1,1,1,1,1,1,25,2,1,16,4,1,18,4,5,7,2,32,6,1,1,1,10,1,10,1,1,1,1,1,3,1,1,1,4,3,1,1,1,1,1,2,3,1,1,1,1,1,5,1,1,1,2,1,4,1,2,3,1,2,2,3,1,2,1,1,1,1,2,1,2,7,5,6,1,1,1,1,12,1,2,1,1,23,3,7,2,1,1,1,51,5,6,13,86,6,10,332,5,9,24,2,25,1,123,5,1,1,45,17,1,1,1,1,1,285,1,32,1,1,5,35,4,55,2,6,1,11,8,6,2,20,1,1,2,1,4,10,1,2,1,2,1,2,41,1,26,3,16,1,1,2,11,6,1,2,1,1,1,4,2,12,1,2,5,1,30,3,13,1,1,1,3,3,1,2,9,1,1,1,1,1,1,1,1,1,10,1,5,2,2,2,8,3,1,2,2,2,2,6,2,1,1,1,19,5,2,1,7,1,1,9,1,1,1,1,1,1,1,1,1,1,4,2,1,1,1,3,3,3,1,1,1,1,1,1,1,1,1,3,1,5,4,6,1,4,6,1,3,3,1,1,2,1,1,2,1,1,1,28,6,6,7,1,7,3,1,6,3,2,7,5,1,91,36,3,18,10,3,2,1,33,5,1,9,1,15,1,1,2,1,1,1,83,5,12,7,5,1,2,13,12,1,1,6,1,3,1,1,1,2,2,1,1,1,34,1,1,1,1,1,4,9,1,1,2,23,1,3,3,27,1,6,10,2,2,181,1,1,2,1,3,1,2,1,2,9,2,11,7,9,1,5,2,3,4,1,134,1,1,13,16,5,6,11,2,2,4,1,9,3,1,74,1,3,46,3,1,3,1,1,3,2,5,2,1,1,6,1,1,2,1,1,1,27,1,8,3,1,1,1,5,1,8,1,6,3,2,1,3,1,2,1,3,1,4,1,1,11,2,1,4,1,1,1,1,4,1,2,10,1,1,10,3,1,9,108,2,1,2,1,1,1,1,45,7,1,1,1,1,1,1,4,1,2,1,3,1,1,3,2,4,2,1,2,1,1,4,1,4,1,4,1,4,3,2,9,18,4,2,2,2,3,1,1,1,10,11,1,3,1,1,1,2,10,3,1,2,1,7,8,1,4,1,1,4,1,1,8,5,3,1,1,3,1,2,2,1,1,1,4,1,2,15,2,12,3,3,17,82,4,1,259,1,2,2,1,12,2,1,15,8,2,1,1,1,4,1,1,1,8,5,1,2,1,9,4,2,1,1,2,1,5,3,7,1,1,1,1,1,1,2,1,1,1,1,2,26,1,1,9,2,3,1,1,3,1,21,1,2,12,17,1,1,1,1,3,1,5,2,8,3,1,1,1,1,1,6,2,1,1,1,1,8,13,7,2,1,1,1,2,29,4,4,1,19,1,1,5,1,2,5,1,1,1,12,2,1,1,3,2,1,6,391,19,1,1,29,51,1,1,3,1,1,2,2,278,32,1,2,186,3,6,2,1,3,4,1,9,2,4,1,1,1,1,1,4,12,1,1,2,7,1,1,1,1,3,1,13,2,5,1,2,1,1,4,5,10,1,7,2,2,1,1,1,6,13,9,1,2,3,16,1,6,5,1,3,4,5,1,1,1,1,1,53,3,1,1,2,1,2,2,1,9,7,1,2,1,1,451,67,12,1,1,1,5,1,1,3,2,46,3,5,1,1,4,2,1,3,1,2,1,1,1,1,1,11,1,1,1,1,5,1,20,4,1,1,2,15,1,7,1,1,2,1,1,1,4,1,1,1,12,1,4,5,2,1,3,241,1,2,1,127,1,11,15,3,1,6,1,1,1,5,2,11,1,1,1,5,1,1,3,1,1,1,1,1,3,4,2,7,311,7,156,582,1,1,143,18,12,4,2,1,1,1,3,2,3,26,147,1,12,21,5,1,10,2,12,4,2,126,1,7,1,1,1,3,1,18,5,1,1,1,1,7,1,3,2,9,5,7,3,1,2,7,1,1,1,2,28,1,1,1,2,1,26,8,1,406,4,1,1,51,2,6,2,2,1,1,1,1,1,3,3,5,1,1,11,2,2,2,1,1,1,3,1,1,81,2,31,1,2,5,4,1,63,11,1,2,158,1,1,2,9,1,1,2,45,1,5,3,30,2,3,1,83,1,3,2,1,1,1,35,2,1,3,1,1,1,1,1,1,1,2,4,3,1,1,3,4,3,16,1,50,37,1,2,17,1,6,1,1,1,2,6,5,1,3,1,2,50,2,5,1,1,2,1,2,9,4,1,23,1,2,1,7,6,1,10,1,1,7,3,2,1,1,1,1,25,2,1,5,1,1,2,1,1,1,7,1,1,2,1,1,1,1,1,1,1,4,1,3,2,1,1,1,4,2,2,3,4,1,1,1,1,3,2,5,1,3,1,29,3,1,4,1,5,1,5,1,4,1,1,1,1,1,3,1,7,1,1,4,5,37,1,1,6,1,12,2,1,1,1,1,1,1,1,33,2,2,3,28,3,28,15,3,54,3,2,2,31,94,90,1,3,2,4,2,25,2,62,9,7,1,1,1,2,1,1,1,2,6,1,3,1,1,1,3,1,1,1,6,1,1,69,12,15,20,1,3,3,2,1,26,3,1,1,1,1,1,3,5,1,13,1,3,3,1,276,1,3,21,13,2,4,3,6,1,9,4,6,1,2,530,7,1,1,1,1,1,125,2,1,1,3,1,2,1,1,1,4,1,64,3,2,1,1,1,1,1,1,4,1,1,1,2,2,1,1,160,2,11,1,9,1,1,1,1,1,2,1,2,1,1,1,1,1,4,11,1,2,2,1,1,1,1,3,1,2,1,5,4,2,7,4,3,2,24,2,2,1,2,6,1,1,2,1,1,2,2,1,1,1,3,1,1,1,1,1,1,1,1,1,2,1,1,1,5,2,5,1,1,1,1,3,1,1,10,1,3,1,1,1,4,20,4,1,6,2,1,3,1,1,1,2,2,1,1,364,1,77,58,6,4,1,2,29,1,13,14,1,2,2,2,2,3,5,1,2,4,2,1,2,1,3,1,1,3,1,3,1,1,2,16,3,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,5,2,1,3,8,3,1,3,1,1,1,3,1,3,1,3,2,1,1,2,6,1,1,1,2,4,2,1,1,1,4,2,1,3,2,1,5,1,2,4,8,1,1,8,1,1,6,1,2,1,1,2,6,1,3,1,1,1,2,2,2,2,2,11,2,1,4,2,1,1,1,1,3,1,2,2,1,1,1,1,11,4,1,1,1,1,8,4,2,17,1,2,2,2,1,1,1,1,18,5,1,2,2,1,1,1,4,2,1,1,195,4,40,2,2,27,4,1,1,41,10,21,7,10,1,2,2,1,365,29,123,2,1,1,1,1,1,1,151,2,570,81,5,62,5,2,10,1,1,7,2,5,2,9,1,1,17,1,3,1,69,1,1,2,1,1,5,1,2,18,5,2,6,42,8,1,25,48,1,1,1,1,1,2,1,4,10,1,359,20,4,2,1,13,3,11,1,2,1,4,7,7,24,1,3,1,1,4,6,1,3,11,1,88,9,1,3,40,7,2,3,3,14,1,14,47,1,1,2,1,648,2,12,65,1,8,4,8,3,1,3,1,1,14,2,1,121,2,8,1,1,8,7,1,2,5,1,9,1,3,7,1,7,2,1,2,1,1,1,1,194,5,3,4,1,4,72,4,1,125,3,1,1,11,3,1,1,1,2,5,6,2,5,1,1,55,3,1,1,3,5,1,1,1,1,16,4,4,13,13,1,1,8,1,2,5,1,1,1,11,1,1,1,1,2,1,1,7,6,1,1,1,11,1,15,5,1,1,1,15,2,38,1,4,1,1,2,19,73,7,8,1,12,1,1,6,20,1,1,4,9,11,2,2,12,24,4,6,1,2,5,1,1,1,62,1,25,1,221,1,30,1,92,17,49,6,1,16,9,51,2,20,1,10,28,1,2,12,4,1,4,46,4,3,3,1,1,1,1,1,1,1,1,1,23,1,11,4,92,1,8,8,1,20,20,1,3,8,1,1,1,6,2,14,3,2,1,1,1,1,1,1,11,3,2,3,3,3,1147,61,1,77,1,6,1,4,1,3,4,1,16,327,16,57,2,7,1,185,2,1,1,4,1,14,2,1,1,1,1,1,1,1,5,1,1,2,5,2,1,10,1,2,1,3,3,1,1,1,3,10,5,2,1,1],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":0.107398568019093,"backgroundColor":"white","gridSize":0,"minRotation":-0.785398163397448,"maxRotation":0.785398163397448,"shuffle":true,"rotateRatio":0.4,"shape":"pentagon","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
+<script type="application/htmlwidget-sizing" data-for="htmlwidget-7ff4f3fcddf3c1f0ac9f">{"viewer":{"width":450,"height":350,"padding":0,"fill":true},"browser":{"width":960,"height":500,"padding":0,"fill":true}}</script>
+</body>
+</html>

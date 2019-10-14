@@ -1,16 +1,34 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>twitter on RDen</title>
+    <title>twitteR on RDen</title>
     <link>https://rden.netlify.com/tags/twitter/</link>
-    <description>Recent content in twitter on RDen</description>
+    <description>Recent content in twitteR on RDen</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Wed, 10 Oct 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 05 Oct 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rden.netlify.com/tags/twitter/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Breaking Bad: Yeah Science, bitch!</title>
+      <link>https://rden.netlify.com/post/breaking_bad/</link>
+      <pubDate>Sat, 05 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://rden.netlify.com/post/breaking_bad/</guid>
+      <description>&lt;p&gt;How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to &lt;a href=&#34;https://www.youtube.com/watch?v=WVR476WHmR8&#34;&gt;Kerplosh&lt;/a&gt;, the number is actually 54.  Was that word pronounced that often? We can answer this question using &lt;em&gt;R&lt;/em&gt;.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Breaking Bad: Yeah Science, bitch!</title>
+      <link>https://rden.netlify.com/post/breaking_bad/</link>
+      <pubDate>Sat, 05 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://rden.netlify.com/post/breaking_bad/</guid>
+      <description>&lt;p&gt;How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to &lt;a href=&#34;https://www.youtube.com/watch?v=WVR476WHmR8&#34;&gt;Kerplosh&lt;/a&gt;, the number is actually 54.  Was that word pronounced that often? We can answer this question using &lt;em&gt;R&lt;/em&gt;.&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Il Re di Twitter? (PART II)</title>

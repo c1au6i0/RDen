@@ -7,10 +7,46 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Sat, 01 Jun 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 05 Oct 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rden.netlify.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>R</title>
+      <link>https://rden.netlify.com/tags/r/</link>
+      <pubDate>Sat, 05 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://rden.netlify.com/tags/r/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ggplot</title>
+      <link>https://rden.netlify.com/tags/ggplot/</link>
+      <pubDate>Sat, 05 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://rden.netlify.com/tags/ggplot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>textmining</title>
+      <link>https://rden.netlify.com/tags/textmining/</link>
+      <pubDate>Sat, 05 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://rden.netlify.com/tags/textmining/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>twitteR</title>
+      <link>https://rden.netlify.com/tags/twitter/</link>
+      <pubDate>Sat, 05 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://rden.netlify.com/tags/twitter/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>aRt</title>
@@ -153,42 +189,6 @@
       <pubDate>Sun, 24 Mar 2019 00:00:00 +0000</pubDate>
       
       <guid>https://rden.netlify.com/tags/roc/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>caret</title>
-      <link>https://rden.netlify.com/tags/caret/</link>
-      <pubDate>Sun, 24 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://rden.netlify.com/tags/caret/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>precision recall</title>
-      <link>https://rden.netlify.com/tags/precision-recall/</link>
-      <pubDate>Sun, 24 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://rden.netlify.com/tags/precision-recall/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>predictive modeling</title>
-      <link>https://rden.netlify.com/tags/predictive-modeling/</link>
-      <pubDate>Sun, 24 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://rden.netlify.com/tags/predictive-modeling/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>av</title>
-      <link>https://rden.netlify.com/tags/av/</link>
-      <pubDate>Thu, 25 Oct 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://rden.netlify.com/tags/av/</guid>
       <description></description>
     </item>
     

@@ -92,9 +92,9 @@ I don’t have an obsession for swear words so…here a wordcloud of **all** the
 
 # Conclusions
 
-* The word "bitch" (and "bitches") was pronounced a total of **108 times**, and was not the most common swear word in the show. 
+* The word "bitch" (and "bitches") was pronounced a total of **108 times**, and it was not the most common swear word in the show. 
 * The number of uses peaked in Season 2 with a total of 28 occurrences.
-* The episode 6 of Season 2 was the one in which the word whose used the most, for a total of 7 time.
+* The episode 6 of Season 2 was the one in which the word whose used the most (7 times).
 
 # CODE
 

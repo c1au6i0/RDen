@@ -64,7 +64,7 @@
   </url>
   
   <url>
-    <loc>https://rden.netlify.com/tags/twitter/</loc>
+    <loc>https://rden.netlify.com/tags/wordcloud/</loc>
     <lastmod>2019-10-05T12:42:13-04:00</lastmod>
     <priority>0</priority>
   </url>
@@ -238,15 +238,16 @@
   </url>
   
   <url>
+    <loc>https://rden.netlify.com/tags/twitter/</loc>
+    <lastmod>2018-10-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://rden.netlify.com/post/re-di-twitter-i/</loc>
     <lastmod>2018-09-12T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://rden.netlify.com/post/bb_wordcloud/</loc>
-    <priority>0</priority>
   </url>
   
 </urlset>

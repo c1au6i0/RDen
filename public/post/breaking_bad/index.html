@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="C1au6i0_HH" />
-  <meta name="description" content="How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to Kerplosh, the number is actually 54. Was that word pronounced that often? We can answer this question using R.
+  <meta name="description" content="How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to Kerplosh, the number is actually 54. Was it pronounced that often? We can answer this question using R.
 " />
 
   <meta name="keywords" content="Hugo, theme, jane" />
@@ -59,26 +59,26 @@
 
 
 <meta property="og:title" content="Breaking Bad: Yeah Science, bitch!" />
-<meta property="og:description" content="How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to Kerplosh, the number is actually 54.  Was that word pronounced that often? We can answer this question using R." />
+<meta property="og:description" content="How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to Kerplosh, the number is actually 54.  Was it pronounced that often? We can answer this question using R." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://rden.netlify.com/post/breaking_bad/" />
-<meta property="article:published_time" content="2019-10-05T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2019-10-14T00:00:00&#43;00:00"/>
 <meta property="article:modified_time" content="2019-10-05T12:42:13-04:00"/>
 
 <meta itemprop="name" content="Breaking Bad: Yeah Science, bitch!">
-<meta itemprop="description" content="How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to Kerplosh, the number is actually 54.  Was that word pronounced that often? We can answer this question using R.">
+<meta itemprop="description" content="How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to Kerplosh, the number is actually 54.  Was it pronounced that often? We can answer this question using R.">
 
 
-<meta itemprop="datePublished" content="2019-10-05T00:00:00&#43;00:00" />
+<meta itemprop="datePublished" content="2019-10-14T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-10-05T12:42:13-04:00" />
-<meta itemprop="wordCount" content="963">
+<meta itemprop="wordCount" content="1218">
 
 
 
-<meta itemprop="keywords" content="R,twitteR,twitter,ggplot,textmining," />
+<meta itemprop="keywords" content="R,wordcloud,ggplot,textmining," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Breaking Bad: Yeah Science, bitch!"/>
-<meta name="twitter:description" content="How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to Kerplosh, the number is actually 54.  Was that word pronounced that often? We can answer this question using R."/>
+<meta name="twitter:description" content="How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to Kerplosh, the number is actually 54.  Was it pronounced that often? We can answer this question using R."/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -286,15 +286,15 @@ if (!doNotTrack) {
       <h1 class="post-title">Breaking Bad: Yeah Science, bitch!</h1>
       
       <div class="post-meta">
-        <time datetime="2019-10-05" class="post-time">
-          2019-10-05
+        <time datetime="2019-10-14" class="post-time">
+          2019-10-14
         </time>
         <div class="post-category">
             <a href="https://rden.netlify.com/categories/r/"> R </a>
             
           </div>
-        <span class="more-meta"> 963 words </span>
-          <span class="more-meta"> 5 min read </span>
+        <span class="more-meta"> 1218 words </span>
+          <span class="more-meta"> 6 min read </span>
 
         
         
@@ -314,6 +314,7 @@ if (!doNotTrack) {
 <li><a href="#some-bulk-numbers">Some bulk numbers</a></li>
 <li><a href="#by-season-and-episode">By season and episode</a></li>
 <li><a href="#wordcloud">Wordcloud</a></li>
+<li><a href="#conclusions">Conclusions</a></li>
 <li><a href="#code">CODE</a></li>
 </ul>
 </nav>
@@ -322,136 +323,415 @@ if (!doNotTrack) {
 
     
     <div class="post-content">
-      <p>How many times was the word “bitch” said in Breaking Bad? Aaron Paul thinks that he used the word at least one hundred time, whereas, according to <a href="https://www.youtube.com/watch?v=WVR476WHmR8">Kerplosh</a>, the number is actually 54.  Was that word pronounced that often? We can answer this question using <em>R</em>.</p>
+      <p><strong>How many times was the word “bitch” said in Breaking Bad?</strong> Aaron Paul thinks that he used the word at least one hundred time, whereas, according to <a href="https://www.youtube.com/watch?v=WVR476WHmR8">Kerplosh</a>, the number is actually 54.  Was it pronounced that often? We can answer this question using <em>R</em>.</p>
 
-<p>We don’t need to watch the entire series again; with the subtitles and some coding we can get to the bottom of this much quicker. I wrote a function to import and make the subtitles tidy, few lines of code to tokenize the dialogue, and I got all the words pronounced in Breaking Bad (code is at the end of the post).</p>
+<p>We don’t need to watch the entire show again: <strong>with the subtitles and some coding we can get to the bottom of this much quicker</strong>. I wrote a function to import and make the subtitles tidy, few lines of code to tokenize the dialogue, and I got all the words pronounced in Breaking Bad (code is at the end of the post).</p>
 
 <h1 id="some-bulk-numbers">Some bulk numbers</h1>
 
 <p>The words &ldquo;bitch&rdquo; and &ldquo;bitches&rdquo; were pronounced a total of <strong>108 times</strong> (96 and 12 times, respectively) by Jessy and the other characters of Breaking Bad. Among the ~9952 unique words, “bitch” was the 165th most used.
-While this is not an insignificant use of the colorful locution, it is far below the top 7 words which are pronounced 9 to 16-fold more frequently than “bitch”.</p>
+While this is not an insignificant use of the colorful locution, <strong>it is far below the top 7 words</strong>, which are pronounced 9 to 16-fold more frequently than “bitch”.</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">words</th>
+<th align="left">frequency</th>
+<th align="left">position</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">just</td>
+<td align="left">1676</td>
+<td align="left">1</td>
+</tr>
+
+<tr>
+<td align="left">know</td>
+<td align="left">1669</td>
+<td align="left">2</td>
+</tr>
+
+<tr>
+<td align="left">right</td>
+<td align="left">1428</td>
+<td align="left">3</td>
+</tr>
+
+<tr>
+<td align="left">yeah</td>
+<td align="left">1147</td>
+<td align="left">4</td>
+</tr>
+
+<tr>
+<td align="left">like</td>
+<td align="left">1114</td>
+<td align="left">5</td>
+</tr>
+
+<tr>
+<td align="left">get</td>
+<td align="left">960</td>
+<td align="left">6</td>
+</tr>
+
+<tr>
+<td align="left">okay</td>
+<td align="left">924</td>
+<td align="left">7</td>
+</tr>
+
+<tr>
+<td align="left">&hellip;</td>
+<td align="left">&hellip;</td>
+<td align="left">&hellip;</td>
+</tr>
+
+<tr>
+<td align="left">bitch</td>
+<td align="left">96</td>
+<td align="left">165</td>
+</tr>
+
+<tr>
+<td align="left">bitches</td>
+<td align="left">12</td>
+<td align="left">1054</td>
+</tr>
+</tbody>
+</table>
+
+<p>Was it at least the most used among swear words?</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">words</th>
+<th align="right">frequency</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">shit</td>
+<td align="right">134</td>
+</tr>
+
+<tr>
+<td align="left">damn</td>
+<td align="right">120</td>
+</tr>
+
+<tr>
+<td align="left">bitch</td>
+<td align="right">96</td>
+</tr>
+
+<tr>
+<td align="left">asshole</td>
+<td align="right">33</td>
+</tr>
+
+<tr>
+<td align="left">crap</td>
+<td align="right">32</td>
+</tr>
+</tbody>
+</table>
+
+<p>Surprisingly… no! The word “shit” and “damn” were used slightly more than &ldquo;bitch&rdquo;.</p>
+
+<h1 id="by-season-and-episode">By season and episode</h1>
+
+<p>They started slow&hellip; The graph bellow shows the number of occurrences per season.</p>
+
+<p><center>
+<em>[click on the figure to enlarge it]</em>
+</center></p>
+
+<p><img src="/post/2019-10-05-breaking_bad_files/figure-html/bitch_season-1.png" width="672" /></p>
+
+<p>In the first season, the words “bitch” and “bitches” were used only 10 times. The seasons with the highest number of uses of those words was the second (28) and the third (27). After a slight decrease in the fourth season (18), the frequency went up again in the last season (25).</p>
+
+<p>Seasons had a different number of episodes and the use of the expression was not normally distributed. For these reasons it is worth to take a look at each single episode.</p>
+
+<p><center>
+<em>[click on the figure to enlarge it]</em>
+</center></p>
+
+<p><img src="/post/2019-10-05-breaking_bad_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+
+<p>The maximal number of occurrences per episode were 7 and 6 in Season 3 – Episode 10 and Season 3 -Episode 6, respectively. Season 2 and Season 3 averaged about 2, whereas the other 1 to 1.5 occurrence of the word per episode.</p>
+
+<h1 id="wordcloud">Wordcloud</h1>
+
+<p>I don’t have an obsession for swear words so…here a wordcloud of <strong>all</strong> the words of the show!</p>
+
+<p><center>
+<em>[click on the words to check their frequency]</em>
+</center></p>
+
+<iframe seamless src="/data/data_post7/bb.html" width="100%" height="400" frameBorder="0"></iframe>
+
+<h1 id="conclusions">Conclusions</h1>
+
+<ul>
+<li>The word &ldquo;bitch&rdquo; (and &ldquo;bitches&rdquo;) was pronounced a total of <strong>108 times</strong>, and was not the most common swear word in the show.</li>
+<li>The number of uses peaked in Season 2 with a total of 28 occurrences.</li>
+<li>The episode 6 of Season 2 was the one in which the word whose used the most, for a total of 7 time.</li>
+</ul>
+
+<h1 id="code">CODE</h1>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-r" data-lang="r">tab <span class="o">&lt;-</span> bb_words <span class="o">%&gt;%</span>
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="kn">library</span><span class="p">(</span>tidytext<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>tidyverse<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>data.table<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>lubridate<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>vroom<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>svDialogs<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>stringr<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>wordcloud2<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>htmlwidgets<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>widgetframe<span class="p">)</span>
+
+<span class="c1"># function to import subtitles that are locate all in a folder</span>
+import_sub <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>link_file<span class="p">){</span>
+  
+  <span class="c1">#extract season and episode from file name</span>
+  info_ser <span class="o">&lt;-</span> str_split<span class="p">(</span>str_extract<span class="p">(</span>link_file<span class="p">,</span> <span class="s">&#34;[:digit:]+x[:digit:]+&#34;</span><span class="p">),</span> <span class="s">&#34;x&#34;</span><span class="p">,</span> simplify <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+
+  subt <span class="o">&lt;-</span> vroom_lines<span class="p">(</span>link_file<span class="p">)</span>
+  <span class="c1"># last 3 rows are specifications for fonts and colors</span>
+  subt <span class="o">&lt;-</span> subt<span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span>subt<span class="p">)</span><span class="m">-3</span><span class="p">)]</span>
+  
+  <span class="c1"># extract number (order) of  subtitles and positions</span>
+  arg <span class="o">&lt;-</span> <span class="kt">list</span><span class="p">(</span>subt<span class="p">,</span> <span class="s">&#34;^[:digit:]+$&#34;</span><span class="p">)</span>
+  numb_pos <span class="o">&lt;-</span> map<span class="p">(</span><span class="kt">list</span><span class="p">(</span>str_subset<span class="p">,</span> str_which<span class="p">),</span> exec<span class="p">,</span> <span class="o">!!!</span>arg<span class="p">)</span>
+  
+  <span class="c1"># this create a col where numbers are repeated</span>
+  subt <span class="o">&lt;-</span> bind_cols<span class="p">(</span>numb <span class="o">=</span> <span class="kp">as.numeric</span><span class="p">(</span><span class="kp">rep</span><span class="p">(</span>numb_pos<span class="p">[[</span><span class="m">1</span><span class="p">]],</span> 
+               <span class="kp">diff</span><span class="p">(</span>
+                 <span class="kt">c</span><span class="p">(</span>numb_pos<span class="p">[[</span><span class="m">2</span><span class="p">]],</span> <span class="kp">length</span><span class="p">(</span>subt<span class="p">)</span><span class="m">+1</span><span class="p">)</span>
+                 <span class="p">))),</span>
+               X1 <span class="o">=</span> subt<span class="p">)</span>
+  
+  subt2 <span class="o">&lt;-</span> subt <span class="o">%&gt;%</span> 
+      mutate<span class="p">(</span>what <span class="o">=</span> 
+               case_when<span class="p">(</span>
+                  str_detect<span class="p">(</span>X1<span class="p">,</span> <span class="s">&#34;[:digit:]+:[:digit:]+&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;time_sub&#34;</span><span class="p">,</span>
+                  str_detect<span class="p">(</span>X1<span class="p">,</span> <span class="s">&#34;[:alpha:]&#34;</span><span class="p">)</span> <span class="o">~</span> <span class="s">&#34;dial&#34;</span><span class="p">)</span>
+             <span class="p">)</span> <span class="o">%&gt;%</span> 
+      na.omit<span class="p">()</span> <span class="o">%&gt;%</span> 
+      group_by<span class="p">(</span>numb<span class="p">,</span> what<span class="p">)</span> <span class="o">%&gt;%</span> 
+      summarize<span class="p">(</span>X1 <span class="o">=</span> <span class="kp">paste</span><span class="p">(</span>X1<span class="p">,</span> collapse <span class="o">=</span> <span class="s">&#34; &#34;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+      pivot_wider<span class="p">(</span>names_from <span class="o">=</span> what<span class="p">,</span> values_from <span class="o">=</span> X1<span class="p">)</span>  <span class="o">%&gt;%</span> 
+      separate<span class="p">(</span>time_sub<span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#34;start_t&#34;</span><span class="p">,</span> <span class="s">&#34;end_t&#34;</span><span class="p">),</span> sep <span class="o">=</span> <span class="s">&#34; --&gt; &#34;</span><span class="p">)</span>  <span class="o">%&gt;%</span> 
+      mutate<span class="p">(</span>season <span class="o">=</span> <span class="kp">as.numeric</span><span class="p">(</span>info_ser<span class="p">[[</span><span class="m">1</span><span class="p">]]),</span>
+             episode <span class="o">=</span> <span class="kp">as.numeric</span><span class="p">(</span>info_ser<span class="p">[[</span><span class="m">2</span><span class="p">]]))</span>  <span class="o">%&gt;%</span> 
+      mutate_at<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="s">&#34;start_t&#34;</span><span class="p">,</span> <span class="s">&#34;end_t&#34;</span><span class="p">),</span> <span class="kp">as.POSIXct</span><span class="p">,</span> format <span class="o">=</span> <span class="s">&#34;%H:%M:%OS&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+      ungroup<span class="p">()</span>
+  
+  <span class="c1"># shorturl.at/cpRU2</span>
+  <span class="kp">message</span><span class="p">(</span><span class="kp">paste0</span><span class="p">(</span><span class="s">&#34;File &#34;</span><span class="p">,</span> link_file<span class="p">,</span> <span class="s">&#34; imported!&#34;</span><span class="p">))</span>
+  <span class="kr">return</span><span class="p">(</span>subt2<span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># folder and files</span>
+subt_folder <span class="o">&lt;-</span> <span class="s">&#34;/Users/heverz/Documents/R_projects/RDen/static/data/data_post7/breaking bad&#34;</span>
+list_files <span class="o">&lt;-</span> <span class="kp">list.files</span><span class="p">(</span>subt_folder<span class="p">,</span> full.names <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+
+<span class="c1"># import - bb stands for breaking bad</span>
+bb <span class="o">&lt;-</span> map_dfr<span class="p">(</span>list_files<span class="p">,</span> import_sub<span class="p">)</span>
+
+bb <span class="o">&lt;-</span> bb <span class="o">%&gt;%</span> 
+   mutate<span class="p">(</span>dial <span class="o">=</span> str_remove_all<span class="p">(</span>dial<span class="p">,</span> pattern <span class="o">=</span> <span class="s">&#34;(\\[.*?\\])|(&lt;.*&gt;)|(Sync and.*)&#34;</span><span class="p">))</span> 
+
+<span class="c1"># tokenize</span>
+stop_words <span class="o">&lt;-</span> get_stopwords<span class="p">(</span>language <span class="o">=</span> <span class="s">&#34;en&#34;</span><span class="p">)</span>
+bb_words <span class="o">&lt;-</span> bb <span class="o">%&gt;%</span> 
+   unnest_tokens<span class="p">(</span>input <span class="o">=</span> dial<span class="p">,</span> output <span class="o">=</span> <span class="s">&#34;words&#34;</span><span class="p">,</span> token <span class="o">=</span> <span class="s">&#34;words&#34;</span><span class="p">,</span> format <span class="o">=</span> <span class="s">&#34;text&#34;</span><span class="p">)</span>  <span class="o">%&gt;%</span> 
+   filter<span class="p">(</span>str_detect<span class="p">(</span>words<span class="p">,</span> <span class="s">&#34;[[:alpha:]]&#34;</span><span class="p">),</span>
+          <span class="o">!</span>words <span class="o">%in%</span> stop_words<span class="o">$</span>word<span class="p">)</span>
+
+<span class="c1"># table1 - bitch</span>
+tab <span class="o">&lt;-</span> bb_words <span class="o">%&gt;%</span>
   group_by<span class="p">(</span>words<span class="p">)</span> <span class="o">%&gt;%</span> 
   summarize<span class="p">(</span>frequency <span class="o">=</span> n<span class="p">())</span> <span class="o">%&gt;%</span> 
   arrange<span class="p">(</span>desc<span class="p">(</span>frequency<span class="p">))</span> <span class="o">%&gt;%</span> 
   mutate<span class="p">(</span>position <span class="o">=</span> <span class="kp">seq_along</span><span class="p">(</span>words<span class="p">))</span> <span class="o">%&gt;%</span> 
   filter<span class="p">(</span>position <span class="o">%in%</span> <span class="m">1</span><span class="o">:</span><span class="m">7</span> <span class="o">|</span> words <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#34;bitch&#34;</span><span class="p">,</span> <span class="s">&#34;bitches&#34;</span><span class="p">))</span>
   
-<span class="kp">do.call</span><span class="p">(</span><span class="s">&#34;rbind&#34;</span><span class="p">,</span> <span class="kt">list</span><span class="p">(</span>tab<span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">7</span><span class="p">,],</span> <span class="kp">rep</span><span class="p">(</span><span class="s">&#34;...&#34;</span><span class="p">,</span> <span class="m">3</span><span class="p">),</span> tab<span class="p">[</span><span class="m">8</span><span class="o">:</span><span class="m">9</span><span class="p">,]))</span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span></pre></td>
-<td class="lntd">
-<pre class="chroma">## # A tibble: 10 x 3
-##    words   frequency position
-##    &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;   
-##  1 just    1676      1       
-##  2 know    1669      2       
-##  3 right   1428      3       
-##  4 yeah    1147      4       
-##  5 like    1114      5       
-##  6 get     960       6       
-##  7 okay    924       7       
-##  8 ...     ...       ...     
-##  9 bitch   96        165     
-## 10 bitches 12        1054</pre></td></tr></table>
-</div>
-</div>
-<p>Was it at least the most used among swear words?</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-r" data-lang="r">bb_words <span class="o">%&gt;%</span> 
+tab1 <span class="o">&lt;-</span> 
+  <span class="kp">do.call</span><span class="p">(</span><span class="s">&#34;rbind&#34;</span><span class="p">,</span> <span class="kt">list</span><span class="p">(</span>tab<span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">7</span><span class="p">,],</span> <span class="kp">rep</span><span class="p">(</span><span class="s">&#34;...&#34;</span><span class="p">,</span> <span class="m">3</span><span class="p">),</span> tab<span class="p">[</span><span class="m">8</span><span class="o">:</span><span class="m">9</span><span class="p">,]))</span> <span class="o">%&gt;%</span> 
+  <span class="kp">as.data.frame</span><span class="p">()</span>
+
+<span class="c1"># table2 - swear words</span>
+tab2 <span class="o">&lt;-</span> bb_words <span class="o">%&gt;%</span> 
   filter<span class="p">(</span>str_detect<span class="p">(</span>words<span class="p">,</span> <span class="s">&#34;^bitch*&#34;</span><span class="p">)</span> <span class="o">|</span> words <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">&#34;shit&#34;</span><span class="p">,</span> <span class="s">&#34;fuck&#34;</span><span class="p">,</span> <span class="s">&#34;damn&#34;</span><span class="p">,</span> <span class="s">&#34;asshole&#34;</span><span class="p">,</span> <span class="s">&#34;assholes&#34;</span><span class="p">,</span> <span class="s">&#34;slut&#34;</span><span class="p">,</span> <span class="s">&#34;whore&#34;</span><span class="p">,</span> <span class="s">&#34;goddamn&#34;</span><span class="p">,</span> <span class="s">&#34;cunt&#34;</span><span class="p">,</span> <span class="s">&#34;crap&#34;</span><span class="p">,</span> <span class="s">&#34;prick&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
   group_by<span class="p">(</span>words<span class="p">)</span> <span class="o">%&gt;%</span> 
   summarize<span class="p">(</span>frequency <span class="o">=</span> n<span class="p">())</span> <span class="o">%&gt;%</span> 
   arrange<span class="p">(</span>desc<span class="p">(</span>frequency<span class="p">))</span> <span class="o">%&gt;%</span> 
-  <span class="kp">head</span><span class="p">(</span><span class="m">5</span><span class="p">)</span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></pre></td>
-<td class="lntd">
-<pre class="chroma">## # A tibble: 5 x 2
-##   words   frequency
-##   &lt;chr&gt;       &lt;int&gt;
-## 1 shit          134
-## 2 damn          120
-## 3 bitch          96
-## 4 asshole        33
-## 5 crap           32</pre></td></tr></table>
-</div>
-</div>
-<p>Surprisingly… no! The word “shit” and “damn” were used slightly more.</p>
+  <span class="kp">head</span><span class="p">(</span><span class="m">5</span><span class="p">)</span>
 
-<h1 id="by-season-and-episode">By season and episode</h1>
+<span class="c1"># graph1 - by season</span>
 
-<p>They started slow&hellip; The graph bellow shows the number of occurrences per season.</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-r" data-lang="r">bb_words <span class="o">%&gt;%</span> 
+graph1 <span class="o">&lt;-</span> bb_words <span class="o">%&gt;%</span> 
   filter<span class="p">(</span>str_detect<span class="p">(</span>words<span class="p">,</span> <span class="s">&#34;^bitch*&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span>
   mutate<span class="p">(</span>season <span class="o">=</span> <span class="kp">paste</span><span class="p">(</span><span class="s">&#34;Season &#34;</span><span class="p">,</span> season<span class="p">))</span> <span class="o">%&gt;%</span> 
   group_by<span class="p">(</span>season<span class="p">)</span> <span class="o">%&gt;%</span> 
@@ -469,90 +749,18 @@ While this is not an insignificant use of the colorful locution, it is far below
                   size <span class="o">=</span> <span class="m">4</span><span class="p">)</span> <span class="o">+</span>
     theme<span class="p">(</span>plot.title <span class="o">=</span> element_text<span class="p">(</span>hjust <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span> size <span class="o">=</span> <span class="m">15</span><span class="p">,</span> face <span class="o">=</span> <span class="s">&#34;bold&#34;</span><span class="p">),</span>
           axis.text.x  <span class="o">=</span> element_text<span class="p">(</span>hjust <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span> size <span class="o">=</span> <span class="m">10</span><span class="p">,</span> face <span class="o">=</span> <span class="s">&#34;bold&#34;</span><span class="p">),</span>
-          legend.position <span class="o">=</span> <span class="s">&#34;none&#34;</span><span class="p">)</span></code></pre></td></tr></table>
-</div>
-</div>
-<p><img src="/post/2019-10-05-breaking_bad_files/figure-html/bitch_season-1.png" width="672" /></p>
-
-<p><strong>In the first season, the words “bitch” and “bitches” were used only 10 times. The seasons with the highest number of uses of those words was the second (28) and the third (27). After a slight decrease in the fourth season (18), the frequency went up again in the last season (25).</strong></p>
-
-<p>Seasons had a different number of episodes and the use of the expression was not normally distributed. For these reasons it is worth to take a look at each single episode.</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-r" data-lang="r">bb_words <span class="o">%&gt;%</span> 
+          legend.position <span class="o">=</span> <span class="s">&#34;none&#34;</span><span class="p">)</span>
+<span class="c1"># averages of season by episode</span>
+bb_words <span class="o">%&gt;%</span> 
   filter<span class="p">(</span>str_detect<span class="p">(</span>words<span class="p">,</span> <span class="s">&#34;^bitch*&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span>
   mutate<span class="p">(</span>season <span class="o">=</span> <span class="kp">paste</span><span class="p">(</span><span class="s">&#34;Season &#34;</span><span class="p">,</span> season<span class="p">))</span> <span class="o">%&gt;%</span> 
   group_by<span class="p">(</span>season<span class="p">)</span> <span class="o">%&gt;%</span> 
   summarize<span class="p">(</span>n <span class="o">=</span> n<span class="p">())</span> <span class="o">%&gt;%</span> 
   arrange<span class="p">(</span>season<span class="p">)</span> <span class="o">%&gt;%</span> 
   mutate<span class="p">(</span>episode_n <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">7</span><span class="p">,</span> <span class="m">13</span><span class="p">,</span> <span class="m">13</span><span class="p">,</span> <span class="m">13</span><span class="p">,</span> <span class="m">16</span><span class="p">),</span> mean_episode <span class="o">=</span> n<span class="o">/</span>episode_n<span class="p">)</span>
-<span class="c1"># %&gt;% </span>
-<span class="c1">#   ggplot(aes(x = season, y = mean_episode, group = season, fill = as.factor(season))) +</span>
-<span class="c1">#     geom_col(colour = &#34;black&#34;, size = 0.3) +</span>
-<span class="c1">#     scale_fill_brewer(palette=&#34;Dark2&#34;) +</span>
-<span class="c1">#     scale_y_continuous(breaks = seq(0,2.5, 0.5), limits = c(0, 2.5)) +</span>
-<span class="c1">#     labs(x = NULL,</span>
-<span class="c1">#          y = NULL,</span>
-<span class="c1">#          # y = expression(&#34;number of times used&#34;~bold(&#34;per episode&#34;)),</span>
-<span class="c1">#          title = expression(~italic(&#34;BITCH + BITCHES&#34;): &#34;average per episode&#34;)) +</span>
-<span class="c1">#     geom_text(aes(y = mean_episode - 0.2,</span>
-<span class="c1">#                  label = round(mean_episode, 2)),</span>
-<span class="c1">#                   size = 4) +</span>
-<span class="c1">#     theme(plot.title = element_text(hjust = 0.5, size = 15, face = &#34;bold&#34;),</span>
-<span class="c1">#           axis.text.x  = element_text(hjust = 0.5, size = 10, face = &#34;bold&#34;),</span>
-<span class="c1">#           legend.position = &#34;none&#34;)</span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-r" data-lang="r"><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-r" data-lang="r">bb_words <span class="o">%&gt;%</span> 
+
+<span class="c1"># graph2 - episodes</span>
+graph2 <span class="o">&lt;-</span> bb_words <span class="o">%&gt;%</span> 
   filter<span class="p">(</span>str_detect<span class="p">(</span>words<span class="p">,</span> <span class="s">&#34;^bitch*&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
   mutate<span class="p">(</span>season <span class="o">=</span> <span class="kp">paste</span><span class="p">(</span><span class="s">&#34;Season &#34;</span><span class="p">,</span> season<span class="p">))</span> <span class="o">%&gt;%</span> 
   group_by<span class="p">(</span>season<span class="p">,</span> episode<span class="p">)</span> <span class="o">%&gt;%</span> 
@@ -573,20 +781,16 @@ While this is not an insignificant use of the colorful locution, it is far below
                   size <span class="o">=</span> <span class="m">3</span><span class="p">)</span> <span class="o">+</span>
     theme<span class="p">(</span>plot.title <span class="o">=</span> element_text<span class="p">(</span>hjust <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span> size <span class="o">=</span> <span class="m">15</span><span class="p">,</span> face <span class="o">=</span> <span class="s">&#34;bold&#34;</span><span class="p">),</span>
           axis.title.x <span class="o">=</span> element_text<span class="p">(</span>hjust <span class="o">=</span> <span class="m">0.5</span><span class="p">,</span> size <span class="o">=</span> <span class="m">10</span><span class="p">,</span> face <span class="o">=</span> <span class="s">&#34;bold&#34;</span><span class="p">),</span>
-          legend.position <span class="o">=</span> <span class="s">&#34;none&#34;</span><span class="p">)</span></code></pre></td></tr></table>
+          legend.position <span class="o">=</span> <span class="s">&#34;none&#34;</span><span class="p">)</span>
+
+<span class="c1"># wordcloud</span>
+bb_wordcloud <span class="o">&lt;-</span>
+  bb_words <span class="o">%&gt;%</span>
+  group_by<span class="p">(</span>words<span class="p">)</span> <span class="o">%&gt;%</span> 
+  summarize<span class="p">(</span>freq <span class="o">=</span> n<span class="p">())</span> <span class="o">%&gt;%</span> 
+  wordcloud2<span class="o">::</span>wordcloud2<span class="p">(</span>shape <span class="o">=</span> <span class="s">&#34;circle&#34;</span><span class="p">)</span></code></pre></td></tr></table>
 </div>
 </div>
-<p><img src="/post/2019-10-05-breaking_bad_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-
-<p>The maximal number of occurrences per episode were 7 and 6 in Season 3 – Episode 10 and Season 3 -Episode 6, respectively. Season 2 and Season 3 averaged about 2, whereas the other 1 to 1.5 occurrence of the word per episode.</p>
-
-<h1 id="wordcloud">Wordcloud</h1>
-
-<p>I don’t have an obsession for swear words so…here a wordcloud of <strong>all</strong> the words of the show!</p>
-
-<iframe seamless src="/data/data_post7/bb_wordcloud.html" width="100%" height="400"></iframe>
-
-<h1 id="code">CODE</h1>
     </div>
 
     
@@ -614,8 +818,7 @@ While this is not an insignificant use of the colorful locution, it is far below
     <footer class="post-footer">
       <div class="post-tags">
           <a href="https://rden.netlify.com/tags/r/">R</a>
-          <a href="https://rden.netlify.com/tags/twitter/">twitteR</a>
-          <a href="https://rden.netlify.com/tags/twitter/">twitter</a>
+          <a href="https://rden.netlify.com/tags/wordcloud/">wordcloud</a>
           <a href="https://rden.netlify.com/tags/ggplot/">ggplot</a>
           <a href="https://rden.netlify.com/tags/textmining/">textmining</a>
           

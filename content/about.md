@@ -13,6 +13,8 @@ I am a data analysis and `R` enthusiast. I was born and I grow up in the eternal
 
 This is where I play with data and `R`.
 
+If you like to punch people check [my blog](https://muaydata.netlify.com/) that focuses on fight stats.
+
 This blog was built in `RStudio` using `RMarkdown`, `Rblogdown` and `Hugo`.
 
 

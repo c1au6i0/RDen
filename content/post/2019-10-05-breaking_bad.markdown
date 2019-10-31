@@ -18,7 +18,7 @@ contentCopyright: yes
 reward: no
 mathjax: no
 ---
-**How many times was the word “bitch” said in Breaking Bad?** Aaron Paul thinks that he used the word at least one hundred time, whereas, according to [Kerplosh]( https://www.youtube.com/watch?v=WVR476WHmR8), the number is actually 54.  Was it pronounced that often? We can answer this question using *R*.
+**How many times was the word “bitch” said in Breaking Bad?** Aaron Paul thinks that he used the word at least one hundred times, whereas, according to [Kerplosh]( https://www.youtube.com/watch?v=WVR476WHmR8), the number is actually 54.  Was it pronounced that often? We can answer this question using *R*.
 <!--more-->
 
 We don’t need to watch the entire show again: **with the subtitles and some coding we can get to the bottom of this much quicker**. I wrote a function to import and make the subtitles tidy, few lines of code to tokenize the dialogue, and I got all the words pronounced in Breaking Bad (code is at the end of the post).

@@ -1,5 +1,5 @@
 ---
-title: 'Breaking Bad: Yeah Science, bi#@ch!'
+title: 'Breaking Bad: Yeah Science, b#@ch!'
 author: 'C1au6i0_HH'
 date: '2019-10-14'
 slug: breaking_bad

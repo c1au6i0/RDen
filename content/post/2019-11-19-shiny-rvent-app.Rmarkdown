@@ -1,0 +1,26 @@
+---
+title: Shiny rvent_app
+author: 'C1au6i0_HH'
+date: '2019-11-19'
+slug: shiny-rvent-app
+categories: 
+  - R
+lastmod:  "`r Sys.Date()`"
+tags:
+  - R
+  - wordcloud
+  - ggplot
+  - textmining
+comment: yes
+toc: yes
+autoCollapseToc: yes
+contentCopyright: yes
+reward: no
+mathjax: no
+---
+
+How can someone use `R` without typing even a single line of code on a terminal?
+With **Shiny**!
+
+
+<!--more-->

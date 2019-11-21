@@ -2,31 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>wordcloud on RDen</title>
-    <link>/tags/wordcloud/</link>
+    <link>https://rden.netlify.com/tags/wordcloud/</link>
     <description>Recent content in wordcloud on RDen</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
     <lastBuildDate>Mon, 14 Oct 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/wordcloud/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://rden.netlify.com/tags/wordcloud/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Breaking Bad: Yeah Science, b#@ch!</title>
-      <link>/post/breaking_bad/</link>
+      <link>https://rden.netlify.com/post/breaking_bad/</link>
       <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/breaking_bad/</guid>
-      <description>&lt;p&gt;&lt;strong&gt;How many times was the word “bitch” said in Breaking Bad?&lt;/strong&gt; Aaron Paul thinks that he used the word at least one hundred times, whereas, according to &lt;a href=&#34;https://www.youtube.com/watch?v=WVR476WHmR8&#34;&gt;Kerplosh&lt;/a&gt;, the number is actually 54.  Was it pronounced that often? We can answer this question using &lt;em&gt;R&lt;/em&gt;.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Breaking Bad: Yeah Science, b#@ch!</title>
-      <link>/post/breaking_bad/</link>
-      <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/post/breaking_bad/</guid>
+      <guid>https://rden.netlify.com/post/breaking_bad/</guid>
       <description>&lt;p&gt;&lt;strong&gt;How many times was the word “bitch” said in Breaking Bad?&lt;/strong&gt; Aaron Paul thinks that he used the word at least one hundred times, whereas, according to &lt;a href=&#34;https://www.youtube.com/watch?v=WVR476WHmR8&#34;&gt;Kerplosh&lt;/a&gt;, the number is actually 54.  Was it pronounced that often? We can answer this question using &lt;em&gt;R&lt;/em&gt;.&lt;/p&gt;</description>
     </item>
     

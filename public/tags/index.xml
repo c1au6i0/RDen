@@ -2,193 +2,193 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on RDen</title>
-    <link>/tags/</link>
+    <link>https://rden.netlify.com/tags/</link>
     <description>Recent content in Tags on RDen</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
     <lastBuildDate>Tue, 19 Nov 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://rden.netlify.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>R</title>
-      <link>/tags/r/</link>
+      <link>https://rden.netlify.com/tags/r/</link>
       <pubDate>Tue, 19 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/r/</guid>
+      <guid>https://rden.netlify.com/tags/r/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Shiny</title>
-      <link>/tags/shiny/</link>
+      <link>https://rden.netlify.com/tags/shiny/</link>
       <pubDate>Tue, 19 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/shiny/</guid>
+      <guid>https://rden.netlify.com/tags/shiny/</guid>
       <description></description>
     </item>
     
     <item>
       <title>furyroad</title>
-      <link>/tags/furyroad/</link>
+      <link>https://rden.netlify.com/tags/furyroad/</link>
       <pubDate>Tue, 19 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/furyroad/</guid>
+      <guid>https://rden.netlify.com/tags/furyroad/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ggplot</title>
-      <link>/tags/ggplot/</link>
+      <link>https://rden.netlify.com/tags/ggplot/</link>
       <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/ggplot/</guid>
+      <guid>https://rden.netlify.com/tags/ggplot/</guid>
       <description></description>
     </item>
     
     <item>
       <title>textmining</title>
-      <link>/tags/textmining/</link>
+      <link>https://rden.netlify.com/tags/textmining/</link>
       <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/textmining/</guid>
+      <guid>https://rden.netlify.com/tags/textmining/</guid>
       <description></description>
     </item>
     
     <item>
       <title>wordcloud</title>
-      <link>/tags/wordcloud/</link>
+      <link>https://rden.netlify.com/tags/wordcloud/</link>
       <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/wordcloud/</guid>
+      <guid>https://rden.netlify.com/tags/wordcloud/</guid>
       <description></description>
     </item>
     
     <item>
       <title>aRt</title>
-      <link>/tags/art/</link>
+      <link>https://rden.netlify.com/tags/art/</link>
       <pubDate>Sat, 01 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/art/</guid>
+      <guid>https://rden.netlify.com/tags/art/</guid>
       <description></description>
     </item>
     
     <item>
       <title>gganimate</title>
-      <link>/tags/gganimate/</link>
+      <link>https://rden.netlify.com/tags/gganimate/</link>
       <pubDate>Sat, 01 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/gganimate/</guid>
+      <guid>https://rden.netlify.com/tags/gganimate/</guid>
       <description></description>
     </item>
     
     <item>
       <title>rvest</title>
-      <link>/tags/rvest/</link>
+      <link>https://rden.netlify.com/tags/rvest/</link>
       <pubDate>Sat, 01 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/rvest/</guid>
+      <guid>https://rden.netlify.com/tags/rvest/</guid>
       <description></description>
     </item>
     
     <item>
       <title>visualization</title>
-      <link>/tags/visualization/</link>
+      <link>https://rden.netlify.com/tags/visualization/</link>
       <pubDate>Sat, 01 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/visualization/</guid>
+      <guid>https://rden.netlify.com/tags/visualization/</guid>
       <description></description>
     </item>
     
     <item>
       <title>import_csv</title>
-      <link>/tags/import_csv/</link>
+      <link>https://rden.netlify.com/tags/import_csv/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/import_csv/</guid>
+      <guid>https://rden.netlify.com/tags/import_csv/</guid>
       <description></description>
     </item>
     
     <item>
       <title>microbenchmark</title>
-      <link>/tags/microbenchmark/</link>
+      <link>https://rden.netlify.com/tags/microbenchmark/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/microbenchmark/</guid>
+      <guid>https://rden.netlify.com/tags/microbenchmark/</guid>
       <description></description>
     </item>
     
     <item>
       <title>reticulate</title>
-      <link>/tags/reticulate/</link>
+      <link>https://rden.netlify.com/tags/reticulate/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/reticulate/</guid>
+      <guid>https://rden.netlify.com/tags/reticulate/</guid>
       <description></description>
     </item>
     
     <item>
       <title>seaborn</title>
-      <link>/tags/seaborn/</link>
+      <link>https://rden.netlify.com/tags/seaborn/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/seaborn/</guid>
+      <guid>https://rden.netlify.com/tags/seaborn/</guid>
       <description></description>
     </item>
     
     <item>
       <title>vroom</title>
-      <link>/tags/vroom/</link>
+      <link>https://rden.netlify.com/tags/vroom/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/vroom/</guid>
+      <guid>https://rden.netlify.com/tags/vroom/</guid>
       <description></description>
     </item>
     
     <item>
       <title>exec</title>
-      <link>/tags/exec/</link>
+      <link>https://rden.netlify.com/tags/exec/</link>
       <pubDate>Thu, 18 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/exec/</guid>
+      <guid>https://rden.netlify.com/tags/exec/</guid>
       <description></description>
     </item>
     
     <item>
       <title>functions</title>
-      <link>/tags/functions/</link>
+      <link>https://rden.netlify.com/tags/functions/</link>
       <pubDate>Thu, 18 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/functions/</guid>
+      <guid>https://rden.netlify.com/tags/functions/</guid>
       <description></description>
     </item>
     
     <item>
       <title>invoke</title>
-      <link>/tags/invoke/</link>
+      <link>https://rden.netlify.com/tags/invoke/</link>
       <pubDate>Thu, 18 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/invoke/</guid>
+      <guid>https://rden.netlify.com/tags/invoke/</guid>
       <description></description>
     </item>
     
     <item>
       <title>purrr</title>
-      <link>/tags/purrr/</link>
+      <link>https://rden.netlify.com/tags/purrr/</link>
       <pubDate>Thu, 18 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/purrr/</guid>
+      <guid>https://rden.netlify.com/tags/purrr/</guid>
       <description></description>
     </item>
     
     <item>
       <title>rlang</title>
-      <link>/tags/rlang/</link>
+      <link>https://rden.netlify.com/tags/rlang/</link>
       <pubDate>Thu, 18 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/rlang/</guid>
+      <guid>https://rden.netlify.com/tags/rlang/</guid>
       <description></description>
     </item>
     

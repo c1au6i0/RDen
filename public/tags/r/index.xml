@@ -2,53 +2,44 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>R on RDen</title>
-    <link>/tags/r/</link>
+    <link>https://rden.netlify.com/tags/r/</link>
     <description>Recent content in R on RDen</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
     <lastBuildDate>Tue, 19 Nov 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://rden.netlify.com/tags/r/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>A Shiny App!</title>
-      <link>/post/shiny-rvent-app/</link>
+      <link>https://rden.netlify.com/post/shiny-rvent-app/</link>
       <pubDate>Tue, 19 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/shiny-rvent-app/</guid>
+      <guid>https://rden.netlify.com/post/shiny-rvent-app/</guid>
       <description>&lt;p&gt;How can someone use &lt;code&gt;R&lt;/code&gt; without typing even a single line of code on a terminal? &lt;br&gt;
 Lucky you&amp;hellip; the present is &lt;strong&gt;Shiny&lt;/strong&gt;!
 &lt;center&gt;
-&lt;img src=&#34;/post/2019-11-19-shiny-rvent-app_files/Screen Shot 2019-11-20 at 17.03.46.png&#34; alt=&#34;&#34; width=&#34;400px&#34; height=&#34;400px&#34;/&gt;
+&lt;img src=&#34;https://rden.netlify.com/post/2019-11-19-shiny-rvent-app_files/Screen Shot 2019-11-20 at 17.03.46.png&#34; alt=&#34;&#34; width=&#34;400px&#34; height=&#34;400px&#34;/&gt;
 &lt;/center&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Breaking Bad: Yeah Science, b#@ch!</title>
-      <link>/post/breaking_bad/</link>
+      <link>https://rden.netlify.com/post/breaking_bad/</link>
       <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/breaking_bad/</guid>
-      <description>&lt;p&gt;&lt;strong&gt;How many times was the word “bitch” said in Breaking Bad?&lt;/strong&gt; Aaron Paul thinks that he used the word at least one hundred times, whereas, according to &lt;a href=&#34;https://www.youtube.com/watch?v=WVR476WHmR8&#34;&gt;Kerplosh&lt;/a&gt;, the number is actually 54.  Was it pronounced that often? We can answer this question using &lt;em&gt;R&lt;/em&gt;.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Breaking Bad: Yeah Science, b#@ch!</title>
-      <link>/post/breaking_bad/</link>
-      <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/post/breaking_bad/</guid>
+      <guid>https://rden.netlify.com/post/breaking_bad/</guid>
       <description>&lt;p&gt;&lt;strong&gt;How many times was the word “bitch” said in Breaking Bad?&lt;/strong&gt; Aaron Paul thinks that he used the word at least one hundred times, whereas, according to &lt;a href=&#34;https://www.youtube.com/watch?v=WVR476WHmR8&#34;&gt;Kerplosh&lt;/a&gt;, the number is actually 54.  Was it pronounced that often? We can answer this question using &lt;em&gt;R&lt;/em&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Il Re di Twitter? (PARTE I)</title>
-      <link>/post/re-di-twitter-i/</link>
+      <link>https://rden.netlify.com/post/re-di-twitter-i/</link>
       <pubDate>Wed, 12 Sep 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/re-di-twitter-i/</guid>
+      <guid>https://rden.netlify.com/post/re-di-twitter-i/</guid>
       <description>&lt;p&gt;In questa serie di Posts andremo ad analizzare gli ultimi 3200 tweets di Di Maio, Salvini e Martina. Il mio studio sarà diviso in 2 parti:&lt;/p&gt;
 
 &lt;ul&gt;

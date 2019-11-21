@@ -2,193 +2,193 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on RDen</title>
-    <link>https://rden.netlify.com/tags/</link>
+    <link>/tags/</link>
     <description>Recent content in Tags on RDen</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Mon, 14 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 19 Nov 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://rden.netlify.com/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>R</title>
-      <link>https://rden.netlify.com/tags/r/</link>
-      <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
+      <link>/tags/r/</link>
+      <pubDate>Tue, 19 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/r/</guid>
+      <guid>/tags/r/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Shiny</title>
+      <link>/tags/shiny/</link>
+      <pubDate>Tue, 19 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/shiny/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>furyroad</title>
+      <link>/tags/furyroad/</link>
+      <pubDate>Tue, 19 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/furyroad/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ggplot</title>
-      <link>https://rden.netlify.com/tags/ggplot/</link>
+      <link>/tags/ggplot/</link>
       <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/ggplot/</guid>
+      <guid>/tags/ggplot/</guid>
       <description></description>
     </item>
     
     <item>
       <title>textmining</title>
-      <link>https://rden.netlify.com/tags/textmining/</link>
+      <link>/tags/textmining/</link>
       <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/textmining/</guid>
+      <guid>/tags/textmining/</guid>
       <description></description>
     </item>
     
     <item>
       <title>wordcloud</title>
-      <link>https://rden.netlify.com/tags/wordcloud/</link>
+      <link>/tags/wordcloud/</link>
       <pubDate>Mon, 14 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/wordcloud/</guid>
+      <guid>/tags/wordcloud/</guid>
       <description></description>
     </item>
     
     <item>
       <title>aRt</title>
-      <link>https://rden.netlify.com/tags/art/</link>
+      <link>/tags/art/</link>
       <pubDate>Sat, 01 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/art/</guid>
+      <guid>/tags/art/</guid>
       <description></description>
     </item>
     
     <item>
       <title>gganimate</title>
-      <link>https://rden.netlify.com/tags/gganimate/</link>
+      <link>/tags/gganimate/</link>
       <pubDate>Sat, 01 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/gganimate/</guid>
+      <guid>/tags/gganimate/</guid>
       <description></description>
     </item>
     
     <item>
       <title>rvest</title>
-      <link>https://rden.netlify.com/tags/rvest/</link>
+      <link>/tags/rvest/</link>
       <pubDate>Sat, 01 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/rvest/</guid>
+      <guid>/tags/rvest/</guid>
       <description></description>
     </item>
     
     <item>
       <title>visualization</title>
-      <link>https://rden.netlify.com/tags/visualization/</link>
+      <link>/tags/visualization/</link>
       <pubDate>Sat, 01 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/visualization/</guid>
+      <guid>/tags/visualization/</guid>
       <description></description>
     </item>
     
     <item>
       <title>import_csv</title>
-      <link>https://rden.netlify.com/tags/import_csv/</link>
+      <link>/tags/import_csv/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/import_csv/</guid>
+      <guid>/tags/import_csv/</guid>
       <description></description>
     </item>
     
     <item>
       <title>microbenchmark</title>
-      <link>https://rden.netlify.com/tags/microbenchmark/</link>
+      <link>/tags/microbenchmark/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/microbenchmark/</guid>
+      <guid>/tags/microbenchmark/</guid>
       <description></description>
     </item>
     
     <item>
       <title>reticulate</title>
-      <link>https://rden.netlify.com/tags/reticulate/</link>
+      <link>/tags/reticulate/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/reticulate/</guid>
+      <guid>/tags/reticulate/</guid>
       <description></description>
     </item>
     
     <item>
       <title>seaborn</title>
-      <link>https://rden.netlify.com/tags/seaborn/</link>
+      <link>/tags/seaborn/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/seaborn/</guid>
+      <guid>/tags/seaborn/</guid>
       <description></description>
     </item>
     
     <item>
       <title>vroom</title>
-      <link>https://rden.netlify.com/tags/vroom/</link>
+      <link>/tags/vroom/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/vroom/</guid>
+      <guid>/tags/vroom/</guid>
       <description></description>
     </item>
     
     <item>
       <title>exec</title>
-      <link>https://rden.netlify.com/tags/exec/</link>
+      <link>/tags/exec/</link>
       <pubDate>Thu, 18 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/exec/</guid>
+      <guid>/tags/exec/</guid>
       <description></description>
     </item>
     
     <item>
       <title>functions</title>
-      <link>https://rden.netlify.com/tags/functions/</link>
+      <link>/tags/functions/</link>
       <pubDate>Thu, 18 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/functions/</guid>
+      <guid>/tags/functions/</guid>
       <description></description>
     </item>
     
     <item>
       <title>invoke</title>
-      <link>https://rden.netlify.com/tags/invoke/</link>
+      <link>/tags/invoke/</link>
       <pubDate>Thu, 18 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/invoke/</guid>
+      <guid>/tags/invoke/</guid>
       <description></description>
     </item>
     
     <item>
       <title>purrr</title>
-      <link>https://rden.netlify.com/tags/purrr/</link>
+      <link>/tags/purrr/</link>
       <pubDate>Thu, 18 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/purrr/</guid>
+      <guid>/tags/purrr/</guid>
       <description></description>
     </item>
     
     <item>
       <title>rlang</title>
-      <link>https://rden.netlify.com/tags/rlang/</link>
+      <link>/tags/rlang/</link>
       <pubDate>Thu, 18 Apr 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/tags/rlang/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ADD_Health</title>
-      <link>https://rden.netlify.com/tags/add_health/</link>
-      <pubDate>Sun, 24 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://rden.netlify.com/tags/add_health/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ROC</title>
-      <link>https://rden.netlify.com/tags/roc/</link>
-      <pubDate>Sun, 24 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://rden.netlify.com/tags/roc/</guid>
+      <guid>/tags/rlang/</guid>
       <description></description>
     </item>
     

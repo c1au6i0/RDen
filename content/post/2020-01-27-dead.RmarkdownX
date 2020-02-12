@@ -1,0 +1,55 @@
+---
+title: Dead
+author: 'C1au6i0_HH'
+date: '2020-01-27'
+slug: dead
+categories: 
+  - R
+lastmod:  "`r Sys.Date()`"
+tags:
+  - R
+  - Shiny
+  - furyroad
+comment: yes
+toc: yes
+autoCollapseToc: yes
+contentCopyright: yes
+reward: no
+mathjax: no
+---
+
+<!--more-->
+```{r libraries, echo=FALSE}
+library(tidyverse)
+library(vroom)
+```
+
+```{r data, warning=FALSE}
+# night of living dead
+nld <- vroom("/Users/heverz/Documents/R_projects/rden/static/data/data_nld/ethogram/cumulative_shots/NLD_1968_exp.txt")
+
+# shot per second 0.18
+sps <- max(nld$shot)/max(nld$time_sec) 
+
+# probably bin of 60 sec is good enough
+nld[, "interval"] <-  as.numeric(cut(nld$time_sec, seq(0, max(nld$time_sec), 60))) 
+
+nld %>% 
+  group_by(interval) %>% 
+  mutate(count = n()) %>% 
+  
+  ggplot(aes(x = interval, y = count)) +
+  geom_point() +
+  geom_line() +
+  theme_bw() +
+  scale_x_continuous(breaks = seq(0, 100, 10)) +
+  labs(x = "minutes", y = "cuts x minute", title = "Night of the living dead (1968)")
+```
+
+
+
+
+
+
+
+

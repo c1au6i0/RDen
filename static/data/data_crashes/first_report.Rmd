@@ -1,0 +1,181 @@
+---
+title: "Preliminary analysis on crashes in MD"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  pdf_document:
+    df_print: kable
+    toc: yes
+---
+
+```{r libraries, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(janitor)
+library(ggridges)
+```
+
+```{r by_year, echo=FALSE}
+c_dat <- read.csv("/Users/heverz/Documents/R_projects/rden/static/data/data_crashes/Maryland_Statewide_Vehicle_Crashes.csv", na.strings=c(""," ","NA")) %>%
+  janitor::clean_names()
+
+
+# remove "SPUR FR " and SPUR TO " from mainroad_name and reference_road_name
+c_dat <- c_dat %>%
+  mutate_at(c("mainroad_name", "reference_road_name"), ~ str_remove(., "(SPUR FR )|(SPUR TO )"))
+```
+
+## Criteria Used and Other Considerations 
+
+This is a fast and dirty first analysis to get an idea of the data.
+
+Crashes were categorized as belonging to the intersection of Columbia Pike and Rivers Edge road, when the `REFERENCE_ROAD_NAME` **contained** `RIVERS EDGE RD` and the `MAINROAD_NAME` **contained** `COLUMBIA PIKE`. In some occasions the `MAINROAD_NAME` was indeed reported as `SPUR FR RIVERS EDGE RD` or `SPUR TO RIVERS EDGE RD`. 
+
+Some of these crashes were categorized as `Intersection` or `Intersection Related` but other were not (see tab below). 
+
+```{r echo=FALSE}
+c_dat %>%
+  filter(str_detect(reference_road_name, "RIVERS EDGE RD")) %>%
+  group_by(junction_desc) %>% 
+  summarize(count = n()) %>% 
+  rename(description =  junction_desc)
+```
+
+At this stage, I am not sure why crashes were categorized in this way (I can investigate that tomorrow). Nevertheless, it seems to me that all the crashes were in close proximity of your intersection (maximal `DISTANCE` from COLUMBIA PIKE was 500 feet), and thus **they were all used for the current analysis**.
+
+## Trends by Year
+
+In the last 4 years, a total of 64 crashes was reported in proximity of your intersection. Overall, it seems that there has been a constant and steady increase in the number of crashes since 2015...(fig below)
+
+Possibly this might be the result of increase in traffic, with more people commuting to DC (?). Regardless, this trend is quite concerning...
+
+```{r river_edge, echo=FALSE}
+c_dat %>%
+  filter(str_detect(reference_road_name, "RIVERS EDGE RD")) %>%
+  group_by(year) %>%
+  summarise(n = n()) %>%
+  ggplot(aes(year, n)) +
+  geom_col(fill = "grey", col = "black") +
+  scale_y_continuous(breaks = 1:18, minor_breaks = NULL) +
+  theme_bw() +
+  labs(y = "number of crashes", title = "Columbia Pike and Rivers Edge road (tot = 64)") +
+  geom_label(aes(year, 1, label = n))
+```
+
+**That growth in number of crashes does not seems to be the result of a general increase in the number of collisions per intersection**. The average number of crashes per intersection has remained quite steady from 2015 to 2019 (see figure below)
+
+You will notice that the average number of crashes per intersection is quite lower when compared with the ones of yours. Honestly, I am not even sure that a similar comparison is that meaningful. For the vast majority of intersections, the number of crashes is actual just 1, and that really drags down the mean...(this will be looked in detailed in the next section).
+
+```{r average, echo=FALSE}
+c_dat %>%
+  unite("inters", c("mainroad_name", "reference_road_name"), sep = " + ") %>%
+  group_by(inters, year) %>%
+  summarize(n_cr = n()) %>%
+  filter(!str_detect(inters, "\\+\\sNA$")) %>% 
+  group_by(year) %>% 
+  summarize(mean = mean(n_cr), sd = sd(n_cr), median = median(n_cr), n = n(), err = sd/sqrt(n)) %>% 
+  
+  ggplot(aes(x = year, y = mean)) + 
+    geom_col(fill = "grey", col = "black") +
+    scale_y_continuous(breaks = 1:18, minor_breaks = NULL, limits = c(0,18)) +
+    geom_linerange(aes(ymin = mean, ymax = mean + sd), linetype = 1) +
+    labs(y = "number of crashes (+/- st.dev)", 
+         title = "Average Crashes per Intersection") +
+    geom_label(aes(year, 1, label = round(mean, digit = 2))) +
+    theme_bw()
+```
+I identified a list of other intersections that had the same number of crashes of yours (see tab below).
+
+```{r other_inters, echo=FALSE}
+c_dat %>%
+  unite("inters", c("mainroad_name", "reference_road_name"), sep = " + ") %>%
+  group_by(inters) %>%
+  summarize(n = n()) %>%
+  filter(!str_detect(inters, "\\+\\sNA$")) %>% 
+  filter(n == 64) %>% 
+  rename(intersection = inters)
+```
+
+I then looked at yearly trends for one of them (COLUMBIA PIKE + BALTO NATIONAL PIKE) (look below).
+
+```{r comparis, echo=FALSE}
+c_dat %>%
+  unite("inters", c("mainroad_name", "reference_road_name"), sep = " + ") %>%
+  filter(inters == "COLUMBIA PIKE + BALTO NATIONAL PIKE") %>% 
+  group_by(year) %>%
+  summarise(n = n()) %>%
+  
+  ggplot(aes(year, n)) +
+  geom_col(fill = "grey", col = "black") +
+  scale_y_continuous(breaks = 1:18, minor_breaks = NULL) +
+  theme_bw() +
+  labs(y = "number of crashes", title = "Columbia Pike and Balto National Pike (tot = 64)") +
+  geom_label(aes(year, 1, label = n))
+```
+I don't see for that intersection a clear year by year increase in crashes as for yours.
+
+**So far, it seems to me that your intersection is becoming more dangerous, and this is not true for average intersection or another intersection of Columbia Pike (with same total crashes).** 
+
+```{r other_tab, echo=FALSE}
+# c_dat %>%
+#   filter(str_detect(reference_road_name, "RIVERS EDGE RD")) %>%
+#   group_by(harm_event_desc2) %>%
+#   summarise(n = n())
+#   
+# 
+# c_dat %>%
+#   filter(str_detect(reference_road_name, "RIVERS EDGE RD")) %>%
+#   group_by(report_type) %>%
+#   summarise(n = n())
+```
+
+## Distribution
+
+The distribution of crashes per intersection is  severely right skewed (look figure below).
+
+In the last 4 years, more than 90000 of the intersections of the dataset **had no more than 5 crashes**. Actually, I am pretty confident that if we were ti included all the intersections of MD, the distribution would be even more right skewed (with a lot of 0 crashes).
+
+The red line in the graph below indicates the bin containing your intersection. This can help for putting it in prospective...
+
+
+```{r frequency_dist, echo=FALSE}
+c_dat %>%
+  unite("inters", c("mainroad_name", "reference_road_name"), sep = " + ") %>%
+  group_by(inters) %>%
+  summarize(n = n()) %>%
+  filter(!str_detect(inters, "\\+\\sNA$")) %>% 
+
+  ggplot(aes(n)) +
+  geom_freqpoly(binwidth = 5) +
+  geom_vline(xintercept = 64, colour = "red", lty = 3) +
+  scale_y_continuous(breaks = seq(0, 100000, 10000)) +
+  labs(x = "number of crashes",
+       y = "number of intersections",
+       title = "Frequency distribution of crashes (binwidth = 5)") +
+  theme_bw()
+```
+
+See below a list with the top 20 intersection for number of crashes in the last 4 years.
+
+
+```{r echo=FALSE}
+c_dat %>%
+  unite("inters", c("mainroad_name", "reference_road_name"), sep = " + ") %>%
+  group_by(inters) %>%
+  summarize(n = n()) %>%
+  filter(!str_detect(inters, "\\+\\sNA$")) %>% 
+  arrange(desc(n)) %>% 
+  head(20) %>% 
+  rename(intersection = inters)
+```
+
+## Take Home Message.
+
+So far, the most striking observation is the yearly increase in the crashes in your intersection.
+
+This is still very preliminary. Tomorrow I will keep looking at the data.
+
+
+
+
+
+
+

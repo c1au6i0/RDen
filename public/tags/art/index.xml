@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>aRt on RDen</title>
-    <link>https://rden.netlify.com/tags/art/</link>
+    <link>/tags/art/</link>
     <description>Recent content in aRt on RDen</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
     <lastBuildDate>Sat, 01 Jun 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://rden.netlify.com/tags/art/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/art/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Abstract aRt: 16 years of MegaMillions</title>
-      <link>https://rden.netlify.com/post/gganimate-lottery/</link>
+      <link>/post/gganimate-lottery/</link>
       <pubDate>Sat, 01 Jun 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://rden.netlify.com/post/gganimate-lottery/</guid>
+      <guid>/post/gganimate-lottery/</guid>
       <description>&lt;p&gt;Today we paint. Our canvas is the Cartesian space, our brushes are &lt;code&gt;R&lt;/code&gt; and its packages, and the art model is  MegaMillions (16 years of numbers).&lt;/p&gt;</description>
     </item>
     

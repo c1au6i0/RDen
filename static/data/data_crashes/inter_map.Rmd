@@ -1,0 +1,50 @@
+---
+title: "Interactive Map"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+  pdf_document:
+    df_print: kable
+    toc: yes
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r libraries, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(leaflet)
+```
+
+
+```{r get_data, echo=FALSE}
+c_dat <- read.csv("/Users/heverz/Documents/R_projects/rden/static/data/data_crashes/Maryland_Statewide_Vehicle_Crashes.csv", na.strings=c(""," ","NA")) %>%
+  janitor::clean_names()
+
+c_dat <- c_dat %>%
+  mutate_at(c("mainroad_name", "reference_road_name"), ~ str_remove(., "(SPUR FR )|(SPUR TO )"))
+```
+
+```{r}
+c_dat %>%
+  filter(str_detect(reference_road_name, "RIVERS EDGE RD")) %>%
+  filter(latitude <= 39.166)
+```
+
+```{r}
+river <- c_dat %>%
+  filter(str_detect(reference_road_name, "RIVERS EDGE RD")) %>%
+  select(latitude, longitude) %>% 
+  
+  leaflet() %>% 
+  addTiles() %>% 
+  addCircleMarkers(radius = 2,
+      clusterOptions = "yes"
+    )
+
+```
+
+```{r}
+
+htmlwidgets::saveWidget(river, "river.html")
+```
+

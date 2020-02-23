@@ -2,23 +2,23 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>leaflet on RDen</title>
-    <link>/tags/leaflet/</link>
+    <link>https://rden.netlify.com/tags/leaflet/</link>
     <description>Recent content in leaflet on RDen</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>&lt;a rel=&#34;license noopener&#34; href=&#34;https://creativecommons.org/licenses/by-nc-nd/4.0/&#34; target=&#34;_blank&#34;&gt;CC BY-NC-ND 4.0&lt;/a&gt;</copyright>
     <lastBuildDate>Tue, 11 Feb 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/leaflet/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://rden.netlify.com/tags/leaflet/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Interactive Maps in R: Maryland Vehicle Crashes</title>
-      <link>/post/interactive-maps/</link>
+      <link>https://rden.netlify.com/post/interactive-maps/</link>
       <pubDate>Tue, 11 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/interactive-maps/</guid>
-      <description>&lt;p&gt;Creating interactive maps might seems a pretty complex task, that would require deep knowledge of &lt;code&gt;JavaScript&lt;/code&gt; and quite some coding. Luckily, the package &lt;code&gt;leaflet&lt;/code&gt; allows &lt;code&gt;R&lt;/code&gt; users of taking advantage of the homonym &lt;code&gt;JavaScript&lt;/code&gt; library &lt;strong&gt;to create interactive mapw&lt;/strong&gt; in just 3 lines of code. Let&amp;rsquo;s look at the vehicle crashes in Maryland in 2019 with an interactive map!&lt;/p&gt;</description>
+      <guid>https://rden.netlify.com/post/interactive-maps/</guid>
+      <description>&lt;p&gt;Creating interactive maps might seems a pretty complex task, that would require deep knowledge of &lt;code&gt;JavaScript&lt;/code&gt; and quite some coding. Luckily, the package &lt;code&gt;leaflet&lt;/code&gt; allows &lt;code&gt;R&lt;/code&gt; users of taking advantage of the homonym &lt;code&gt;JavaScript&lt;/code&gt; library &lt;strong&gt;to create interactive maps&lt;/strong&gt; in just 3 lines of code. Let&amp;rsquo;s look at the vehicle crashes in Maryland in 2019 with an interactive map!&lt;/p&gt;</description>
     </item>
     
   </channel>

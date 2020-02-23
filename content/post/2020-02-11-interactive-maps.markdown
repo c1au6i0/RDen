@@ -10,7 +10,7 @@ tags:
   - leaflet
   - Maryland
   - crashes
-lastmod: "2020-02-11 19:07:18"
+lastmod: "2020-02-23 12:29:09"
 keywords: []
 description: ''
 comment: yes
@@ -21,7 +21,7 @@ reward: no
 mathjax: no
 ---
 
-Creating interactive maps might seems a pretty complex task, that would require deep knowledge of `JavaScript` and quite some coding. Luckily, the package `leaflet` allows `R` users of taking advantage of the homonym `JavaScript` library **to create interactive mapw** in just 3 lines of code. Let's look at the vehicle crashes in Maryland in 2019 with an interactive map!
+Creating interactive maps might seems a pretty complex task, that would require deep knowledge of `JavaScript` and quite some coding. Luckily, the package `leaflet` allows `R` users of taking advantage of the homonym `JavaScript` library **to create interactive maps** in just 3 lines of code. Let's look at the vehicle crashes in Maryland in 2019 with an interactive map!
 
 <!--more-->
 

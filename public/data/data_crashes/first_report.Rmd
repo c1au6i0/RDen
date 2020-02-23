@@ -33,10 +33,12 @@ Some of these crashes were categorized as `Intersection` or `Intersection Relate
 
 ```{r echo=FALSE}
 c_dat %>%
-  filter(str_detect(reference_road_name, "RIVERS EDGE RD")) %>%
-  group_by(junction_desc) %>% 
-  summarize(count = n()) %>% 
-  rename(description =  junction_desc)
+  filter(str_detect(	
+reference_road_name, "Ramp")) 
+
+%>%
+  group_by(year) %>% 
+  summarize(count = n()) 
 ```
 
 At this stage, I am not sure why crashes were categorized in this way (I can investigate that tomorrow). Nevertheless, it seems to me that all the crashes were in close proximity of your intersection (maximal `DISTANCE` from COLUMBIA PIKE was 500 feet), and thus **they were all used for the current analysis**.

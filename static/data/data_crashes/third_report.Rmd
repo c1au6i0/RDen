@@ -1,0 +1,49 @@
+---
+title: "Second Report"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    df_print: kable
+    toc: true
+---
+
+```{r libraries, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(janitor)
+library(ggridges)
+library(leaflet)
+library(plotly)
+library(rvent)
+library(ggiraph)
+library(htmlwidgets)
+library(plotly)
+```
+
+```{r message=FALSE}
+howard <- c_dat %>%
+  filter(county_desc == "Howard") 
+
+Sys.setenv("MAPBOX_TOKEN" = "pk.eyJ1IjoiY2xhdWRpb3phbmV0dGluaSIsImEiOiJjazc1ZDI5NjAwMmk4M2txYTllcHB1MjJpIn0.3nW8EnMVDJJGFyTEfOoawg") # for Orca
+
+fig <- 
+  howard  %>%
+    plot_mapbox(
+      lat = ~latitude,
+      lon = ~longitude,
+      marker = list(color = "grey"),
+      type = 'scattermapbox',
+      hovertext = ~collision_type_desc) 
+
+fig <- fig %>%
+  layout(
+    mapbox = list(
+      style = 'open-street-map',
+      zoom = 5,
+      center = list(lon = -76, lat = 39))) 
+
+fig
+
+# https://plot.ly/r/group-by/
+# split = ~class
+```
+

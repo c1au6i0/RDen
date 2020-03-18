@@ -10,7 +10,7 @@ tags:
   - leaflet
   - Maryland
   - crashes
-lastmod: "2020-02-23 12:29:09"
+lastmod: "2020-03-18 09:30:11"
 keywords: []
 description: ''
 comment: yes
@@ -27,7 +27,7 @@ Creating interactive maps might seems a pretty complex task, that would require 
 
 # The Data
 
-Data on Maryland vehicle crashes can  be downloaded from the open data portal of the state ((link)[https://opendata.maryland.gov/Public-Safety/Maryland-Statewide-Vehicle-Crashes/65du-s3qu]).
+Data on Maryland vehicle crashes can  be downloaded from the open data portal of the (state)[https://opendata.maryland.gov/Public-Safety/Maryland-Statewide-Vehicle-Crashes/65du-s3qu].
 Let's load some libraries, import the data and extract crashes of 2019.
 
 

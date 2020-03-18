@@ -41,7 +41,7 @@
 
 &lt;h1 id=&#34;the-data&#34;&gt;The Data&lt;/h1&gt;
 
-&lt;p&gt;Data on Maryland vehicle crashes can  be downloaded from the open data portal of the state ((link)[&lt;a href=&#34;https://opendata.maryland.gov/Public-Safety/Maryland-Statewide-Vehicle-Crashes/65du-s3qu]&#34;&gt;https://opendata.maryland.gov/Public-Safety/Maryland-Statewide-Vehicle-Crashes/65du-s3qu]&lt;/a&gt;).
+&lt;p&gt;Data on Maryland vehicle crashes can  be downloaded from the open data portal of the (state)[&lt;a href=&#34;https://opendata.maryland.gov/Public-Safety/Maryland-Statewide-Vehicle-Crashes/65du-s3qu&#34;&gt;https://opendata.maryland.gov/Public-Safety/Maryland-Statewide-Vehicle-Crashes/65du-s3qu&lt;/a&gt;].
 Let&amp;rsquo;s load some libraries, import the data and extract crashes of 2019.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
